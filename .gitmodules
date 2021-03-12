@@ -1,0 +1,3 @@
+[submodule "unity/gamified"]
+	path = unity/gamified
+	url = git@github.com:paths-ankan/scout-progression-system-gamified.git

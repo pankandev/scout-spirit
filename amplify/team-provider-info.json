@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-scoutspirit-dev-131430-authRole",
+      "UnauthRoleArn": "arn:aws:iam::093932304843:role/amplify-scoutspirit-dev-131430-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::093932304843:role/amplify-scoutspirit-dev-131430-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-scoutspirit-dev-131430-deployment",
+      "UnauthRoleName": "amplify-scoutspirit-dev-131430-unauthRole",
+      "StackName": "amplify-scoutspirit-dev-131430",
+      "StackId": "arn:aws:cloudformation:us-west-2:093932304843:stack/amplify-scoutspirit-dev-131430/09ebc560-7e97-11eb-b5dd-061401d3c053",
+      "AmplifyAppId": "d3102xm7avrnx9"
+    }
+  }
+}
