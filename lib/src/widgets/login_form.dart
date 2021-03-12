@@ -1,8 +1,8 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
+import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 
 class LoginForm extends StatefulWidget {
@@ -135,22 +135,20 @@ class _LoginFormState extends State<LoginForm> {
       this.loading = true;
     });
     try {
-      await Amplify.Auth.signIn(
-        username: _bloc.email,
-        password: _bloc.password,
-      );
-    } on AuthException catch (e) {
+      await AuthenticationService().login(this._bloc.email, this._bloc.password);
+    } on NotAuthorizedException catch (e) {
+      SnackBarProvider.showMessage(context, 'Contraseña incorrecta');
+      throw e;
+    } on UserNotFoundException catch (e) {
+      SnackBarProvider.showMessage(context, 'Correo electrónico no registrado');
+      throw e;
+    } on UserNotConfirmedException catch (e) {
+      SnackBarProvider.showMessage(context, 'Usuario no confirmado');
+      throw e;
+    } catch (e) {
       setState(() {
         this.loading = false;
       });
-      if (e is NotAuthorizedException) {
-        SnackBarProvider.showMessage(context, 'Correo o contraseña incorrecta');
-      } else {
-        SnackBarProvider.showMessage(context, 'Error desconocido');
-      }
-      return;
-    } catch (_) {
-      return;
     }
     await Navigator.of(context).pushReplacementNamed('/');
   }

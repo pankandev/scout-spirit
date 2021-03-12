@@ -6,14 +6,14 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 
 abstract class RestApiService {
-  Future<String> getToken() async {
+  Future<String> _getToken() async {
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
         options: CognitoSessionOptions(getAWSCredentials: true));
     return session.userPoolTokens.idToken;
   }
 
-  Future<Map<String, String>> getAuthorizedHeader() async {
-    String token = await getToken();
+  Future<Map<String, String>> _getAuthorizedHeader() async {
+    String token = await _getToken();
     if (token == null)
       return {};
     return {"Authorization": token};
@@ -27,7 +27,7 @@ abstract class RestApiService {
   Future<Map> get(String path, {Map<String, String> queryParams}) async {
     RestOptions options = RestOptions(
       path: path,
-      headers: await getAuthorizedHeader()
+      headers: await _getAuthorizedHeader()
     );
     if (queryParams != null) options.queryParameters = queryParams;
     try {

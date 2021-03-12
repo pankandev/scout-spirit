@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import 'package:scout_spirit/src/utils/json.dart';
 
-Beneficiary beneficiaryFromJson(String str) => Beneficiary.fromJson(json.decode(str));
+Beneficiary beneficiaryFromJson(String str) => Beneficiary.fromMap(json.decode(str));
 
 String beneficiaryToJson(Beneficiary data) => json.encode(data.toJson());
 
@@ -20,9 +20,10 @@ class Beneficiary {
     this.target,
     this.nTasks,
     this.score,
-    this.user,
+    this.userId,
     this.fullName,
-    this.group,
+    this.groupCode,
+    this.districtCode
   });
 
   dynamic completed;
@@ -33,11 +34,12 @@ class Beneficiary {
   dynamic target;
   TasksCount nTasks;
   TasksCount score;
-  String user;
+  String userId;
   String fullName;
-  String group;
+  String groupCode;
+  String districtCode;
 
-  factory Beneficiary.fromJson(Map<String, dynamic> json) => Beneficiary(
+  factory Beneficiary.fromMap(Map<String, dynamic> json) => Beneficiary(
     completed: json["completed"],
     unitUser: json["unit-user"],
     boughtItems: BoughtItems.fromJson(json["bought_items"]),
@@ -46,9 +48,10 @@ class Beneficiary {
     target: json["target"],
     nTasks: TasksCount.fromJson(json["n_tasks"]),
     score: TasksCount.fromJson(json["score"]),
-    user: json["user"],
+    userId: json["user"],
     fullName: json["full-name"],
-    group: json["group"],
+    groupCode: json["group"].split('::')[1],
+    districtCode: json["group"].split('::')[0],
   );
 
   Map<String, dynamic> toJson() => {
@@ -60,14 +63,14 @@ class Beneficiary {
     "target": target,
     "n_tasks": nTasks.toJson(),
     "score": score.toJson(),
-    "user": user,
+    "user": userId,
     "full-name": fullName,
-    "group": group,
+    "group": "$districtCode::$groupCode",
   };
 
   @override
   String toString() {
-    return "Beneficiary(full-name: '$fullName', nickname: '$nickname', user: $user, group: $group)";
+    return "Beneficiary(fullName: '$fullName', nickname: '$nickname', userId: $userId, district: $districtCode, group: $groupCode)";
   }
 }
 
@@ -98,14 +101,14 @@ class TasksCount {
   int spirituality;
   int corporality;
 
-  factory TasksCount.fromJson(Map<String, dynamic> json) => TasksCount(
+  factory TasksCount.fromJson(Map<String, dynamic> json) => json != null ? TasksCount(
     sociability: JsonUtils.to<int>(json["sociability"]),
     character: JsonUtils.to<int>(json["character"]),
     affectivity: JsonUtils.to<int>(json["affectivity"]),
     creativity: JsonUtils.to<int>(json["creativity"]),
     spirituality: JsonUtils.to<int>(json["spirituality"]),
     corporality: JsonUtils.to<int>(json["corporality"]),
-  );
+  ) : TasksCount(sociability: 0, character: 0, affectivity: 0, creativity: 0, spirituality: 0, corporality: 0);
 
   Map<String, dynamic> toJson() => {
     "sociability": sociability,

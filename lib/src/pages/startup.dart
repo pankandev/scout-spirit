@@ -67,15 +67,14 @@ class _StartupPageState extends State<StartupPage> {
   void _startup(BuildContext context) async {
     this.stage = StartupStage.AmplifyLoading;
     await _configureAmplify();
+
     this.stage = StartupStage.CheckSession;
-    try {
-      await Amplify.Auth.getCurrentUser();
-    } on SignedOutException {
+    if (!await _checkIfLoggedIn()) {
       await Navigator.of(context).pushReplacementNamed('/login');
-      return;
+    } else {
+      this.stage = StartupStage.SigningIn;
+      await Navigator.of(context).pushReplacementNamed('/home');
     }
-    this.stage = StartupStage.SigningIn;
-    await Navigator.of(context).pushReplacementNamed('/home');
   }
 
   _StartupPageState({this.child});
@@ -91,6 +90,15 @@ class _StartupPageState extends State<StartupPage> {
     } on AmplifyAlreadyConfiguredException {
       print(
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
+    }
+  }
+
+  Future<bool> _checkIfLoggedIn() async {
+    try {
+      AuthSession session = await Amplify.Auth.fetchAuthSession();
+      return session.isSignedIn;
+    } on SignedOutException {
+      return false;
     }
   }
 }

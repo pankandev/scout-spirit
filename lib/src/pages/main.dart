@@ -1,8 +1,11 @@
-import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
+import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
+import 'package:scout_spirit/src/services/districts.dart';
+import 'package:scout_spirit/src/services/groups.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 
@@ -11,7 +14,10 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => BeneficiariesService())
+        Provider(create: (_) => BeneficiariesService()),
+        Provider(create: (_) => GroupsService()),
+        Provider(create: (_) => DistrictsService()),
+        Provider(create: (_) => AuthenticationService()),
       ],
       child: Scaffold(
         body: _buildBody(context),
@@ -21,42 +27,73 @@ class MainPage extends StatelessWidget {
           onTap: _onTap,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(label: 'Grupo', icon: Icon(Icons.group)),
-            BottomNavigationBarItem(label: '¡Explorar!', icon: Icon(ScoutSpiritIcons.campfire)),
-            BottomNavigationBarItem(label: 'Bitácora', icon: Icon(ScoutSpiritIcons.fleur_de_lis)),
+            BottomNavigationBarItem(
+                label: '¡Explorar!', icon: Icon(ScoutSpiritIcons.campfire)),
+            BottomNavigationBarItem(
+                label: 'Bitácora', icon: Icon(ScoutSpiritIcons.fleur_de_lis)),
           ],
         ),
       ),
     );
   }
 
-  void _onTap(int button) {
-  }
+  void _onTap(int button) {}
 
   Stack _buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
         Background(),
         SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconButton(icon: Icon(Icons.arrow_back_outlined, color: Color.fromRGBO(255, 255, 255, 0.8)), onPressed: () {  },),
-                  Text('Espíritu Scout', style: TextStyle(color: Colors.white),)
-                ],
-              ),
-              ActiveTaskContainer()
-            ],
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                _buildUserContainer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_back_outlined,
+                              color: Color.fromRGBO(255, 255, 255, 0.8)),
+                          onPressed: () => _logout(context),
+                        ),
+                        Text(
+                          'Espíritu Scout',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                    ),
+                    ActiveTaskContainer()
+                  ],
+                ),
+              ],
+            ),
           ),
         )
       ],
     );
   }
 
+  Container _buildUserContainer() {
+    return Container(
+      height: 64.0,
+      child: StreamBuilder<User>(
+          stream: AuthenticationService().userStream,
+          builder: (context, snapshot) => Container(
+                child: snapshot.hasData
+                    ? Column(
+                        children: [Text(snapshot.data.beneficiary.fullName)],
+                      )
+                    : CircularProgressIndicator(),
+              )),
+    );
+  }
+
   Future<void> _logout(BuildContext context) async {
-    await Amplify.Auth.signOut();
+    await AuthenticationService().logout();
     await Navigator.of(context).pushReplacementNamed('/login');
   }
 }
