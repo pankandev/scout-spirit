@@ -59,3 +59,4 @@ amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
 android/unityLibrary/
+/unity/gamified/.idea/.idea.gamified/
