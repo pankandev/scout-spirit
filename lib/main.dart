@@ -3,6 +3,7 @@ import 'package:scout_spirit/src/pages/main.dart';
 import 'package:scout_spirit/src/pages/login.dart';
 import 'package:scout_spirit/src/pages/signup.dart';
 import 'package:scout_spirit/src/pages/startup.dart';
+import 'package:scout_spirit/src/pages/explore.dart';
 
 
 void main() => runApp(ScoutSpiritApp());
@@ -19,6 +20,7 @@ class ScoutSpiritApp extends StatelessWidget {
         '/login': (_) => LoginPage(),
         '/signup': (_) => SignUpPage(),
         '/home': (_) => MainPage(),
+        '/explore': (_) => ExplorePage()
       },
     );
   }

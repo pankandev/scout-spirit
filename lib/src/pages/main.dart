@@ -24,7 +24,7 @@ class MainPage extends StatelessWidget {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color.fromRGBO(30, 30, 30, 1),
           unselectedItemColor: Colors.white,
-          onTap: _onTap,
+          onTap: (index) => _onTap(context, index),
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(label: 'Grupo', icon: Icon(Icons.group)),
             BottomNavigationBarItem(
@@ -37,7 +37,11 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  void _onTap(int button) {}
+  void _onTap(BuildContext context, int button) {
+    if (button == 1) {
+      Navigator.of(context).pushNamed('/explore');
+    }
+  }
 
   Stack _buildBody(BuildContext context) {
     return Stack(
