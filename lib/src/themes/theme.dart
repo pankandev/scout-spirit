@@ -9,3 +9,5 @@ final appTheme = ThemeData.light().copyWith(
       ),
   primaryColor: Color.fromRGBO(70, 26, 194, 1),
 );
+
+final mutedTextTheme = ThemeData.light().textTheme.caption;

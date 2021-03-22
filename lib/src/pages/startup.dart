@@ -4,11 +4,13 @@ import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:scout_spirit/amplifyconfiguration.dart';
+import 'package:scout_spirit/src/services/objectives.dart';
 
 enum StartupStage {
   AmplifyLoading,
   CheckSession,
   SigningIn,
+  PreloadingStaticData
 }
 
 class StartupPage extends StatefulWidget {
@@ -42,6 +44,8 @@ class _StartupPageState extends State<StartupPage> {
     switch (stage) {
       case StartupStage.AmplifyLoading:
         return 'Armando mochila...';
+      case StartupStage.PreloadingStaticData:
+        return 'Subiendo cosas al bus...';
       case StartupStage.CheckSession:
         return 'Subiendo al bus...';
       case StartupStage.SigningIn:
@@ -68,8 +72,12 @@ class _StartupPageState extends State<StartupPage> {
     this.stage = StartupStage.AmplifyLoading;
     await _configureAmplify();
 
+    this.stage = StartupStage.PreloadingStaticData;
+    await ObjectivesService().preload();
+
     this.stage = StartupStage.CheckSession;
-    if (!await _checkIfLoggedIn()) {
+    final bool isLoggedIn = await _checkIfLoggedIn();
+    if (!isLoggedIn) {
       await Navigator.of(context).pushReplacementNamed('/login');
     } else {
       this.stage = StartupStage.SigningIn;
@@ -79,10 +87,14 @@ class _StartupPageState extends State<StartupPage> {
 
   _StartupPageState({this.child});
 
+  static bool _isConfigured = false;
+
   Future<void> _configureAmplify() async {
     AmplifyAnalyticsPinpoint analyticsPlugin = AmplifyAnalyticsPinpoint();
     AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
     AmplifyAPI apiPlugin = AmplifyAPI();
+
+    if (_isConfigured) return;
 
     try {
       Amplify.addPlugins([authPlugin, analyticsPlugin, apiPlugin]);
@@ -91,14 +103,11 @@ class _StartupPageState extends State<StartupPage> {
       print(
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
     }
+    _isConfigured = true;
   }
 
   Future<bool> _checkIfLoggedIn() async {
-    try {
-      AuthSession session = await Amplify.Auth.fetchAuthSession();
-      return session.isSignedIn;
-    } on SignedOutException {
-      return false;
-    }
+    AuthSession session = await Amplify.Auth.fetchAuthSession();
+    return session.isSignedIn;
   }
 }

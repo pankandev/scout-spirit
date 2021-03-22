@@ -1,3 +1,6 @@
 [submodule "unity/gamified"]
 	path = unity/gamified
 	url = git@github.com:paths-ankan/scout-progression-system-gamified.git
+[submodule "assets/jsons/resources"]
+	path = assets/jsons/resources
+	url = git@github.com:pankandev/pps-resources.git

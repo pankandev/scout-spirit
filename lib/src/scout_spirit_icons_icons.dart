@@ -24,4 +24,16 @@ class ScoutSpiritIcons {
   static const IconData campfire = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData fleur_de_lis = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData trebol = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData spirituality = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData affectivity = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData character = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData corporality = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData creativity = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sociability = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData spirituality_1 = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData affectivity_1 = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData character_1 = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData corporality_1 = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData creativity_1 = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sociability_1 = IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

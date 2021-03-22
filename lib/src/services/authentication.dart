@@ -25,10 +25,17 @@ class AuthenticationService {
 
   Stream<User> get userStream => _authenticatedUserController.stream;
 
-  User get authenticatedUser => _authenticatedUserController.value;
+  User get snapAuthenticatedUser => _authenticatedUserController.value;
 
   Future<void> updateAuthenticatedUser() async {
-    AuthUser user = await Amplify.Auth.getCurrentUser();
+    AuthUser user;
+    AuthSession authSession = await Amplify.Auth.fetchAuthSession();
+    if (authSession.isSignedIn) {
+      user = await Amplify.Auth.getCurrentUser();
+    } else {
+      user = null;
+    }
+
     if (user == null) {
       _authenticatedUserController.sink.add(null);
       _sessionController.sink.add(null);
@@ -43,8 +50,33 @@ class AuthenticationService {
         .add(User.fromAuthUser(user, beneficiary, attributes));
 
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
-        options: CognitoSessionOptions(getAWSCredentials: true));
+        options: CognitoSessionOptions(getAWSCredentials: false));
     _sessionController.sink.add(session);
+  }
+
+  Future<bool> register(
+      {String email,
+      String password,
+      String nickname,
+      String name,
+      String lastName,
+      DateTime birthDate,
+      Unit unit}) async {
+    try {
+      SignUpOptions options = SignUpOptions(userAttributes: {
+        "nickname": nickname,
+        "name": name,
+        "family_name": lastName,
+        "birthdate": "${birthDate.day}-${birthDate.month}-${birthDate.year}",
+        "gender": unit.toString().toLowerCase().split('.').last
+      });
+      SignUpResult result = await Amplify.Auth.signUp(
+          username: email, password: password, options: options);
+      print(result);
+      return true;
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<bool> login(String email, String password) async {

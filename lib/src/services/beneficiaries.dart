@@ -7,6 +7,14 @@ import 'package:scout_spirit/src/services/rest_api.dart';
 class BeneficiariesService extends RestApiService {
   final String _apiPath = 'api/beneficiaries';
 
+  static BeneficiariesService _instance = BeneficiariesService._internal();
+
+  BeneficiariesService._internal();
+
+  factory BeneficiariesService() {
+    return _instance;
+  }
+
   Future<Beneficiary> getMyself() async {
     AuthUser user = await Amplify.Auth.getCurrentUser();
     if (user == null) throw UnauthenticatedError();
@@ -19,7 +27,9 @@ class BeneficiariesService extends RestApiService {
 
   Future<List<Beneficiary>> getAllFromGroup(
       String districtCode, String groupCode) async {
-    List<dynamic> items = (await this.get("api/districts/$districtCode/groups/$groupCode/beneficiaries/"))["items"];
+    List<dynamic> items = (await this.get(
+            "api/districts/$districtCode/groups/$groupCode/beneficiaries/"))[
+        "items"];
     return items.map<Beneficiary>((item) => Beneficiary.fromMap(item)).toList();
   }
 }

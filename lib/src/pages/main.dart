@@ -48,8 +48,7 @@ class MainPage extends StatelessWidget {
       children: <Widget>[
         Background(),
         SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
+          child: Expanded(
             child: Column(
               children: [
                 _buildUserContainer(),

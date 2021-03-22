@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
+import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 
 abstract class RestApiService {
   Future<String> _getToken() async {
@@ -14,21 +15,25 @@ abstract class RestApiService {
 
   Future<Map<String, String>> _getAuthorizedHeader() async {
     String token = await _getToken();
-    if (token == null)
-      return {};
-    return {"Authorization": token};
+    if (token == null) return {};
+    return {"Authorization": "Bearer $token"};
   }
 
-  Future<Map> _handleJsonOperation(RestOperation operation) async {
+  Future<AuthUser> throwIfUnauthenticated() async {
+    AuthUser user = await Amplify.Auth.getCurrentUser();
+    if (user == null) throw UnauthenticatedError();
+    return user;
+  }
+
+  Future<Map<String, dynamic>> _handleJsonOperation(
+      RestOperation operation) async {
     RestResponse response = await operation.response;
     return json.decode(String.fromCharCodes(response.data));
   }
 
   Future<Map> get(String path, {Map<String, String> queryParams}) async {
-    RestOptions options = RestOptions(
-      path: path,
-      headers: await _getAuthorizedHeader()
-    );
+    RestOptions options =
+        RestOptions(path: path, headers: await _getAuthorizedHeader());
     if (queryParams != null) options.queryParameters = queryParams;
     try {
       return await _handleJsonOperation(Amplify.API.get(restOptions: options));
@@ -47,10 +52,12 @@ abstract class RestApiService {
     }
   }
 
-  Future<void> post(String path, Map body) async {
+  Future<Map<String, dynamic>> post(String path, Map body) async {
+    RestOptions options = RestOptions(
+        path: path,
+        body: Uint8List.fromList(json.encode(body).codeUnits),
+        headers: await _getAuthorizedHeader());
     try {
-      RestOptions options = RestOptions(
-          path: path, body: Uint8List.fromList(json.encode(body).codeUnits));
       return await _handleJsonOperation(Amplify.API.post(restOptions: options));
     } on ApiException catch (e) {
       throw e;
