@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-final _config = {
+final amplifyConfigMap = {
   "UserAgent": "aws-amplify-cli/2.0",
   "Version": "1.0",
   "auth": {
@@ -40,19 +40,7 @@ final _config = {
         "pinpointTargeting": {"region": "us-west-2"}
       }
     }
-  },
-  "api": {
-    "plugins": {
-      "awsAPIPlugin": {
-        "PPSAPI": {
-          "endpointType": "REST",
-          "endpoint": "https://5ls6ka1vg1.execute-api.us-west-2.amazonaws.com/Prod/",
-          "region": "us-west-2",
-          "authorizationType": "AMAZON_COGNITO_USER_POOLS",
-        }
-      }
-    }
   }
 };
 
-final String amplifyconfig = jsonEncode(_config);
+final String amplifyconfig = jsonEncode(amplifyConfigMap);

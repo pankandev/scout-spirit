@@ -10,5 +10,5 @@ String stageToString(DevelopmentStage stage) {
 }
 
 DevelopmentStage stageFromName(String name) {
-  return _stageNames[name];
+  return _stageNames[name]!;
 }

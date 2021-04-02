@@ -8,7 +8,7 @@ class LoginCredentials {
     return "LoginCredentials(email: '$email', password: '$password')";
   }
 
-  LoginCredentials({this.email, this.password});
+  LoginCredentials({required this.email, required this.password});
 }
 
 class SignUpCredentials {
@@ -25,11 +25,11 @@ class SignUpCredentials {
   }
 
   SignUpCredentials(
-      {this.email,
-      this.password,
-      this.nickname,
-      this.name,
-      this.lastName,
-      this.birthDate,
-      this.unit});
+      {required this.email,
+      required this.password,
+      required this.nickname,
+      required this.name,
+      required this.lastName,
+      required this.birthDate,
+      required this.unit});
 }

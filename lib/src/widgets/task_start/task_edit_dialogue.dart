@@ -29,7 +29,7 @@ class TaskEditDialogue extends StatelessWidget {
                       maxLines: 4,
                       maxLength: 120,
                       validator: (value) {
-                        if (value.length > 120) {
+                        if (value == null || value.length > 120) {
                           return "La tarea no puede tener más de 120 carácteres";
                         }
                         return null;

@@ -1,7 +1,6 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
-import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 
@@ -28,6 +27,7 @@ class _LoginFormState extends State<LoginForm> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15.0),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 10.0),
           Text('Acceso', style: appTheme.textTheme.headline1),
@@ -55,6 +55,7 @@ class _LoginFormState extends State<LoginForm> {
           return Container(
             width: double.infinity,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 RaisedButton(
@@ -99,7 +100,7 @@ class _LoginFormState extends State<LoginForm> {
               decoration: InputDecoration(
                   labelText: 'Contraseña',
                   suffixIcon: Icon(Icons.https),
-                  errorText: wasPasswordTouched ? snapshot.error : null),
+                  errorText: wasPasswordTouched ? snapshot.error as String : null),
               onChanged: (value) {
                 if (!wasPasswordTouched)
                   setState(() => wasPasswordTouched = true);
@@ -121,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
                 color: wasEmailTouched && snapshot.error != null
                     ? appTheme.errorColor
                     : null),
-            errorText: wasEmailTouched ? snapshot.error : null),
+            errorText: wasEmailTouched ? snapshot.error as String : null),
         onChanged: (value) {
           if (!wasEmailTouched) setState(() => wasEmailTouched = true);
           _bloc.changeEmail(value);
@@ -134,22 +135,27 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       this.loading = true;
     });
+
+    bool errored = false;
+    AuthenticationService service = AuthenticationService();
     try {
-      await AuthenticationService().login(this._bloc.email, this._bloc.password);
-    } on NotAuthorizedException catch (e) {
-      SnackBarProvider.showMessage(context, 'Contraseña incorrecta');
-      throw e;
-    } on UserNotFoundException catch (e) {
-      SnackBarProvider.showMessage(context, 'Correo electrónico no registrado');
-      throw e;
-    } on UserNotConfirmedException catch (e) {
-      SnackBarProvider.showMessage(context, 'Usuario no confirmado');
-      throw e;
-    } catch (e) {
+      errored = !await service.login(context, this._bloc.email, this._bloc.password);
+    } on UserNotConfirmedException {
+      await Navigator.of(context).pushNamed('/confirm', arguments: this._bloc.email);
       setState(() {
         this.loading = false;
       });
+      return;
     }
-    await Navigator.of(context).pushReplacementNamed('/');
+
+    if (errored) {
+      setState(() {
+        this.loading = false;
+      });
+    } else if (service.snapAuthenticatedUser!.beneficiary == null) {
+      await Navigator.of(context).pushReplacementNamed('/join');
+    } else {
+      await Navigator.of(context).pushReplacementNamed('/home');
+    }
   }
 }

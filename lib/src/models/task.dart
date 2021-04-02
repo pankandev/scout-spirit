@@ -1,11 +1,18 @@
-class Task {
+class SubTask {
   final String description;
   final bool completed;
 
-  Task({this.description, this.completed = false});
+  SubTask({required this.description, this.completed = false});
 
   @override
   String toString() {
-    return "Task(description: '$description', completed: $completed)";
+    return "SubTask(description: '$description', completed: $completed)";
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "description": description,
+      "completed": completed
+    };
   }
 }

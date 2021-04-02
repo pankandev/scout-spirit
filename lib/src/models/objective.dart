@@ -11,7 +11,7 @@ class Objective {
   final String rawObjective;
 
   Objective(
-      {this.stage, this.area, this.line, this.subline, this.rawObjective});
+      {required this.stage, required this.area, required this.line, required this.subline, required this.rawObjective});
 
   static Objective fromCode(String code) {
     List<String> sections = code.split('::');
@@ -25,7 +25,7 @@ class Objective {
   }
 
   String get authorizedObjective {
-    User user = AuthenticationService().snapAuthenticatedUser;
+    User user = AuthenticationService().snapAuthenticatedUser!;
     if (user == null) return rawObjective;
     return getUserObjective(user);
   }
@@ -52,7 +52,7 @@ class Objective {
     return "Objective(stage: $stage, area: $area, line: $line, subline: $subline, objective: '$authorizedObjective')";
   }
 
-  Objective copyWith({String objective}) {
+  Objective copyWith({String? objective}) {
     return Objective(
         line: line,
         subline: subline,

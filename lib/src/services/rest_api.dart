@@ -1,78 +1,77 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:amplify_api/amplify_api.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
+import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
+import 'package:http/http.dart' as http;
 
 abstract class RestApiService {
-  Future<String> _getToken() async {
+  Future<String?> _getToken() async {
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
-        options: CognitoSessionOptions(getAWSCredentials: true));
+            options: CognitoSessionOptions(getAWSCredentials: true))
+        as CognitoAuthSession;
     return session.userPoolTokens.idToken;
   }
 
   Future<Map<String, String>> _getAuthorizedHeader() async {
-    String token = await _getToken();
+    String? token = await _getToken();
     if (token == null) return {};
     return {"Authorization": "Bearer $token"};
   }
 
   Future<AuthUser> throwIfUnauthenticated() async {
-    AuthUser user = await Amplify.Auth.getCurrentUser();
-    if (user == null) throw UnauthenticatedError();
+    AuthUser? user = await Amplify.Auth.getCurrentUser();
+    // ignore: unnecessary_null_comparison
+    if (user == null)
+      throw UnauthenticatedError(message: 'No authenticated user found');
     return user;
   }
 
   Future<Map<String, dynamic>> _handleJsonOperation(
-      RestOperation operation) async {
-    RestResponse response = await operation.response;
-    return json.decode(String.fromCharCodes(response.data));
+      Future<http.Response> responseFuture) async {
+    http.Response response = await responseFuture;
+    if (response.statusCode >= 400) {
+      throw new HttpError(statusCode: response.statusCode, response: response);
+    }
+    return json.decode(response.body);
   }
 
-  Future<Map> get(String path, {Map<String, String> queryParams}) async {
-    RestOptions options =
-        RestOptions(path: path, headers: await _getAuthorizedHeader());
-    if (queryParams != null) options.queryParameters = queryParams;
-    try {
-      return await _handleJsonOperation(Amplify.API.get(restOptions: options));
-    } on ApiException catch (e) {
-      throw e;
+  Uri getApiUri(String path) {
+    if (path.length > 0 && path[0] == '/') {
+      path = path.substring(1);
     }
+    return Uri.parse(
+        "https://5ls6ka1vg1.execute-api.us-west-2.amazonaws.com/Prod/" + path);
   }
 
-  Future<void> put(String path, Map body) async {
-    try {
-      RestOptions options = RestOptions(
-          path: path, body: Uint8List.fromList(json.encode(body).codeUnits));
-      return await _handleJsonOperation(Amplify.API.put(restOptions: options));
-    } on ApiException catch (e) {
-      throw e;
-    }
+  Future<Map<String, dynamic>> get(String path,
+      {Map<String, String>? queryParams}) async {
+    Map<String, String> headers = await _getAuthorizedHeader();
+    Uri apiUri = getApiUri(path).replace(queryParameters: queryParams);
+    return await _handleJsonOperation(http.get(apiUri, headers: headers));
   }
 
-  Future<Map<String, dynamic>> post(String path, Map body) async {
-    RestOptions options = RestOptions(
-        path: path,
-        body: Uint8List.fromList(json.encode(body).codeUnits),
-        headers: await _getAuthorizedHeader());
-    try {
-      return await _handleJsonOperation(Amplify.API.post(restOptions: options));
-    } on ApiException catch (e) {
-      throw e;
-    }
+  Future<Map<String, dynamic>> put(String path, Map body) async {
+    Map<String, String> headers = await _getAuthorizedHeader();
+    Uri apiUri = getApiUri(path);
+    return await _handleJsonOperation(
+        http.put(apiUri, body: json.encode(body), headers: headers));
   }
 
-  Future<void> delete(String path) async {
-    try {
-      RestOptions options = RestOptions(
-        path: path,
-      );
-      return await _handleJsonOperation(
-          Amplify.API.delete(restOptions: options));
-    } on ApiException catch (e) {
-      throw e;
-    }
+  Future<Map<String, dynamic>> post(String path, {Map? body}) async {
+    Map<String, String> headers = await _getAuthorizedHeader();
+    Uri apiUri = getApiUri(path);
+    return await _handleJsonOperation(http.post(apiUri,
+        body: body != null ? json.encode(body) : null, headers: headers));
+  }
+
+  Future<Map<String, dynamic>> delete(String path) async {
+    Map<String, String> headers = await _getAuthorizedHeader();
+    Uri apiUri = getApiUri(path);
+    return await _handleJsonOperation(http.delete(apiUri, headers: headers));
   }
 }

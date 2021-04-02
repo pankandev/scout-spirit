@@ -1,9 +1,9 @@
-import 'package:amplify_api/amplify_api.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:scout_spirit/amplifyconfiguration.dart';
+import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/objectives.dart';
 
 enum StartupStage {
@@ -36,9 +36,9 @@ class _StartupPageState extends State<StartupPage> {
     );
   }
 
-  final Widget child;
+  final Widget? child;
 
-  StartupStage _stage;
+  StartupStage _stage = StartupStage.AmplifyLoading;
 
   String get loadingText {
     switch (stage) {
@@ -51,7 +51,6 @@ class _StartupPageState extends State<StartupPage> {
       case StartupStage.SigningIn:
         return 'Llegando a la zona de campamento';
     }
-    return 'Cargando...';
   }
 
   StartupStage get stage => _stage;
@@ -76,10 +75,15 @@ class _StartupPageState extends State<StartupPage> {
     await ObjectivesService().preload();
 
     this.stage = StartupStage.CheckSession;
-    final bool isLoggedIn = await _checkIfLoggedIn();
+    AuthenticationService service = AuthenticationService();
+    await service.updateAuthenticatedUser();
+    final bool isLoggedIn = service.snapAuthenticatedUser != null;
     if (!isLoggedIn) {
       await Navigator.of(context).pushReplacementNamed('/login');
-    } else {
+    } else if (service.snapAuthenticatedUser!.beneficiary == null) {
+      this.stage = StartupStage.SigningIn;
+      await Navigator.of(context).pushReplacementNamed('/join');
+    }else {
       this.stage = StartupStage.SigningIn;
       await Navigator.of(context).pushReplacementNamed('/home');
     }
@@ -92,12 +96,11 @@ class _StartupPageState extends State<StartupPage> {
   Future<void> _configureAmplify() async {
     AmplifyAnalyticsPinpoint analyticsPlugin = AmplifyAnalyticsPinpoint();
     AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
-    AmplifyAPI apiPlugin = AmplifyAPI();
 
     if (_isConfigured) return;
 
     try {
-      Amplify.addPlugins([authPlugin, analyticsPlugin, apiPlugin]);
+      Amplify.addPlugins([authPlugin, analyticsPlugin]);
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
       print(
@@ -106,8 +109,4 @@ class _StartupPageState extends State<StartupPage> {
     _isConfigured = true;
   }
 
-  Future<bool> _checkIfLoggedIn() async {
-    AuthSession session = await Amplify.Auth.fetchAuthSession();
-    return session.isSignedIn;
-  }
 }

@@ -4,34 +4,37 @@ import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
 
 class TaskStartFormState {
-  final Objective originalObjective;
-  final Objective personalObjective;
-  final List<Task> tasks;
+  final Objective? originalObjective;
+  final Objective? personalObjective;
+  final List<SubTask>? tasks;
 
   TaskStartFormState(
-      {this.originalObjective, this.personalObjective, this.tasks});
+      {required this.originalObjective,
+      required this.personalObjective,
+      required this.tasks});
 }
 
 class TaskStartForm {
-  final BehaviorSubject<Objective> _original = BehaviorSubject<Objective>();
-  final BehaviorSubject<Objective> _personal = BehaviorSubject<Objective>();
+  final BehaviorSubject<Objective?> _original = BehaviorSubject<Objective?>();
+  final BehaviorSubject<Objective?> _personal = BehaviorSubject<Objective?>();
 
-  final BehaviorSubject<List<Task>> _tasks = BehaviorSubject<List<Task>>();
+  final BehaviorSubject<List<SubTask>> _tasks =
+      BehaviorSubject<List<SubTask>>();
 
-  List<Task> get tasks => _tasks.value;
+  List<SubTask> get tasks => _tasks.value ?? [];
 
-  set tasks(List<Task> value) {
+  set tasks(List<SubTask> value) {
     _tasks.sink.add(value);
   }
 
   TaskStartForm() {
-    _original.value = null;
-    _personal.value = null;
-    _tasks.value = [];
+    _original.add(null);
+    _personal.add(null);
+    _tasks.add([]);
   }
 
   Stream<TaskStartFormState> get stateStream => CombineLatestStream.combine3<
-              Objective, Objective, List<Task>, TaskStartFormState>(
+              Objective?, Objective, List<SubTask>, TaskStartFormState>(
           originalObjectiveStream, personalObjectiveStream, tasksStream,
           (original, personal, tasks) {
         return TaskStartFormState(
@@ -40,24 +43,25 @@ class TaskStartForm {
             tasks: tasks);
       });
 
-  set originalObjective(Objective value) {
+  set originalObjective(Objective? value) {
     _original.sink.add(value);
   }
 
-  Objective get originalObjective => _original.value;
+  Objective? get originalObjective => _original.value;
 
-  Stream<Objective> get originalObjectiveStream => _original.stream;
+  Stream<Objective?> get originalObjectiveStream => _original.stream;
 
-  set personalObjective(Objective value) {
+  set personalObjective(Objective? value) {
     _personal.sink.add(value);
   }
 
-  Objective get personalObjective => _personal.value;
+  Objective? get personalObjective => _personal.value;
 
   Stream<Objective> get personalObjectiveStream =>
       _personal.stream.transform(_validateObjective);
 
-  Stream<List<Task>> get tasksStream => _tasks.stream.transform(_validateTasks);
+  Stream<List<SubTask>> get tasksStream =>
+      _tasks.stream.transform(_validateTasks);
 
   final StreamTransformer<Objective, Objective> _validateObjective =
       StreamTransformer<Objective, Objective>.fromHandlers(
@@ -69,8 +73,8 @@ class TaskStartForm {
     }
   });
 
-  final StreamTransformer<List<Task>, List<Task>> _validateTasks =
-      StreamTransformer<List<Task>, List<Task>>.fromHandlers(
+  final StreamTransformer<List<SubTask>, List<SubTask>> _validateTasks =
+      StreamTransformer<List<SubTask>, List<SubTask>>.fromHandlers(
           handleData: (data, sink) {
     bool isAnyObjectiveEmpty = data.fold(true,
         (previousValue, element) => previousValue && element.description == '');
@@ -92,8 +96,8 @@ class TaskStartForm {
   }
 
   void clear() {
-    _original.value = null;
-    _personal.value = null;
-    _tasks.value = [];
+    _original.add(null);
+    _personal.add(null);
+    _tasks.add([]);
   }
 }

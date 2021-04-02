@@ -8,11 +8,11 @@ import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/widgets/objective_card.dart';
 
 class ObjectivesList extends StatefulWidget {
-  const ObjectivesList({Key key, @required this.area, this.onChange})
+  const ObjectivesList({Key? key, required this.area, this.onChange})
       : super(key: key);
 
   final DevelopmentArea area;
-  final Function(Objective objective) onChange;
+  final Function(Objective objective)? onChange;
 
   @override
   _ObjectivesListState createState() => _ObjectivesListState();
@@ -20,7 +20,7 @@ class ObjectivesList extends StatefulWidget {
 
 class _ObjectivesListState extends State<ObjectivesList> {
   TextEditingController _searchController = new TextEditingController();
-  List<Objective> filteredObjectives;
+  List<Objective>? filteredObjectives;
 
   @override
   void initState() {
@@ -29,10 +29,10 @@ class _ObjectivesListState extends State<ObjectivesList> {
   }
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser.unit, widget.area);
+      AuthenticationService().snapAuthenticatedUser!.unit, widget.area);
 
   void _loadObjectives() {
-    User user = AuthenticationService().snapAuthenticatedUser;
+    User user = AuthenticationService().snapAuthenticatedUser!;
     List<Objective> objectives =
     ObjectivesService().getAllByArea(user.stage, widget.area);
     if (_searchController.value.text != '') {
@@ -79,14 +79,14 @@ class _ObjectivesListState extends State<ObjectivesList> {
 
   ListView _buildCardList() {
     return ListView.builder(
-      itemCount: filteredObjectives.length,
+      itemCount: filteredObjectives!.length,
       itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
           child: Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: ObjectiveCard(
-                objective: filteredObjectives[index],
-                onSelect: () => widget.onChange(filteredObjectives[index]),
+                objective: filteredObjectives![index],
+                onSelect: widget.onChange != null ? () => widget.onChange!(filteredObjectives![index]) : null,
               ))),
     );
   }

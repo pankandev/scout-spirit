@@ -2,39 +2,68 @@ import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:scout_spirit/src/modals/objective-select.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
+import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
-import 'package:scout_spirit/src/services/beneficiaries.dart';
-import 'package:scout_spirit/src/services/districts.dart';
-import 'package:scout_spirit/src/services/groups.dart';
+import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
+import 'package:scout_spirit/src/widgets/task_container.dart';
 
-class ActiveTaskContainer extends StatelessWidget {
+class ActiveTaskContainer extends StatefulWidget {
+  @override
+  _ActiveTaskContainerState createState() => _ActiveTaskContainerState();
+}
+
+class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
+  final double aspectRatio = 1.918;
+
+  @override
+  void initState() {
+    super.initState();
+    TasksService().getActiveTask();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final double aspectRatio = 1.918;
-    double width = size.width * 0.9;
-    double height = size.width * 0.9 / aspectRatio;
+    double width = size.width * 0.75;
+    double height = width / aspectRatio;
 
-    return StreamBuilder<User>(
-        stream: AuthenticationService().userStream,
+    return StreamBuilder<Task?>(
+        stream: TasksService().activeTask,
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
-          User user = snapshot.data;
-          return user.beneficiary.target == null
+          Task? task = snapshot.data;
+          return task == null
               ? _buildEmptyContainer(height, width, context)
-              : _buildTaskContainer(height, width, context);
+              : _buildTaskContainer(task, height, width, context);
         });
   }
 
   Widget _buildTaskContainer(
-      double height, double width, BuildContext context) {
-    return Container();
+      Task task, double height, double width, BuildContext context) {
+    Objective objective = task.personalObjective;
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      StreamBuilder<User?>(
+        stream: AuthenticationService().userStream,
+        builder: (context, snapshot) {
+          User? user = snapshot.data;
+          return snapshot.hasData ? Container(
+              width: width,
+              height: height,
+              child: Hero(
+                tag: "${objective.line}.${objective.subline}",
+                child: TaskContainer(
+                  task: task,
+                  unit: user!.unit,
+                  onTap: () => _onTaskTap(context, user),
+                  iconSize: height * 1.5,
+                ),
+              )) : Center(child: CircularProgressIndicator());
+        }
+      ),
+    ]);
   }
 
   Widget _buildEmptyContainer(
@@ -105,9 +134,9 @@ class ActiveTaskContainer extends StatelessWidget {
   }
 
   Future<void> _onCreate(BuildContext context) async {
-    showDialog(
+    await showDialog(
         context: context,
-        child: ObjectiveSelectModal(
+        builder: (context) => ObjectiveSelectModal(
             onSelect: (area) => _onAreaSelect(context, area)));
   }
 
@@ -115,12 +144,12 @@ class ActiveTaskContainer extends StatelessWidget {
     await Navigator.of(context).pushNamed('/tasks/start', arguments: area);
   }
 
-  Future<void> goToTask(BuildContext context) async {
-    BeneficiariesService service =
-        Provider.of<BeneficiariesService>(context, listen: false);
-    DistrictsService dService =
-        Provider.of<DistrictsService>(context, listen: false);
-    GroupsService gService = Provider.of<GroupsService>(context, listen: false);
-    Beneficiary beneficiary = await service.getMyself();
+  void _onTaskTap(BuildContext context, User user) {
+    Navigator.of(context).pushNamed('/tasks/view', arguments: <String, dynamic>{
+      'isActive': true,
+      'task': user.beneficiary!.target,
+      'unit': user.unit,
+      'editable': false
+    });
   }
 }

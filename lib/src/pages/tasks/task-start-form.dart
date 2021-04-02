@@ -12,7 +12,7 @@ import 'package:scout_spirit/src/services/tasks.dart';
 class TaskStartFormPage extends StatefulWidget {
   final DevelopmentArea area;
 
-  TaskStartFormPage({this.area});
+  TaskStartFormPage({required this.area});
 
   @override
   _TaskStartFormPageState createState() => _TaskStartFormPageState();
@@ -27,7 +27,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
   bool loading = false;
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser.unit, widget.area);
+      AuthenticationService().snapAuthenticatedUser!.unit, widget.area);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                 StreamBuilder(
                     stream: form.stateStream,
                     builder: (context, snapshot) {
-                      int page = pageController.page?.round();
+                      int? page = pageController.page?.round();
                       return page != null && page > 0
                           ? IconButton(
                               onPressed: readyToContinue && !loading
@@ -66,11 +66,10 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
   }
 
   bool get readyToContinue {
-    switch (pageController.page.round()) {
+    switch (pageController.page!.round()) {
       case 1:
-        // print(form.personalObjective.rawObjective);
         return form.personalObjective != null &&
-            form.personalObjective.rawObjective != '';
+            form.personalObjective!.rawObjective != '';
       case 2:
         bool isAnyTaskEmpty = !form.tasks.fold(
             true,
@@ -142,16 +141,16 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    if (pageController.page > 0) {
-      goToPage(pageController.page.round() - 1);
+    if (pageController.page! > 0) {
+      goToPage(pageController.page!.round() - 1);
       return false;
     }
     return true;
   }
 
   void _onSubmit() {
-    if (pageController.page < 2) {
-      goToPage(pageController.page.round() + 1);
+    if (pageController.page! < 2) {
+      goToPage(pageController.page!.round() + 1);
     } else {
       _submit();
     }
@@ -180,12 +179,17 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
     setState(() {
       loading = true;
     });
+    bool errored = false;
     try {
-      await TasksService().startObjective(form.personalObjective, form.tasks);
+      await TasksService().startObjective(form.personalObjective!, form.tasks);
     } catch (e) {
+      errored = true;
       setState(() {
         loading = false;
       });
+    }
+    if (!errored) {
+      Navigator.of(context).pop();
     }
   }
 }

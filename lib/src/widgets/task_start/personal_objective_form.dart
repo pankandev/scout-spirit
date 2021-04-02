@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/objective.dart';
@@ -8,7 +9,7 @@ import 'package:scout_spirit/src/widgets/objective_card.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 
 class PersonalObjectiveForm extends StatefulWidget {
-  PersonalObjectiveForm({Key key}) : super(key: key);
+  PersonalObjectiveForm({Key? key}) : super(key: key);
 
   @override
   _PersonalObjectiveFormState createState() => _PersonalObjectiveFormState();
@@ -18,13 +19,14 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
   final fieldController = TextEditingController();
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser.unit,
-      Provider.of<TaskStartForm>(context).originalObjective.area);
+      AuthenticationService().snapAuthenticatedUser!.unit,
+      Provider.of<TaskStartForm>(context).originalObjective!.area);
 
   @override
   void initState() {
     super.initState();
-    Objective objective = Provider.of<TaskStartForm>(context, listen: false).personalObjective;
+    Objective? objective =
+        Provider.of<TaskStartForm>(context, listen: false).personalObjective;
     fieldController.text = objective != null ? objective.rawObjective : '';
   }
 
@@ -66,7 +68,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
                             controller: fieldController,
                             maxLines: 8,
                             validator: (value) {
-                              if (value.isEmpty) {
+                              if (value == null || value.isEmpty) {
                                 return "Este campo está vacío";
                               }
                               return null;
@@ -75,7 +77,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
                               TaskStartForm form = Provider.of<TaskStartForm>(
                                   context,
                                   listen: false);
-                              form.personalObjective = form.originalObjective
+                              form.personalObjective = form.originalObjective!
                                   .copyWith(objective: value);
                             },
                             decoration: InputDecoration(
@@ -97,7 +99,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
             if (Provider.of<TaskStartForm>(context).originalObjective != null)
               ObjectiveCard(
                 objective:
-                    Provider.of<TaskStartForm>(context).originalObjective,
+                    Provider.of<TaskStartForm>(context).originalObjective!,
               ),
           ],
         ),

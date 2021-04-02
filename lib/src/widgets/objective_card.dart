@@ -6,12 +6,12 @@ import 'package:scout_spirit/src/services/authentication.dart';
 
 class ObjectiveCard extends StatelessWidget {
   final Objective objective;
-  final Function onSelect;
+  final void Function()? onSelect;
 
-  ObjectiveCard({this.objective, this.onSelect});
+  ObjectiveCard({required this.objective, this.onSelect});
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser.unit, objective.area);
+      AuthenticationService().snapAuthenticatedUser!.unit, objective.area);
 
   @override
   Widget build(BuildContext context) {

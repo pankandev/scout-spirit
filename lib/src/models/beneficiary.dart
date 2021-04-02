@@ -13,43 +13,60 @@ Beneficiary beneficiaryFromJson(String str) =>
 
 String beneficiaryToJson(Beneficiary data) => json.encode(data.toJson());
 
-class TargetObjective {
+class Task {
   double score;
-  DateTime created;
-  bool completed;
+  DateTime? created;
+  bool? completed;
   Objective originalObjective;
   Objective personalObjective;
-  Task tasks;
+  List<SubTask> tasks;
 
-  TargetObjective.fromMap(Map<String, dynamic> map)
+  Task(
+      {required this.score,
+      this.created,
+      this.completed,
+      required this.originalObjective,
+      required this.personalObjective,
+      required this.tasks});
+
+  Task.fromMap(Map<String, dynamic> map)
       : score = map['score'],
+        tasks = List.from(map['tasks'].map((task) => SubTask(
+            description: task['description'], completed: task['completed']))),
         personalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['personal-objective']),
         originalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['original-objective']);
+
+  @override
+  String toString() {
+    return "Task(score: $score, created: $created, completed: $completed, originalObjective: $originalObjective, personalObjective: $personalObjective, tasks: $tasks)";
+  }
 }
 
 class Beneficiary {
   Beneficiary(
       {this.completed,
-      this.unitUser,
-      this.boughtItems,
-      this.birthdate,
-      this.nickname,
-      this.target,
-      this.nTasks,
-      this.score,
-      this.userId,
-      this.fullName,
-      this.groupCode,
-      this.districtCode});
+      required this.unitUser,
+      required this.boughtItems,
+      required this.birthdate,
+      required this.nickname,
+      required this.target,
+      required this.nTasks,
+      required this.score,
+      required this.userId,
+      required this.fullName,
+      required this.groupCode,
+      required this.districtCode,
+      this.setBaseTasks});
 
   dynamic completed;
   String unitUser;
   BoughtItems boughtItems;
+  bool? setBaseTasks;
   String birthdate;
   String nickname;
-  TargetObjective target;
+  Task? target;
   TasksCount nTasks;
   TasksCount score;
   String userId;
@@ -58,21 +75,19 @@ class Beneficiary {
   String districtCode;
 
   factory Beneficiary.fromMap(Map<String, dynamic> json) => Beneficiary(
-        completed: json["completed"],
-        unitUser: json["unit-user"],
-        boughtItems: BoughtItems.fromJson(json["bought_items"]),
-        birthdate: json["birthdate"],
-        nickname: json["nickname"],
-        target: json["target"] != null
-            ? TargetObjective.fromMap(json["target"])
-            : null,
-        nTasks: TasksCount.fromJson(json["n_tasks"]),
-        score: TasksCount.fromJson(json["score"]),
-        userId: json["user"],
-        fullName: json["full-name"],
-        groupCode: json["group"].split('::')[1],
-        districtCode: json["group"].split('::')[0],
-      );
+      completed: json["completed"],
+      unitUser: json["unit-user"],
+      boughtItems: BoughtItems.fromJson(json["bought_items"]),
+      birthdate: json["birthdate"],
+      nickname: json["nickname"],
+      target: json["target"] != null ? Task.fromMap(json["target"]) : null,
+      nTasks: TasksCount.fromJson(json["n_tasks"]),
+      score: TasksCount.fromJson(json["score"]),
+      userId: json["user"],
+      fullName: json["full-name"],
+      groupCode: json["group"].split('::')[1],
+      districtCode: json["group"].split('::')[0],
+      setBaseTasks: json["set_base_tasks"]);
 
   Map<String, dynamic> toJson() => {
         "completed": completed,
@@ -86,6 +101,7 @@ class Beneficiary {
         "user": userId,
         "full-name": fullName,
         "group": "$districtCode::$groupCode",
+        "set_base_tasks": setBaseTasks
       };
 
   @override
@@ -104,12 +120,12 @@ class BoughtItems {
 
 class TasksCount {
   TasksCount({
-    this.sociability,
-    this.character,
-    this.affectivity,
-    this.creativity,
-    this.spirituality,
-    this.corporality,
+    required this.sociability,
+    required this.character,
+    required this.affectivity,
+    required this.creativity,
+    required this.spirituality,
+    required this.corporality,
   });
 
   int sociability;
@@ -119,14 +135,14 @@ class TasksCount {
   int spirituality;
   int corporality;
 
-  factory TasksCount.fromJson(Map<String, dynamic> json) => json != null
+  factory TasksCount.fromJson(Map<String, dynamic>? json) => json != null
       ? TasksCount(
-          sociability: JsonUtils.to<int>(json["sociability"]),
-          character: JsonUtils.to<int>(json["character"]),
-          affectivity: JsonUtils.to<int>(json["affectivity"]),
-          creativity: JsonUtils.to<int>(json["creativity"]),
-          spirituality: JsonUtils.to<int>(json["spirituality"]),
-          corporality: JsonUtils.to<int>(json["corporality"]),
+          sociability: JsonUtils.to<int>(json["sociability"])!,
+          character: JsonUtils.to<int>(json["character"])!,
+          affectivity: JsonUtils.to<int>(json["affectivity"])!,
+          creativity: JsonUtils.to<int>(json["creativity"])!,
+          spirituality: JsonUtils.to<int>(json["spirituality"])!,
+          corporality: JsonUtils.to<int>(json["corporality"])!,
         )
       : TasksCount(
           sociability: 0,

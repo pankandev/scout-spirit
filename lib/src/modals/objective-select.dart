@@ -4,7 +4,7 @@ import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 
 class ObjectiveSelectModal extends StatelessWidget {
-  final Function(DevelopmentArea area) onSelect;
+  final Function(DevelopmentArea area)? onSelect;
 
   ObjectiveSelectModal({this.onSelect});
 
@@ -57,7 +57,7 @@ class ObjectiveSelectModal extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 10.0,
                 children: ObjectivesDisplay.getUserAreasIconData(
-                        AuthenticationService().snapAuthenticatedUser)
+                        AuthenticationService().snapAuthenticatedUser!)
                     .map<Widget>((area) => _buildAreaIcon(context, area))
                     .toList(),
               ),
@@ -76,7 +76,8 @@ class ObjectiveSelectModal extends StatelessWidget {
             RawMaterialButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                this.onSelect(areaData.area);
+                if (this.onSelect != null)
+                  this.onSelect!(areaData.area);
               },
               elevation: 8.0,
               fillColor: areaData.color,

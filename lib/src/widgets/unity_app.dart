@@ -7,7 +7,7 @@ class UnityApp extends StatefulWidget {
 }
 
 class _UnityAppState extends State<UnityApp> {
-  UnityWidgetController _unityWidgetController;
+  UnityWidgetController? _unityWidgetController;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +22,12 @@ class _UnityAppState extends State<UnityApp> {
     print('Received message from unity: ${message.toString()}');
   }
 
-  void onUnitySceneLoaded(SceneLoaded scene) {
-    print('Received scene loaded from unity: ${scene.name}');
-    print('Received scene loaded from unity buildIndex: ${scene.buildIndex}');
+  void onUnitySceneLoaded(SceneLoaded? scene) {
+    print('Received scene loaded from unity: ${scene?.name}');
+    print('Received scene loaded from unity buildIndex: ${scene?.buildIndex}');
   }
 
-  void _onUnityCreated(controller) {
+  void _onUnityCreated(UnityWidgetController controller) {
     this._unityWidgetController = controller;
   }
 }

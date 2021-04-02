@@ -15,7 +15,7 @@ class User {
   final String nickname;
   final DateTime birthDate;
   final Unit unit;
-  final Beneficiary beneficiary;
+  final Beneficiary? beneficiary;
 
   static Unit unitFromName(String name) {
     switch (name.toLowerCase()) {
@@ -54,7 +54,7 @@ class User {
 
   static DateFormat get birthDateFormat => new DateFormat("dd-MM-yyyy");
 
-  User.fromAuthUser(AuthUser user, Beneficiary beneficiary,
+  User.fromAuthUser(AuthUser user, Beneficiary? beneficiary,
       List<AuthUserAttribute> attributes)
       : id = user.userId,
         email = user.username,

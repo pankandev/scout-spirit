@@ -8,24 +8,21 @@ import 'package:scout_spirit/src/widgets/task_start/task_edit_dialogue.dart';
 import 'package:scout_spirit/src/forms/task_start.dart';
 
 class TasksForm extends StatefulWidget {
-  final Function(List<Task> tasks) onChange;
+  final Function(List<SubTask> tasks)? onChange;
 
-  TasksForm({Key key, this.onChange}) : super(key: key);
+  TasksForm({Key? key, this.onChange}) : super(key: key);
 
   @override
   _TasksFormState createState() => _TasksFormState();
 }
 
 class _TasksFormState extends State<TasksForm> {
-  List<Task> tasks = [];
+  List<SubTask> tasks = [];
 
   @override
   void initState() {
     super.initState();
     tasks = form.tasks;
-    if (tasks == null) {
-      tasks = [];
-    }
   }
 
   TaskStartForm get form => Provider.of<TaskStartForm>(context, listen: false);
@@ -84,7 +81,7 @@ class _TasksFormState extends State<TasksForm> {
   }
 
   Widget _buildTaskCard(int index) {
-    Task task = index < tasks.length ? tasks[index] : null;
+    SubTask? task = index < tasks.length ? tasks[index] : null;
     return task == null
         ? _buildEmptyTaskBody()
         : Card(
@@ -138,7 +135,7 @@ class _TasksFormState extends State<TasksForm> {
 
   void _addTask() {
     setState(() {
-      tasks.add(Task(description: ''));
+      tasks.add(SubTask(description: ''));
       _onEdit(tasks.length - 1);
       _validateAndEmit();
     });
@@ -152,13 +149,13 @@ class _TasksFormState extends State<TasksForm> {
   }
 
   Future<void> _onEdit(int index) async {
-    String content =
-        await showDialog(context: context, child: TaskEditDialogue());
+    String? content =
+        await showDialog(context: context, builder: (context) => TaskEditDialogue());
     if (content == null) {
       return;
     }
     setState(() {
-      tasks[index] = Task(description: content);
+      tasks[index] = SubTask(description: content);
       _validateAndEmit();
     });
   }

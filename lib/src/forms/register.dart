@@ -10,7 +10,7 @@ class RegisterFormBloc {
   final passwordController = TextEditingController();
   final repeatPasswordController = TextEditingController();
   final birthDateController = ValueNotifier<DateTime>(DateTime.now());
-  final unitController = ValueNotifier<Unit>(null);
+  final unitController = ValueNotifier<Unit?>(null);
 
   SignUpCredentials get credentials => SignUpCredentials(
     email: emailController.text,
@@ -19,6 +19,6 @@ class RegisterFormBloc {
     lastName: lastNameController.text,
     password: passwordController.text,
     birthDate: birthDateController.value,
-    unit: unitController.value
+    unit: unitController.value!
   );
 }

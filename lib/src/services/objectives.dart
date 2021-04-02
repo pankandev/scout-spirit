@@ -15,7 +15,7 @@ class ObjectivesService {
 
   ObjectivesService._internal();
 
-  Map<DevelopmentStage, List<Objective>> cache;
+  Map<DevelopmentStage, List<Objective>>? cache;
 
   bool get initialized => cache != null;
 
@@ -26,7 +26,7 @@ class ObjectivesService {
       String data = await rootBundle.loadString(
           'assets/jsons/resources/objectives/${stageToString(stage)}.json');
       Map<String, dynamic> stageLines = json.decode(data);
-      cache[stage] = List<Objective>();
+      cache![stage] = [];
 
       stageLines.forEach((String areaName, dynamic lines) {
         // iterate areas
@@ -41,7 +41,7 @@ class ObjectivesService {
                 line: line + 1,
                 subline: subline + 1,
                 rawObjective: objectiveContent);
-            cache[stage].add(objective);
+            cache![stage]!.add(objective);
           });
         });
       });
@@ -51,20 +51,20 @@ class ObjectivesService {
   List<Objective> getAllByStage(DevelopmentStage stage) {
     if (!initialized)
       throw AppError(message: 'Trying to use uninitialized service');
-    return cache[stage].where((objective) => objective.stage == stage).toList();
+    return cache![stage]!.where((objective) => objective.stage == stage).toList();
   }
 
   List<Objective> getAllByArea(DevelopmentStage stage, DevelopmentArea area) {
     if (!initialized)
       throw AppError(message: 'Trying to use uninitialized service');
-    return cache[stage].where((objective) => objective.area == area).toList();
+    return cache![stage]!.where((objective) => objective.area == area).toList();
   }
 
   List<Objective> getAllByLine(
       DevelopmentStage stage, DevelopmentArea area, int line) {
     if (!initialized)
       throw AppError(message: 'Trying to use uninitialized service');
-    return cache[stage]
+    return cache![stage]!
         .where((objective) => objective.area == area && objective.line == line)
         .toList();
   }
@@ -73,7 +73,7 @@ class ObjectivesService {
       DevelopmentStage stage, DevelopmentArea area, int line, int subline) {
     if (!initialized)
       throw AppError(message: 'Trying to use uninitialized service');
-    return cache[stage].firstWhere((element) =>
+    return cache![stage]!.firstWhere((element) =>
         element.stage == stage &&
         element.area == area &&
         element.line == line &&
