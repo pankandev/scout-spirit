@@ -47,6 +47,7 @@ class Task {
 class Beneficiary {
   Beneficiary(
       {this.completed,
+      required this.lastClaimedToken,
       required this.unitUser,
       required this.boughtItems,
       required this.birthdate,
@@ -73,8 +74,10 @@ class Beneficiary {
   String fullName;
   String groupCode;
   String districtCode;
+  int lastClaimedToken;
 
-  factory Beneficiary.fromMap(Map<String, dynamic> json) => Beneficiary(
+  factory Beneficiary.fromMap(Map<String, dynamic> json) {
+    return Beneficiary(
       completed: json["completed"],
       unitUser: json["unit-user"],
       boughtItems: BoughtItems.fromJson(json["bought_items"]),
@@ -85,9 +88,11 @@ class Beneficiary {
       score: TasksCount.fromJson(json["score"]),
       userId: json["user"],
       fullName: json["full-name"],
-      groupCode: json["group"].split('::')[1],
-      districtCode: json["group"].split('::')[0],
+      groupCode: json["group"],
+      districtCode: json["district"],
+      lastClaimedToken: json["last_claimed_token"],
       setBaseTasks: json["set_base_tasks"]);
+  }
 
   Map<String, dynamic> toJson() => {
         "completed": completed,

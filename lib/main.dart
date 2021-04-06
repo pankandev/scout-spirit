@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/pages/main.dart';
 import 'package:scout_spirit/src/pages/authentication.dart';
 import 'package:scout_spirit/src/pages/signup.dart';
@@ -8,6 +9,7 @@ import 'package:scout_spirit/src/pages/startup.dart';
 import 'package:scout_spirit/src/pages/confirm.dart';
 import 'package:scout_spirit/src/pages/explore.dart';
 import 'package:scout_spirit/src/pages/join.dart';
+import 'package:scout_spirit/src/widgets/reward_view.dart';
 import 'package:scout_spirit/src/pages/initialize.dart';
 import 'package:scout_spirit/src/pages/tasks/task-start-form.dart';
 import 'package:scout_spirit/src/pages/tasks/task-view.dart';
@@ -16,7 +18,7 @@ import 'package:scout_spirit/src/utils/development_area.dart';
 
 void main() async {
   await Hive.initFlutter();
-  await Hive.openBox('rewards');
+  await Hive.openBox<String>('rewards');
   runApp(ScoutSpiritApp());
 }
 
@@ -37,8 +39,12 @@ class ScoutSpiritApp extends StatelessWidget {
         '/initialize': (_) => InitializePage(),
         '/home': (_) => MainPage(),
         '/explore': (_) => ExplorePage(),
-        '/tasks/start': (context) =>
-            TaskStartFormPage(area: ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
+        '/rewards/claim': (context) => RewardsPage(
+            rewards:
+                ModalRoute.of(context)!.settings.arguments! as List<Reward>),
+        '/tasks/start': (context) => TaskStartFormPage(
+            area:
+                ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
         '/tasks/view': (context) => TaskViewPage()
       },
     );

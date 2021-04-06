@@ -13,9 +13,9 @@ import 'package:scout_spirit/src/services/districts.dart';
 import 'package:scout_spirit/src/services/groups.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
+import 'package:scout_spirit/src/widgets/reward_overlay.dart';
 
 class MainPage extends StatelessWidget {
-  final ConfettiController _confettiController = ConfettiController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +59,8 @@ class MainPage extends StatelessWidget {
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: SafeArea(
-              child: Stack(children: [
-                Column(
+              child: RewardOverlay(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(
@@ -82,18 +82,7 @@ class MainPage extends StatelessWidget {
                     MainDivider(),
                   ],
                 ),
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: ConfettiWidget(
-                      confettiController: _confettiController,
-                      blastDirection: pi / 2,
-                      emissionFrequency: 0.01,
-                      numberOfParticles: 20,
-                      maxBlastForce: 100,
-                      minBlastForce: 80,
-                      gravity: 0.3,
-                    ))
-              ]),
+              ),
             ),
           ),
         )

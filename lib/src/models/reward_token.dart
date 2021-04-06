@@ -6,7 +6,6 @@ import 'package:scout_spirit/src/models/rewards/reward.dart';
 
 enum RewardRarity { COMMON, RARE }
 
-
 RewardRarity _rarityFromName(String name) {
   switch (name.toUpperCase()) {
     case 'COMMON':
@@ -44,7 +43,7 @@ class RewardSet {
 }
 
 class RewardTokenBody {
-  final String id;
+  final int index;
   final String sub;
   final int iat;
   final int exp;
@@ -53,23 +52,34 @@ class RewardTokenBody {
   final List<RewardSet> boxes;
 
   RewardTokenBody.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
+      : index = map["index"],
         sub = map["sub"],
         iat = map["iat"],
         exp = map["exp"],
         static = RewardSet.fromList(map["static"]),
         boxes =
-            (map["boxes"] as List).map((e) => RewardSet.fromList(e)).toList();
+            (map["boxes"] as List).map((e) => RewardSet.fromList(e)).toList() {
+    boxes.shuffle();
+  }
 
   @override
   String toString() {
-    return "RewardTokenBody(id: $id, sub: $sub, iat: $iat, exp: $exp, static: $static, boxes: $boxes)";
+    return "RewardTokenBody(index: $index, sub: $sub, iat: $iat, exp: $exp, static: $static, boxes: $boxes)";
   }
 }
 
 class RewardToken {
   final String token;
   final RewardTokenBody body;
+
+  bool get isExpired {
+    DateTime expires =
+        DateTime.fromMillisecondsSinceEpoch(body.exp * 1000).toUtc();
+    DateTime now = DateTime.now().toUtc();
+    return now.isAfter(expires);
+  }
+
+  String get storageId => "${body.sub}::${body.index}";
 
   RewardToken(String encodedToken)
       : token = encodedToken,

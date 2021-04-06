@@ -38,7 +38,9 @@ class TaskView extends StatefulWidget {
   final Unit unit;
   final ValueNotifier<Task?> taskController = ValueNotifier<Task?>(null);
 
-  TaskView({Key? key, required this.task, required this.unit, this.isActive = false}) : super(key: key) {
+  TaskView(
+      {Key? key, required this.task, required this.unit, this.isActive = false})
+      : super(key: key) {
     taskController.value = task;
   }
 
@@ -108,7 +110,8 @@ class _TaskViewState extends State<TaskView> {
                           ),
                           value: subtask.completed,
                           onChanged: widget.isActive
-                              ? (bool? value) => _onSubTaskTap(task, index, value!)
+                              ? (bool? value) =>
+                                  _onSubTaskTap(task, index, value!)
                               : null),
                       Divider(
                         height: 1,
@@ -142,6 +145,8 @@ class _TaskViewState extends State<TaskView> {
 
   Widget _buildSaveButton(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool isOriginalCompleted =
+        widget.task.tasks.fold(true, (prev, next) => prev && next.completed);
     return Align(
         alignment: Alignment.bottomCenter,
         child: Container(
@@ -152,8 +157,10 @@ class _TaskViewState extends State<TaskView> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: dirty && !loading
-                      ? () => completed ? _complete() : _save()
+                  onPressed: (dirty || isOriginalCompleted) && !loading
+                      ? () => completed || isOriginalCompleted
+                          ? _complete()
+                          : _save()
                       : null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

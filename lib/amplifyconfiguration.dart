@@ -10,15 +10,15 @@ final amplifyConfigMap = {
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "us-west-2:b6535368-12b8-45a3-9308-1c30cec20964",
+              "PoolId": "us-west-2:160f7faf-21f1-4611-9f73-bcb1849fe4be",
               "Region": "us-west-2"
             }
           }
         },
         "CognitoUserPool": {
           "Default": {
-            "PoolId": "us-west-2_Tau9d2K6B",
-            "AppClientId": "1i9t2btpfetg45a8d1cg3r5qgs",
+            "PoolId": "us-west-2_SwOlCeGN1",
+            "AppClientId": "12np1gn5jf4dcgfi6ub47e6oeq",
             "Region": "us-west-2"
           }
         },

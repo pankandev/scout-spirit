@@ -22,6 +22,7 @@ class TasksService extends RestApiService {
   final BehaviorSubject<Task?> taskSubject = BehaviorSubject<Task>();
 
   Stream<Task?> get activeTask => taskSubject.stream;
+  Task? get snapActiveTask => taskSubject.value;
 
   static TasksService _instance = TasksService._internal();
 
@@ -33,6 +34,8 @@ class TasksService extends RestApiService {
 
   Future<void> startObjective(
       Objective personalObjective, List<SubTask> tasks) async {
+    if (tasks.length == 0)
+      throw new AppError(message: 'Tasks list is empty');
     User user = AuthenticationService().snapAuthenticatedUser!;
     Map<String, dynamic> payload = {
       "sub-tasks": tasks.map((e) => e.description).toList(),
@@ -45,11 +48,11 @@ class TasksService extends RestApiService {
   }
 
   Future<Task?> updateActiveTask(List<SubTask> subTasks) async {
+    Task target = TasksService().snapActiveTask!;
     User user = AuthenticationService().snapAuthenticatedUser!;
-    Objective objective = user.beneficiary!.target!.personalObjective;
     Map<String, dynamic> payload = {
       "sub-tasks": subTasks.map((e) => e.toMap()).toList(),
-      "description": objective.rawObjective
+      "description": target.personalObjective.rawObjective
     };
     await put('api/users/${user.id}/tasks/active', payload);
     return await getActiveTask();

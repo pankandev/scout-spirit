@@ -45,7 +45,7 @@ abstract class RestApiService {
       path = path.substring(1);
     }
     return Uri.parse(
-        "https://5ls6ka1vg1.execute-api.us-west-2.amazonaws.com/Prod/" + path);
+        "https://j2cpy7mcrh.execute-api.us-west-2.amazonaws.com/Prod/" + path);
   }
 
   Future<Map<String, dynamic>> get(String path,
