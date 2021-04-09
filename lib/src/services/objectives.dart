@@ -79,4 +79,18 @@ class ObjectivesService {
         element.line == line &&
         element.subline == subline);
   }
+
+  Objective getByKey(String key) {
+    List<String> splitted = key.split('::');
+    if (splitted.length != 3)
+      throw new AppError(message: 'Objective key $key must consist of 3 parts');
+    List<String> lineSubline = splitted[2].split('.');
+    if (lineSubline.length != 2)
+      throw new AppError(message: 'Objective line ${splitted[2]} must consist of 2 parts');
+    DevelopmentStage stage = stageFromName(splitted[0]);
+    DevelopmentArea area = areaFromName(splitted[1]);
+    int line = int.parse(lineSubline[0]);
+    int subline = int.parse(lineSubline[1]);
+    return getBySubline(stage, area, line, subline);
+  }
 }

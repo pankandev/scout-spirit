@@ -83,6 +83,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
                             decoration: InputDecoration(
                               labelText: 'Objetivo personal',
                               alignLabelWithHint: true,
+                              border: OutlineInputBorder(),
                               hintText: 'Para realizar este objetivo voy a...',
                             ),
                           ),

@@ -48,7 +48,7 @@ abstract class RestApiService {
         "https://j2cpy7mcrh.execute-api.us-west-2.amazonaws.com/Prod/" + path);
   }
 
-  Future<Map<String, dynamic>> get(String path,
+  Future<Map<String, dynamic?>> get(String path,
       {Map<String, String>? queryParams}) async {
     Map<String, String> headers = await _getAuthorizedHeader();
     Uri apiUri = getApiUri(path).replace(queryParameters: queryParams);

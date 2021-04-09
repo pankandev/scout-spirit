@@ -74,7 +74,7 @@ class RewardToken {
 
   bool get isExpired {
     DateTime expires =
-        DateTime.fromMillisecondsSinceEpoch(body.exp * 1000).toUtc();
+        DateTime.fromMillisecondsSinceEpoch(body.exp * 1000, isUtc: true);
     DateTime now = DateTime.now().toUtc();
     return now.isAfter(expires);
   }

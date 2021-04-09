@@ -90,8 +90,12 @@ class RewardItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.done, size: 42.0, color: Colors.green),
-                        SizedBox(width: 10.0,),
-                        Text('Confirmar', style: TextStyle(fontSize: 21.0, color: Colors.green))
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Text('Confirmar',
+                            style:
+                                TextStyle(fontSize: 21.0, color: Colors.green))
                       ]),
                 ),
                 onPressed: onConfirm)

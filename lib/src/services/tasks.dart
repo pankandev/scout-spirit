@@ -13,15 +13,16 @@ class CompleteTaskResponse {
   RewardToken reward;
   Task task;
 
-  CompleteTaskResponse.fromMap(Map<String, dynamic> map):
-    reward = RewardToken(map["reward"]),
-    task = Task.fromMap(map["task"]);
+  CompleteTaskResponse.fromMap(Map<String, dynamic> map)
+      : reward = RewardToken(map["reward"]),
+        task = Task.fromMap(map["task"]);
 }
 
 class TasksService extends RestApiService {
   final BehaviorSubject<Task?> taskSubject = BehaviorSubject<Task>();
 
   Stream<Task?> get activeTask => taskSubject.stream;
+
   Task? get snapActiveTask => taskSubject.value;
 
   static TasksService _instance = TasksService._internal();
@@ -34,8 +35,7 @@ class TasksService extends RestApiService {
 
   Future<void> startObjective(
       Objective personalObjective, List<SubTask> tasks) async {
-    if (tasks.length == 0)
-      throw new AppError(message: 'Tasks list is empty');
+    if (tasks.length == 0) throw new AppError(message: 'Tasks list is empty');
     User user = AuthenticationService().snapAuthenticatedUser!;
     Map<String, dynamic> payload = {
       "sub-tasks": tasks.map((e) => e.description).toList(),
@@ -62,7 +62,8 @@ class TasksService extends RestApiService {
     User user = AuthenticationService().snapAuthenticatedUser!;
     Task? task;
     try {
-      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/active');
+      Map<String, dynamic> response =
+          await get('api/users/${user.id}/tasks/active');
       task = Task.fromMap(response);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
@@ -81,10 +82,11 @@ class TasksService extends RestApiService {
 
   Future<CompleteTaskResponse> completeActiveTask() async {
     User user = AuthenticationService().snapAuthenticatedUser!;
-    Map<String, dynamic> data = await post('api/users/${user.id}/tasks/active/complete');
+    Map<String, dynamic> data =
+        await post('api/users/${user.id}/tasks/active/complete');
     await getActiveTask();
     CompleteTaskResponse response = CompleteTaskResponse.fromMap(data);
-    RewardsService().saveReward(response.reward);
+    await RewardsService().saveReward(response.reward);
     return response;
   }
 }

@@ -187,6 +187,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
       setState(() {
         loading = false;
       });
+      throw e;
     }
     if (!errored) {
       Navigator.of(context).pop();

@@ -6,7 +6,11 @@ class ProviderConsumer<T> extends StatefulWidget {
   final ValueNotifier<T> controller;
   final Widget Function(ValueNotifier<T> controller) builder;
 
-  const ProviderConsumer({Key? key, required this.controller, required this.builder, this.onChange})
+  const ProviderConsumer(
+      {Key? key,
+      required this.controller,
+      required this.builder,
+      this.onChange})
       : super(key: key);
 
   @override
@@ -14,7 +18,6 @@ class ProviderConsumer<T> extends StatefulWidget {
 }
 
 class _ProviderConsumerState<T> extends State<ProviderConsumer<T>> {
-
   @override
   void initState() {
     super.initState();

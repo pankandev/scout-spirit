@@ -29,11 +29,11 @@ class AuthenticationService {
   Stream<User?> get userStream => _authenticatedUserController.stream;
 
   User? get snapAuthenticatedUser => _authenticatedUserController.value;
+  String get authenticatedUserId => _authenticatedUserController.value!.id;
 
   Future<void> updateAuthenticatedUser() async {
     AuthUser? user;
     AuthSession authSession = await Amplify.Auth.fetchAuthSession();
-    print(authSession.isSignedIn);
     if (authSession.isSignedIn) {
       user = await Amplify.Auth.getCurrentUser();
     } else {

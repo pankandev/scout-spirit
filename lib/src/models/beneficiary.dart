@@ -4,14 +4,49 @@
 
 import 'dart:convert';
 
+import 'package:jose/jose.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
+import 'package:scout_spirit/src/services/objectives.dart';
 import 'package:scout_spirit/src/utils/json.dart';
 
 Beneficiary beneficiaryFromJson(String str) =>
     Beneficiary.fromMap(json.decode(str));
 
 String beneficiaryToJson(Beneficiary data) => json.encode(data.toJson());
+
+class TaskToken {
+  final String token;
+  final String sub;
+  final int iat;
+  final int exp;
+  final Objective objective;
+
+  bool get isExpired {
+    DateTime expires = DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
+    DateTime now = DateTime.now().toUtc();
+    return now.isAfter(expires);
+  }
+
+  TaskToken._fromTokenPayload(this.token, Map<String, dynamic> payload)
+      : sub = payload['sub'],
+        iat = payload['iat'],
+        exp = payload['exp'],
+        objective = ObjectivesService().getByKey(payload['objective']);
+
+  factory TaskToken(String encodedToken) {
+    Map<String, dynamic> payload = json.decode(
+        JsonWebSignature.fromCompactSerialization(encodedToken)
+            .unverifiedPayload
+            .stringContent);
+    return TaskToken._fromTokenPayload(encodedToken, payload);
+  }
+
+  @override
+  String toString() {
+    return "RewardToken(sub: $sub, iat: $iat, exp: $exp, objective: $objective)";
+  }
+}
 
 class Task {
   double score;
@@ -20,14 +55,17 @@ class Task {
   Objective originalObjective;
   Objective personalObjective;
   List<SubTask> tasks;
+  bool? eligibleForReward;
+  TaskToken? token;
 
-  Task(
-      {required this.score,
-      this.created,
-      this.completed,
-      required this.originalObjective,
-      required this.personalObjective,
-      required this.tasks});
+  Task({
+    required this.score,
+    required this.originalObjective,
+    required this.personalObjective,
+    required this.tasks,
+    this.created,
+    this.completed,
+  });
 
   Task.fromMap(Map<String, dynamic> map)
       : score = map['score'],
@@ -36,11 +74,13 @@ class Task {
         personalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['personal-objective']),
         originalObjective = Objective.fromCode(map['objective'])
-            .copyWith(objective: map['original-objective']);
+            .copyWith(objective: map['original-objective']),
+        eligibleForReward = map['eligible_for_progress_reward'],
+        token = map.containsKey('token') ? TaskToken(map['token']) : null;
 
   @override
   String toString() {
-    return "Task(score: $score, created: $created, completed: $completed, originalObjective: $originalObjective, personalObjective: $personalObjective, tasks: $tasks)";
+    return "Task(score: $score, created: $created, completed: $completed, originalObjective: $originalObjective, personalObjective: $personalObjective, tasks: $tasks, token: $token)";
   }
 }
 
@@ -78,20 +118,20 @@ class Beneficiary {
 
   factory Beneficiary.fromMap(Map<String, dynamic> json) {
     return Beneficiary(
-      completed: json["completed"],
-      unitUser: json["unit-user"],
-      boughtItems: BoughtItems.fromJson(json["bought_items"]),
-      birthdate: json["birthdate"],
-      nickname: json["nickname"],
-      target: json["target"] != null ? Task.fromMap(json["target"]) : null,
-      nTasks: TasksCount.fromJson(json["n_tasks"]),
-      score: TasksCount.fromJson(json["score"]),
-      userId: json["user"],
-      fullName: json["full-name"],
-      groupCode: json["group"],
-      districtCode: json["district"],
-      lastClaimedToken: json["last_claimed_token"],
-      setBaseTasks: json["set_base_tasks"]);
+        completed: json["completed"],
+        unitUser: json["unit-user"],
+        boughtItems: BoughtItems.fromJson(json["bought_items"]),
+        birthdate: json["birthdate"],
+        nickname: json["nickname"],
+        target: json["target"] != null ? Task.fromMap(json["target"]) : null,
+        nTasks: TasksCount.fromJson(json["n_tasks"]),
+        score: TasksCount.fromJson(json["score"]),
+        userId: json["user"],
+        fullName: json["full-name"],
+        groupCode: json["group"],
+        districtCode: json["district"],
+        lastClaimedToken: json["last_claimed_token"],
+        setBaseTasks: json["set_base_tasks"]);
   }
 
   Map<String, dynamic> toJson() => {
