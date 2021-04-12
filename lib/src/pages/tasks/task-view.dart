@@ -69,7 +69,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
                         backgroundColor: (user != null && task != null)
                             ? ObjectivesDisplay.getAreaIconData(
                                     user.unit, task.originalObjective.area)
-                                .color
+                                .colorScheme.primary
                             : Colors.grey,
                         shadowColor: Colors.transparent,
                         actions: completed != null
@@ -217,7 +217,6 @@ class _TaskViewPageState extends State<TaskViewPage> {
       await TasksService().updateActiveTask(taskController.value!.tasks);
     } catch (e) {
       setState(() {
-        dirty = false;
         loading = false;
       });
       throw e;
@@ -252,7 +251,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
       loading = true;
     });
     try {
-      CompleteTaskResponse response = await TasksService().completeActiveTask();
+      await TasksService().completeActiveTask();
     } catch (e) {
       setState(() {
         dirty = true;

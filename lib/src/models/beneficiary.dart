@@ -23,7 +23,8 @@ class TaskToken {
   final Objective objective;
 
   bool get isExpired {
-    DateTime expires = DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
+    DateTime expires =
+        DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
     DateTime now = DateTime.now().toUtc();
     return now.isAfter(expires);
   }
@@ -76,7 +77,20 @@ class Task {
         originalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['original-objective']),
         eligibleForReward = map['eligible_for_progress_reward'],
-        token = map.containsKey('token') ? TaskToken(map['token']) : null;
+        token = map.containsKey('token') ? TaskToken(map['token']) : null,
+        completed = map['completed'];
+
+  Task.fromLiteMap(Map<String, dynamic> map)
+      : score = 0,
+        tasks = List.from(map['tasks'].map((task) => SubTask(
+            description: task['description'], completed: task['completed']))),
+        personalObjective = Objective.fromCode(map['objective'])
+            .copyWith(objective: map['personal-objective']),
+        originalObjective = Objective.fromCode(map['objective'])
+            .copyWith(objective: map['original-objective']),
+        eligibleForReward = false,
+        token = null,
+        completed = map['completed'];
 
   @override
   String toString() {

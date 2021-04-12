@@ -185,7 +185,7 @@ class _SignUpFormState extends State<SignUpForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
-                    onPressed: loading != null
+                    onPressed: !loading
                         ? () {
                             if (_basicDataFormKey.currentState!.validate() && form.unitController.value != null) {
                               _register(context);

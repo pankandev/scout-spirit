@@ -5,13 +5,23 @@ import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 
 class AreaDisplayData {
   final IconData icon;
-  final Color color;
+  final ColorScheme colorScheme;
   final DevelopmentArea area;
 
   String get name => _areaNames[area]!;
 
   AreaDisplayData(
-      {required this.icon, required this.color, required this.area});
+      {required this.icon, required this.colorScheme, required this.area});
+
+  Color get color => colorScheme.primary;
+
+  Color get disabledColor {
+    int average = (0.9 * (color.red + color.green + color.blue) / 3).round();
+    if (average == 0) {
+      average = 32;
+    }
+    return Color.fromARGB(255, average, average, average);
+  }
 }
 
 final Map<DevelopmentArea, String> _areaNames = {
@@ -26,54 +36,54 @@ final Map<DevelopmentArea, String> _areaNames = {
 final Map<DevelopmentArea, AreaDisplayData> _scoutIcons = {
   DevelopmentArea.Corporality: AreaDisplayData(
       icon: ScoutSpiritIcons.corporality_1,
-      color: Colors.blueAccent,
+      colorScheme: ColorScheme.dark(primary: Colors.blueAccent),
       area: DevelopmentArea.Corporality),
   DevelopmentArea.Creativity: AreaDisplayData(
       icon: ScoutSpiritIcons.creativity_1,
-      color: Colors.pink,
+      colorScheme: ColorScheme.dark(primary: Colors.pink),
       area: DevelopmentArea.Creativity),
   DevelopmentArea.Character: AreaDisplayData(
       icon: ScoutSpiritIcons.character_1,
-      color: Colors.lightBlueAccent,
+      colorScheme: ColorScheme.dark(primary: Colors.lightBlueAccent),
       area: DevelopmentArea.Character),
   DevelopmentArea.Affectivity: AreaDisplayData(
       icon: ScoutSpiritIcons.affectivity_1,
-      color: Colors.red[500]!,
+      colorScheme: ColorScheme.dark(primary: Colors.red[500]!),
       area: DevelopmentArea.Affectivity),
   DevelopmentArea.Sociability: AreaDisplayData(
       icon: ScoutSpiritIcons.sociability_1,
-      color: Colors.black,
+      colorScheme: ColorScheme.dark(primary: Colors.black),
       area: DevelopmentArea.Sociability),
   DevelopmentArea.Spirituality: AreaDisplayData(
       icon: ScoutSpiritIcons.spirituality_1,
-      color: Colors.lightGreen,
+      colorScheme: ColorScheme.dark(primary: Colors.lightGreen),
       area: DevelopmentArea.Spirituality),
 };
 
 final Map<DevelopmentArea, AreaDisplayData> _guidesIcons = {
   DevelopmentArea.Corporality: AreaDisplayData(
       icon: ScoutSpiritIcons.corporality,
-      color: Colors.lightGreen,
+      colorScheme: ColorScheme.dark(primary: Colors.lightGreen),
       area: DevelopmentArea.Corporality),
   DevelopmentArea.Creativity: AreaDisplayData(
       icon: ScoutSpiritIcons.creativity,
-      color: Colors.deepOrange,
+      colorScheme: ColorScheme.dark(primary: Colors.deepOrange),
       area: DevelopmentArea.Creativity),
   DevelopmentArea.Character: AreaDisplayData(
       icon: ScoutSpiritIcons.character,
-      color: Colors.white,
+      colorScheme: ColorScheme.dark(primary: Colors.white),
       area: DevelopmentArea.Character),
   DevelopmentArea.Affectivity: AreaDisplayData(
       icon: ScoutSpiritIcons.affectivity,
-      color: Colors.white,
+      colorScheme: ColorScheme.dark(primary: Colors.white),
       area: DevelopmentArea.Affectivity),
   DevelopmentArea.Sociability: AreaDisplayData(
       icon: ScoutSpiritIcons.sociability,
-      color: Colors.white,
+      colorScheme: ColorScheme.dark(primary: Colors.white),
       area: DevelopmentArea.Sociability),
   DevelopmentArea.Spirituality: AreaDisplayData(
       icon: ScoutSpiritIcons.spirituality,
-      color: Colors.white,
+      colorScheme: ColorScheme.dark(primary: Colors.white),
       area: DevelopmentArea.Spirituality),
 };
 

@@ -8,6 +8,8 @@ import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
+import 'package:scout_spirit/src/utils/development_area.dart';
+import 'package:scout_spirit/src/utils/development_stage.dart';
 
 class CompleteTaskResponse {
   RewardToken reward;
@@ -76,6 +78,65 @@ class TasksService extends RestApiService {
     return task;
   }
 
+  Future<List<Task>> getUserTasksByArea(
+      User user, DevelopmentStage stage, DevelopmentArea area) async {
+    try {
+      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(area)}/');
+      List items = response["items"];
+      List<Task> tasks = items.map((item) => Task.fromLiteMap(item)).toList();
+      return tasks;
+    } on HttpError catch (e) {
+      throw e;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<Task?> getUserTasksByStage(User user, DevelopmentStage stage) async {
+    Task? task;
+    try {
+      Map<String, dynamic> response =
+          await get('api/users/${user.id}/tasks/${stageToString(stage)}/');
+      task = Task.fromMap(response);
+    } on HttpError catch (e) {
+      if (e.statusCode == 404) {
+        task = null;
+      } else {
+        throw e;
+      }
+    }
+    taskSubject.sink.add(task);
+    return task;
+  }
+
+  Future<Task?> getUserTasks(User user) async {
+    try {
+      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/');
+      var items = response["items"];
+      return items.map((item) => Task.fromMap(item)).toList();
+    } on HttpError catch (e) {
+      throw e;
+    }
+  }
+
+  Future<Task?> getUserTask(User user, DevelopmentStage stage,
+      DevelopmentArea area, int line, int subline) async {
+    Task? task;
+    try {
+      Map<String, dynamic> response = await get(
+          'api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(area)}/$line/$subline');
+      task = Task.fromMap(response);
+    } on HttpError catch (e) {
+      if (e.statusCode == 404) {
+        task = null;
+      } else {
+        throw e;
+      }
+    }
+    taskSubject.sink.add(task);
+    return task;
+  }
+
   void dispose() {
     taskSubject.close();
   }
@@ -88,5 +149,20 @@ class TasksService extends RestApiService {
     CompleteTaskResponse response = CompleteTaskResponse.fromMap(data);
     await RewardsService().saveReward(response.reward);
     return response;
+  }
+
+  Future<void> initializeObjectives(
+      Map<DevelopmentArea, List<Objective>> objectives) async {
+    String userId = AuthenticationService().authenticatedUserId;
+    Map<String, dynamic> response = await post('/api/users/$userId/tasks/initialize/', body: {
+      'objectives': objectives.values
+          .expand((element) => element)
+          .map(
+              (e) => {"line": e.line, "subline": e.subline, "area": e.areaName})
+          .toList()
+    });
+    RewardToken token = RewardToken(response['reward']);
+    RewardsService().saveReward(token);
+    await AuthenticationService().updateAuthenticatedUser();
   }
 }

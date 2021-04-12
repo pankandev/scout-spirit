@@ -1,7 +1,21 @@
+
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:scout_spirit/src/utils/development_stage.dart';
+
+class Line {
+  final String name;
+  final String? image;
+  final Map<DevelopmentStage, List<Objective>> objectives;
+
+  Line({required this.name, required this.objectives, this.image});
+
+  @override
+  String toString() {
+    return "Line(name: '$name', image: $image, objectives: $objectives)";
+  }
+}
 
 class Objective {
   final int line;
@@ -11,7 +25,11 @@ class Objective {
   final String rawObjective;
 
   Objective(
-      {required this.stage, required this.area, required this.line, required this.subline, required this.rawObjective});
+      {required this.stage,
+      required this.area,
+      required this.line,
+      required this.subline,
+      required this.rawObjective});
 
   static Objective fromCode(String code) {
     List<String> sections = code.split('::');
@@ -26,7 +44,6 @@ class Objective {
 
   String get authorizedObjective {
     User user = AuthenticationService().snapAuthenticatedUser!;
-    if (user == null) return rawObjective;
     return getUserObjective(user);
   }
 
@@ -49,7 +66,7 @@ class Objective {
 
   @override
   String toString() {
-    return "Objective(stage: $stage, area: $area, line: $line, subline: $subline, objective: '$authorizedObjective')";
+    return "Objective(stage: $stage, area: $area, line: $line, subline: $subline, objective: '$rawObjective')";
   }
 
   Objective copyWith({String? objective}) {
@@ -60,4 +77,18 @@ class Objective {
         area: area,
         rawObjective: objective ?? rawObjective);
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Objective) {
+      return other.stage == stage &&
+          other.area == area &&
+          other.line == line &&
+          other.subline == subline;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }

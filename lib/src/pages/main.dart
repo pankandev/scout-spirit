@@ -1,7 +1,3 @@
-import 'dart:math';
-
-import 'package:confetti/confetti.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
@@ -9,6 +5,7 @@ import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
+import 'package:scout_spirit/src/providers/confirm_provider.dart';
 import 'package:scout_spirit/src/services/districts.dart';
 import 'package:scout_spirit/src/services/groups.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
@@ -16,7 +13,6 @@ import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/reward_overlay.dart';
 
 class MainPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -55,7 +51,7 @@ class MainPage extends StatelessWidget {
       children: <Widget>[
         Background(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: SafeArea(
@@ -133,22 +129,27 @@ class MainPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (beneficiary.setBaseTasks == null)
+                      if (beneficiary.setBaseTasks == null ||
+                          !beneficiary.setBaseTasks!)
                         FittedBox(
                           fit: BoxFit.fitWidth,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).pushNamed('/initialize');
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith(
+                                        (states) => Colors.redAccent)),
+                            onPressed: () async {
+                              bool result = await ConfirmProvider.askConfirm(
+                                  context,
+                                  question: '¿Estás listo?',
+                                  content:
+                                      'Para marcar los objetivos iniciales te recomendamos haber conversado sobre esto con tu guiadora o dirigente.');
+                              if (result) {
+                                Navigator.of(context).pushNamed('/initialize');
+                              }
                             },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 25.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  border: Border.all(color: Colors.redAccent)),
-                              child: Text(
-                                  'No has indicado tus objetivos iniciales'),
-                            ),
+                            child:
+                                Text('No has indicado tus objetivos iniciales'),
                           ),
                         )
                     ],

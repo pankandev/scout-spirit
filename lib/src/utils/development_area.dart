@@ -26,3 +26,7 @@ DevelopmentArea areaFromName(String value) {
   }
   throw new AppError(message: "Unknown development area name: $value");
 }
+
+String areaToString(DevelopmentArea area) {
+  return area.toString().split('.')[1].toLowerCase();
+}

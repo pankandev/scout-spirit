@@ -52,7 +52,7 @@ class _ObjectivesListState extends State<ObjectivesList> {
     return filteredObjectives == null
         ? Center(
         child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(areaData.color)))
+            valueColor: new AlwaysStoppedAnimation<Color>(areaData.colorScheme.primary)))
         : Padding(
       padding: const EdgeInsets.only(top: 12.0, left: 24.0, right: 24.0),
       child: Column(

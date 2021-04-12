@@ -35,7 +35,11 @@ class AuthenticationService {
     AuthUser? user;
     AuthSession authSession = await Amplify.Auth.fetchAuthSession();
     if (authSession.isSignedIn) {
-      user = await Amplify.Auth.getCurrentUser();
+      try {
+        user = await Amplify.Auth.getCurrentUser();
+      } on SignedOutException {
+        user = null;
+      }
     } else {
       user = null;
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:scout_spirit/src/forms/initialize.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/pages/main.dart';
 import 'package:scout_spirit/src/pages/authentication.dart';
@@ -10,7 +11,8 @@ import 'package:scout_spirit/src/pages/confirm.dart';
 import 'package:scout_spirit/src/pages/explore.dart';
 import 'package:scout_spirit/src/pages/join.dart';
 import 'package:scout_spirit/src/widgets/reward_view.dart';
-import 'package:scout_spirit/src/pages/initialize.dart';
+import 'package:scout_spirit/src/pages/initialize/initialize.dart';
+import 'package:scout_spirit/src/pages/initialize/initialize_area.dart';
 import 'package:scout_spirit/src/pages/tasks/task-start-form.dart';
 import 'package:scout_spirit/src/pages/tasks/task-view.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
@@ -37,6 +39,12 @@ class ScoutSpiritApp extends StatelessWidget {
         '/signup': (_) => SignUpPage(),
         '/confirm': (_) => ConfirmPage(),
         '/initialize': (_) => InitializePage(),
+        '/initialize/area': (context) {
+          Map arguments = (ModalRoute.of(context)!.settings.arguments as Map);
+          InitializeFormBloc form = arguments['form'];
+          DevelopmentArea area = arguments['area'];
+          return InitializeAreaPage(form: form, area: area);
+        },
         '/home': (_) => MainPage(),
         '/explore': (_) => ExplorePage(),
         '/rewards/claim': (context) => RewardsPage(

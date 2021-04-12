@@ -45,7 +45,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                   Icon(areaData.icon),
                 ],
               ),
-              backgroundColor: areaData.color,
+              backgroundColor: areaData.colorScheme.primary,
               actions: [
                 StreamBuilder(
                     stream: form.stateStream,
@@ -100,7 +100,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                   fit: BoxFit.fill,
                   child: Icon(
                     areaData.icon,
-                    color: areaData.color.withAlpha(186),
+                    color: areaData.colorScheme.primary.withAlpha(186),
                   ),
                 ),
               ),

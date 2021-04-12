@@ -1,33 +1,58 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
+import 'package:scout_spirit/src/unity/unity_controller.dart';
 
 class UnityApp extends StatefulWidget {
+  final GameController controller;
+
+  const UnityApp({Key? key, required this.controller}) : super(key: key);
+
   @override
   _UnityAppState createState() => _UnityAppState();
 }
 
 class _UnityAppState extends State<UnityApp> {
-  UnityWidgetController? _unityWidgetController;
+  late final Future<AndroidDeviceInfo> deviceInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    deviceInfo = DeviceInfoPlugin().androidInfo;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return UnityWidget(
-      onUnityCreated: _onUnityCreated,
-      onUnityMessage: onUnityMessage,
-      onUnitySceneLoaded: onUnitySceneLoaded,
+    return FutureBuilder<AndroidDeviceInfo>(
+      future: deviceInfo,
+      builder: (context, snapshot) => !snapshot.hasData
+          ? Center(child: CircularProgressIndicator())
+          : (snapshot.data!.isPhysicalDevice
+              ? UnityWidget(
+                  fullscreen: true,
+                  onUnityCreated: _onUnityCreated,
+                  onUnityMessage: onUnityMessage,
+                  onUnitySceneLoaded: onUnitySceneLoaded,
+                )
+              : Container()),
     );
   }
 
   void onUnityMessage(message) {
-    print('Received message from unity: ${message.toString()}');
+    widget.controller.handleUnityMessage(message);
   }
 
   void onUnitySceneLoaded(SceneLoaded? scene) {
-    print('Received scene loaded from unity: ${scene?.name}');
-    print('Received scene loaded from unity buildIndex: ${scene?.buildIndex}');
+    widget.controller.onNewScene(scene);
   }
 
-  void _onUnityCreated(UnityWidgetController controller) {
-    this._unityWidgetController = controller;
+  void _onUnityCreated(UnityWidgetController unityController) {
+    widget.controller.init(unityController);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.controller.stop();
   }
 }

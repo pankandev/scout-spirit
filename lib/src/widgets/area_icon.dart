@@ -17,7 +17,7 @@ class AreaIcon extends StatelessWidget {
     int alpha = (opacity != null ? opacity! * 255 : 255).round();
     return Icon(
       display.icon,
-      color: display.color.withAlpha(alpha),
+      color: display.colorScheme.primary.withAlpha(alpha),
       size: size,
     );
   }

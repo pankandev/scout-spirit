@@ -46,23 +46,24 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
     Objective objective = task.personalObjective;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       StreamBuilder<User?>(
-        stream: AuthenticationService().userStream,
-        builder: (context, snapshot) {
-          User? user = snapshot.data;
-          return snapshot.hasData ? Container(
-              width: width,
-              height: height,
-              child: Hero(
-                tag: "${objective.line}.${objective.subline}",
-                child: TaskContainer(
-                  task: task,
-                  unit: user!.unit,
-                  onTap: () => _onTaskTap(context, user),
-                  iconSize: height * 1.5,
-                ),
-              )) : Center(child: CircularProgressIndicator());
-        }
-      ),
+          stream: AuthenticationService().userStream,
+          builder: (context, snapshot) {
+            User? user = snapshot.data;
+            return snapshot.hasData
+                ? Container(
+                    width: width,
+                    height: height,
+                    child: Hero(
+                      tag: "${objective.line}.${objective.subline}",
+                      child: TaskContainer(
+                        task: task,
+                        unit: user!.unit,
+                        onTap: () => _onTaskTap(context, user),
+                        iconSize: height * 1.5,
+                      ),
+                    ))
+                : Center(child: CircularProgressIndicator());
+          }),
     ]);
   }
 
@@ -137,6 +138,7 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
     await showDialog(
         context: context,
         builder: (context) => ObjectiveSelectModal(
+            closeOnSelect: true,
             onSelect: (area) => _onAreaSelect(context, area)));
   }
 

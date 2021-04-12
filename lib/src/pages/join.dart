@@ -86,7 +86,7 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
     if (_formKey.currentState!.validate()) {
       try {
         await BeneficiariesService().joinGroup(widget.codeController.text);
-      } on HttpError catch (e) {
+      } on HttpError {
         SnackBarProvider.showMessage(context, 'Código Incorrecto');
       } on AppError {
         SnackBarProvider.showMessage(context, 'Código Incorrecto');
