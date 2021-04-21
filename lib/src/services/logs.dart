@@ -35,21 +35,25 @@ class LogsService extends RestApiService {
   }
 
   Future<List<Log>> getProgressLogs(Task task) async {
-    String userId = AuthenticationService().authenticatedUserId;
-    String tag = joinKey([
+    String category = joinKey([
       "PROGRESS",
       task.originalObjective.stageName,
       task.originalObjective.areaName,
       "${task.originalObjective.line}.${task.originalObjective.subline}"
     ]);
-    Map<String, dynamic> response =
-        await this.get('/api/users/$userId/logs/$tag/');
-    List<Map<String, dynamic>> items = List.from(response["items"]);
-    return items.map((e) => Log.fromMap(e)).toList();
+    return await getByCategory(category);
   }
 
   Future<List<Log>> getProgressLogsForActiveTask() async {
     Task task = TasksService().snapActiveTask!;
     return await getProgressLogs(task);
+  }
+
+  Future<List<Log>> getByCategory(String category) async {
+    String userId = AuthenticationService().authenticatedUserId;
+    Map<String, dynamic> response =
+      await this.get('/api/users/$userId/logs/$category/');
+    List<Map<String, dynamic>> items = List.from(response["items"]);
+    return items.map((e) => Log.fromMap(e)).toList();
   }
 }

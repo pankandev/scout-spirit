@@ -4,6 +4,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
@@ -25,11 +26,22 @@ class AuthenticationService {
       BehaviorSubject<User>();
   final BehaviorSubject<CognitoAuthSession?> _sessionController =
       BehaviorSubject<CognitoAuthSession>();
+  final BehaviorSubject<Avatar> _avatarController = BehaviorSubject<Avatar>();
 
   Stream<User?> get userStream => _authenticatedUserController.stream;
 
+  Stream<Avatar> get avatarStream => _avatarController.stream;
+
   User? get snapAuthenticatedUser => _authenticatedUserController.value;
+
   String get authenticatedUserId => _authenticatedUserController.value!.id;
+
+  Future<String> getIdentityId() async {
+    CognitoAuthSession authSession = await Amplify.Auth.fetchAuthSession(
+            options: CognitoSessionOptions(getAWSCredentials: true))
+        as CognitoAuthSession;
+    return authSession.identityId.split('.').last;
+  }
 
   Future<void> updateAuthenticatedUser() async {
     AuthUser? user;
@@ -118,8 +130,11 @@ class AuthenticationService {
     return;
   }
 
+  Future<void> updateNickname() async {}
+
   void dispose() {
     _sessionController.close();
     _authenticatedUserController.close();
+    _avatarController.close();
   }
 }

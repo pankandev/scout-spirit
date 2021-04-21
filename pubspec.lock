@@ -7,63 +7,70 @@ packages:
       name: amplify_analytics_pinpoint
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_analytics_plugin_interface:
     dependency: transitive
     description:
       name: amplify_analytics_plugin_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_api_plugin_interface:
     dependency: transitive
     description:
       name: amplify_api_plugin_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_auth_cognito:
     dependency: "direct main"
     description:
       name: amplify_auth_cognito
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_auth_plugin_interface:
     dependency: transitive
     description:
       name: amplify_auth_plugin_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_core:
     dependency: transitive
     description:
       name: amplify_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_datastore_plugin_interface:
     dependency: transitive
     description:
       name: amplify_datastore_plugin_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_flutter:
     dependency: "direct main"
     description:
       name: amplify_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   amplify_storage_plugin_interface:
     dependency: transitive
     description:
       name: amplify_storage_plugin_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
+  amplify_storage_s3:
+    dependency: "direct main"
+    description:
+      name: amplify_storage_s3
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   asn1lib:
     dependency: transitive
     description:
@@ -202,6 +209,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_speed_dial:
+    dependency: "direct main"
+    description:
+      name: flutter_speed_dial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -254,6 +268,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  image_crop:
+    dependency: "direct main"
+    description:
+      name: image_crop
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   intl:
     dependency: "direct main"
     description:

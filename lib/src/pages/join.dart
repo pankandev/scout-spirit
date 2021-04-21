@@ -66,7 +66,6 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
             Expanded(
               child: TextFormField(
                 controller: widget.codeController,
-                keyboardType: TextInputType.number,
                 validator: (value) => value == null || value.isEmpty
                     ? 'Este campo es obligatorio'
                     : null,
@@ -86,8 +85,15 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
     if (_formKey.currentState!.validate()) {
       try {
         await BeneficiariesService().joinGroup(widget.codeController.text);
-      } on HttpError {
-        SnackBarProvider.showMessage(context, 'Código Incorrecto');
+      } on HttpError catch (e) {
+        if (e.statusCode == 403 || e.statusCode == 404) {
+          SnackBarProvider.showMessage(context, 'Código Incorrecto');
+        } else if (e.statusCode == 400) {
+          SnackBarProvider.showMessage(context, 'Ya te has unido a un grupo');
+          await Navigator.of(context).pushReplacementNamed('/');
+        } else {
+          SnackBarProvider.showMessage(context, 'Error desconocido');
+        }
       } on AppError {
         SnackBarProvider.showMessage(context, 'Código Incorrecto');
       }

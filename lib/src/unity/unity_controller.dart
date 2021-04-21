@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:scout_spirit/src/error/unity_flutter_error.dart';
 
@@ -27,9 +28,7 @@ class GameController {
   bool get initialized => _controller != null;
 
   void init(UnityWidgetController controller) {
-    if (!initialized) {
-      _controller = controller;
-    }
+    _controller = controller;
   }
 
   void onNewScene(SceneLoaded? scene) {
@@ -77,9 +76,13 @@ class GameController {
       } on UnityFlutterError catch (e) {
         error = e;
       } catch (e) {
-        error = UnityFlutterError(code: "UNKNOWN", message: "An unknown error ocurred");
+        error = UnityFlutterError(
+            code: "UNKNOWN", message: "An unknown error ocurred");
         throw e;
       }
+    } else {
+      print(
+          "[WARN] Method '$method' called from Unity, but no handler exists for this method");
     }
     await _sendResponse(messageIndex, response: response, error: error);
   }
@@ -95,7 +98,18 @@ class GameController {
     });
   }
 
+  Future<void> takeScreenshot(String filename) async {
+    await _controller!.postMessage(RECEIVER_GAME_OBJECT, "TakeScreenshot", filename);
+  }
+
+  Future<void> changeAvatarClothes(
+      String targetGameObject, Avatar? clothes) async {
+    Map<String, dynamic> map = clothes?.toMap() ?? (new Avatar()).toMap();
+    await _controller!.postJsonMessage(targetGameObject, "ChangeClothes", map);
+  }
+
   Future<void> stop() async {
-    goToScene("Hub");
+    await goToScene("Hub");
+    _controller = null;
   }
 }

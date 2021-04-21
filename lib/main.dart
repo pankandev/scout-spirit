@@ -10,6 +10,7 @@ import 'package:scout_spirit/src/pages/startup.dart';
 import 'package:scout_spirit/src/pages/confirm.dart';
 import 'package:scout_spirit/src/pages/explore.dart';
 import 'package:scout_spirit/src/pages/join.dart';
+import 'package:scout_spirit/src/pages/profile.dart';
 import 'package:scout_spirit/src/widgets/reward_view.dart';
 import 'package:scout_spirit/src/pages/initialize/initialize.dart';
 import 'package:scout_spirit/src/pages/initialize/initialize_area.dart';
@@ -46,6 +47,7 @@ class ScoutSpiritApp extends StatelessWidget {
           return InitializeAreaPage(form: form, area: area);
         },
         '/home': (_) => MainPage(),
+        '/profile': (_) => ProfilePage(),
         '/explore': (_) => ExplorePage(),
         '/rewards/claim': (context) => RewardsPage(
             rewards:

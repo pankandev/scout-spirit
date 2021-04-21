@@ -5,6 +5,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
+import 'package:flutter/foundation.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:http/http.dart' as http;
@@ -44,8 +45,8 @@ abstract class RestApiService {
     if (path.length > 0 && path[0] == '/') {
       path = path.substring(1);
     }
-    return Uri.parse(
-        "https://j2cpy7mcrh.execute-api.us-west-2.amazonaws.com/Prod/" + path);
+    String baseUrl = kReleaseMode ? "https://j2cpy7mcrh.execute-api.us-west-2.amazonaws.com/Prod/" : "http://localhost:3000/";
+    return Uri.parse(baseUrl + path);
   }
 
   Future<Map<String, dynamic?>> get(String path,

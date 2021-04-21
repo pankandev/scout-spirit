@@ -1,8 +1,11 @@
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:scout_spirit/amplifyconfiguration.dart';
+import 'package:scout_spirit/src/error/app_error.dart';
+import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/objectives.dart';
 
@@ -76,7 +79,14 @@ class _StartupPageState extends State<StartupPage> {
 
     this.stage = StartupStage.CheckSession;
     AuthenticationService service = AuthenticationService();
-    await service.updateAuthenticatedUser();
+    try {
+      await service.updateAuthenticatedUser();
+    } on HttpError catch (e) {
+      if (e.statusCode == 403) {
+        await service.logout();
+      }
+    } on Exception {
+    }
     final bool isLoggedIn = service.snapAuthenticatedUser != null;
     if (!isLoggedIn) {
       await Navigator.of(context).pushReplacementNamed('/login');
@@ -96,11 +106,12 @@ class _StartupPageState extends State<StartupPage> {
   Future<void> _configureAmplify() async {
     AmplifyAnalyticsPinpoint analyticsPlugin = AmplifyAnalyticsPinpoint();
     AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
+    AmplifyStorageS3 storagePlugin = AmplifyStorageS3();
 
     if (_isConfigured) return;
 
     try {
-      Amplify.addPlugins([authPlugin, analyticsPlugin]);
+      Amplify.addPlugins([authPlugin, analyticsPlugin, storagePlugin]);
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
       print(

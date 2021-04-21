@@ -10,15 +10,15 @@ final amplifyConfigMap = {
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "us-west-2:160f7faf-21f1-4611-9f73-bcb1849fe4be",
+              "PoolId": "us-west-2:90ba3bdf-3c3e-4bea-853b-11f11344deec",
               "Region": "us-west-2"
             }
           }
         },
         "CognitoUserPool": {
           "Default": {
-            "PoolId": "us-west-2_SwOlCeGN1",
-            "AppClientId": "12np1gn5jf4dcgfi6ub47e6oeq",
+            "PoolId": "us-west-2_vbPmGbURK",
+            "AppClientId": "6j4lha55h4agpjlgdck0hbdtse",
             "Region": "us-west-2"
           }
         },
@@ -34,10 +34,18 @@ final amplifyConfigMap = {
     "plugins": {
       "awsPinpointAnalyticsPlugin": {
         "pinpointAnalytics": {
-          "appId": "d6dceb728fe2406dac16bc26d2e495b1",
+          "appId": "ff90b7d6185047dc8bd8533f0854e5d2",
           "region": "us-west-2"
         },
         "pinpointTargeting": {"region": "us-west-2"}
+      }
+    }
+  },
+  "storage": {
+    "plugins": {
+      "awsS3StoragePlugin": {
+        "bucket": "scout-spirit-gallery",
+        "region": "us-west-2"
       }
     }
   }

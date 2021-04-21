@@ -32,10 +32,9 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: UnityApp(controller: GameController()),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => GameController().goToScene("World"),
-      ),
-    );
+        body: UnityApp(
+      controller: GameController(),
+      initialSceneName: "World",
+    ));
   }
 }

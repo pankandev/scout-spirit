@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
@@ -97,6 +98,13 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
     try {
       rewards =
           await RewardsService().claimReward(widget.reward, boxIndex: boxIndex);
+    } on HttpError catch (e) {
+      if (e.statusCode == 400) {
+        Navigator.of(context).pop();
+        return;
+      } else {
+        throw e;
+      }
     } catch (e) {
       setState(() {
         loading = false;

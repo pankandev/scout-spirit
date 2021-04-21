@@ -5,8 +5,12 @@ import 'package:scout_spirit/src/unity/unity_controller.dart';
 
 class UnityApp extends StatefulWidget {
   final GameController controller;
+  final String initialSceneName;
+  final bool fullscreen;
 
-  const UnityApp({Key? key, required this.controller}) : super(key: key);
+  const UnityApp(
+      {Key? key, required this.controller, required this.initialSceneName, this.fullscreen = true})
+      : super(key: key);
 
   @override
   _UnityAppState createState() => _UnityAppState();
@@ -23,18 +27,23 @@ class _UnityAppState extends State<UnityApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AndroidDeviceInfo>(
-      future: deviceInfo,
-      builder: (context, snapshot) => !snapshot.hasData
-          ? Center(child: CircularProgressIndicator())
-          : (snapshot.data!.isPhysicalDevice
-              ? UnityWidget(
-                  fullscreen: true,
-                  onUnityCreated: _onUnityCreated,
-                  onUnityMessage: onUnityMessage,
-                  onUnitySceneLoaded: onUnitySceneLoaded,
-                )
-              : Container()),
+    return WillPopScope(
+      onWillPop: () async {
+        await widget.controller.stop();
+        return true;
+      },
+      child: FutureBuilder<AndroidDeviceInfo>(
+        future: deviceInfo,
+        builder: (context, snapshot) => !snapshot.hasData
+            ? Center(child: CircularProgressIndicator())
+            : (snapshot.data!.isPhysicalDevice
+                ? UnityWidget(
+                    onUnityCreated: _onUnityCreated,
+                    onUnityMessage: onUnityMessage,
+                    onUnitySceneLoaded: onUnitySceneLoaded,
+                  )
+                : Container()),
+      ),
     );
   }
 
@@ -46,13 +55,8 @@ class _UnityAppState extends State<UnityApp> {
     widget.controller.onNewScene(scene);
   }
 
-  void _onUnityCreated(UnityWidgetController unityController) {
+  Future<void> _onUnityCreated(UnityWidgetController unityController) async {
     widget.controller.init(unityController);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.controller.stop();
+    await widget.controller.goToScene(widget.initialSceneName);
   }
 }

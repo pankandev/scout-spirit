@@ -1,10 +1,14 @@
 import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
+import 'package:scout_spirit/src/models/log.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
+import 'package:scout_spirit/src/services/logs.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
+import 'package:scout_spirit/src/utils/key.dart';
 
 class RewardsService extends RestApiService {
   static final RewardsService _instance = RewardsService._internal();
@@ -19,9 +23,17 @@ class RewardsService extends RestApiService {
             message: 'A box index must be given for this reward');
       }
     }
-    Map<String, dynamic> response = await post('api/rewards/claim', body: body);
-    List<Reward> rewards =
-        (response["rewards"] as List).map((e) => Reward.fromMap(e)).toList();
+    Map<String, dynamic> response;
+    try {
+      response = await post(
+          'api/rewards/claim', body: body);
+    } on HttpError catch (e) {
+      if (e.statusCode == 400) {
+        box.delete(token.storageId);
+      }
+      throw e;
+    }
+    List<Reward> rewards = (response["rewards"] as List).map((e) => Reward.fromMap(e)).toList();
     box.delete(token.storageId);
     return rewards;
   }
@@ -58,5 +70,35 @@ class RewardsService extends RestApiService {
 
   factory RewardsService() {
     return _instance;
+  }
+
+  Future<void> updateCategory(String category) async {
+    BehaviorSubject<List<Reward>> subject = _getCategorySubject(category);
+    List<Log> rewardLogs =
+        await LogsService().getByCategory(joinKey(["REWARD", category]));
+    List<Reward> rewards = rewardLogs
+        .map((e) =>
+            Reward.fromMap(e.data!))
+        .toList();
+    subject.sink.add(rewards);
+  }
+
+  BehaviorSubject<List<Reward>> _getCategorySubject(String category) {
+    if (!rewardsByCategory.containsKey(category.toLowerCase())) {
+      rewardsByCategory[category] = new BehaviorSubject<List<Reward>>();
+    }
+    BehaviorSubject<List<Reward>> subject = rewardsByCategory[category]!;
+    return subject;
+  }
+
+  Stream<List<Reward>> getByCategory(String category) {
+    return _getCategorySubject(category).stream;
+  }
+
+  final Map<String, BehaviorSubject<List<Reward>>> rewardsByCategory = {};
+
+  void dispose() {
+    rewardsByCategory.values.forEach((element) => element.close());
+    rewardsByCategory.clear();
   }
 }

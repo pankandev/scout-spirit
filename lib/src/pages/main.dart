@@ -118,9 +118,11 @@ class MainPage extends StatelessWidget {
                       ),
                       OutlinedButton(
                         style: ButtonStyle(
+                          overlayColor: MaterialStateProperty.resolveWith((states) => Colors.white24),
+                          backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.transparent),
                             side: MaterialStateProperty.resolveWith(
                                 (states) => BorderSide(color: Colors.white))),
-                        onPressed: () {},
+                        onPressed: () => Navigator.pushNamed(context, '/profile'),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Text(
