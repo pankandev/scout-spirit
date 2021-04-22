@@ -10,15 +10,15 @@ final amplifyConfigMap = {
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "us-west-2:90ba3bdf-3c3e-4bea-853b-11f11344deec",
+              "PoolId": "us-west-2:51fb4d6b-10d4-461e-8172-ac52529b4f2a",
               "Region": "us-west-2"
             }
           }
         },
         "CognitoUserPool": {
           "Default": {
-            "PoolId": "us-west-2_vbPmGbURK",
-            "AppClientId": "6j4lha55h4agpjlgdck0hbdtse",
+            "PoolId": "us-west-2_GikObR6zU",
+            "AppClientId": "6ibudrnjml4p3rc4t9oabvis8o",
             "Region": "us-west-2"
           }
         },
@@ -34,7 +34,7 @@ final amplifyConfigMap = {
     "plugins": {
       "awsPinpointAnalyticsPlugin": {
         "pinpointAnalytics": {
-          "appId": "ff90b7d6185047dc8bd8533f0854e5d2",
+          "appId": "a9f6d01c8d1f4702a3d75bd063fa4533",
           "region": "us-west-2"
         },
         "pinpointTargeting": {"region": "us-west-2"}

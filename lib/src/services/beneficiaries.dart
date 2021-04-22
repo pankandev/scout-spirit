@@ -9,7 +9,6 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
-import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
 
@@ -72,6 +71,7 @@ class BeneficiariesService extends RestApiService {
         key: key,
         local: file,
         options: UploadFileOptions());
+    print(result.key);
     return result;
   }
 }

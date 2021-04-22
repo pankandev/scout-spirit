@@ -40,7 +40,8 @@ class AuthenticationService {
     CognitoAuthSession authSession = await Amplify.Auth.fetchAuthSession(
             options: CognitoSessionOptions(getAWSCredentials: true))
         as CognitoAuthSession;
-    return authSession.identityId.split('.').last;
+    print(authSession.identityId);
+    return authSession.identityId;
   }
 
   Future<void> updateAuthenticatedUser() async {

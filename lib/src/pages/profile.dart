@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
+import 'package:scout_spirit/src/providers/loading_screen.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/avatar.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
@@ -76,16 +77,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<Map<String, dynamic>?> getAvatar(
       Map<String, dynamic>? arguments) async {
+    LoadingScreenProvider().show(context, label: "Cargando avatar...");
     Avatar avatar = await AvatarService().getAuthenticatedAvatar();
+    LoadingScreenProvider().hide();
     loadInitialValues(avatar);
     return avatar.toMap();
   }
 
   Future<void> _save() async {
-    await AvatarService().updateAuthenticatedAvatar();
+    setState(() {
+      touched = false;
+    });
+    try {
+      await AvatarService().updateAuthenticatedAvatar();
+    } catch (e) {
+      setState(() {
+        touched = true;
+      });
+    }
   }
 
   bool touched = false;
+  static int profileIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
         IconButton(icon: Icon(Icons.save), onPressed: touched ? _save : null),
         IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: () => GameController().takeScreenshot("image.png")),
+            onPressed: () => GameController().takeScreenshot("image_${profileIndex++}.png")),
       ]),
       floatingActionButton: SpeedDial(
         children: categories.keys.map((e) {
