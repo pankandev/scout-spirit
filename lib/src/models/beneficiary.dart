@@ -107,6 +107,7 @@ class Beneficiary {
       required this.birthdate,
       required this.nickname,
       required this.target,
+      required this.profilePicture,
       required this.nTasks,
       required this.score,
       required this.userId,
@@ -117,6 +118,7 @@ class Beneficiary {
 
   dynamic completed;
   String unitUser;
+  String? profilePicture;
   BoughtItems boughtItems;
   bool? setBaseTasks;
   String birthdate;
@@ -134,6 +136,7 @@ class Beneficiary {
     return Beneficiary(
         completed: json["completed"],
         unitUser: json["unit-user"],
+        profilePicture: json["profile_picture"],
         boughtItems: BoughtItems.fromJson(json["bought_items"]),
         birthdate: json["birthdate"],
         nickname: json["nickname"],
@@ -158,6 +161,7 @@ class Beneficiary {
         "n_tasks": nTasks.toJson(),
         "score": score.toJson(),
         "user": userId,
+        "profile_picture": profilePicture,
         "full-name": fullName,
         "group": "$districtCode::$groupCode",
         "set_base_tasks": setBaseTasks

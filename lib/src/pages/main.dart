@@ -52,31 +52,34 @@ class MainPage extends StatelessWidget {
         Background(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: SafeArea(
-              child: RewardOverlay(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildUserContainer(context),
-                    MainDivider(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text('Objetivo personal'),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        ActiveTaskContainer()
-                      ],
-                    ),
-                    MainDivider(),
-                  ],
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: SafeArea(
+                child: RewardOverlay(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      _buildUserContainer(context),
+                      MainDivider(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Objetivo personal'),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          ActiveTaskContainer()
+                        ],
+                      ),
+                      MainDivider(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -104,7 +107,20 @@ class MainPage extends StatelessWidget {
                         height: 102,
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(51),
-                            child: Image.asset('assets/imgs/avatar.png')),
+                            child: FutureBuilder<Beneficiary?>(
+                                future:
+                                    BeneficiariesService().getMyself(),
+                                builder: (context, snapshot) {
+                                  String placeholderPath =
+                                      'assets/imgs/avatar.png';
+                                  String? data = snapshot.data?.profilePicture;
+                                  return data != null
+                                      ? FadeInImage(
+                                          image: NetworkImage(data),
+                                          placeholder:
+                                              AssetImage(placeholderPath))
+                                      : Image.asset(placeholderPath);
+                                })),
                       ),
                       SizedBox(
                         height: 10.0,
@@ -118,11 +134,14 @@ class MainPage extends StatelessWidget {
                       ),
                       OutlinedButton(
                         style: ButtonStyle(
-                          overlayColor: MaterialStateProperty.resolveWith((states) => Colors.white24),
-                          backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.transparent),
+                            overlayColor: MaterialStateProperty.resolveWith(
+                                (states) => Colors.white24),
+                            backgroundColor: MaterialStateProperty.resolveWith(
+                                (states) => Colors.transparent),
                             side: MaterialStateProperty.resolveWith(
                                 (states) => BorderSide(color: Colors.white))),
-                        onPressed: () => Navigator.pushNamed(context, '/profile'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/profile'),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Text(
@@ -168,6 +187,10 @@ class MainPage extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
     await AuthenticationService().logout();
     await Navigator.of(context).pushReplacementNamed('/login');
+  }
+
+  Future<void> _refresh() async {
+    await AuthenticationService().updateAuthenticatedUser();
   }
 }
 

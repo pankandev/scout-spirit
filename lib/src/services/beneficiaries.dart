@@ -1,6 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'dart:io';
 
+import 'package:uuid/uuid.dart' as uuid;
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
@@ -63,15 +64,29 @@ class BeneficiariesService extends RestApiService {
         body: {"code": realCode});
   }
 
-  Future<UploadFileResult> uploadProfilePicture(File file) async {
-    String identityId = await AuthenticationService().getIdentityId();
+  Future<String> uploadPublicFile(String identityId, File file) async {
     String extension = file.path.split('.').last;
-    final String key = "$identityId/images/profile.$extension";
-    UploadFileResult result = await Amplify.Storage.uploadFile(
-        key: key,
-        local: file,
-        options: UploadFileOptions());
-    print(result.key);
-    return result;
+    String id = uuid.Uuid().v1();
+    String filename = "$id.$extension";
+    final String key = "$identityId/images/$filename";
+    await Amplify.Storage.uploadFile(
+        key: key, local: file, options: UploadFileOptions());
+    return filename;
+  }
+
+  Future<String> uploadProfilePicture(File file) async {
+    String userId = await AuthenticationService().authenticatedUserId;
+    String identityId = await AuthenticationService().getIdentityId();
+    String filename = await uploadPublicFile(identityId, file);
+    String url = getImageUrl(identityId, filename);
+    await put("api/beneficiaries/$userId", {
+      "profile_picture": url
+    });
+    await AuthenticationService().updateAuthenticatedUser();
+    return url;
+  }
+
+  String getImageUrl(String identityId, String filename) {
+    return webUrl + "public/$identityId/images/$filename";
   }
 }

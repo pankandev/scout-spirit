@@ -32,6 +32,7 @@ dependencies:
   device_info: ^2.0.0
   flutter_speed_dial: ^3.0.5
   image_crop: ^0.4.0
+  uuid: 3.0.4
 
 dev_dependencies:
   flutter_test:

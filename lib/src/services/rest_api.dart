@@ -10,6 +10,8 @@ import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:http/http.dart' as http;
 
+const WEB_URL = "https://d1jw7u4jmw9fzl.cloudfront.net/";
+
 abstract class RestApiService {
   Future<String?> _getToken() async {
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
@@ -45,8 +47,12 @@ abstract class RestApiService {
     if (path.length > 0 && path[0] == '/') {
       path = path.substring(1);
     }
-    String baseUrl = kReleaseMode ? "https://j2cpy7mcrh.execute-api.us-west-2.amazonaws.com/Prod/" : "http://localhost:3000/";
+    String baseUrl = kReleaseMode ? WEB_URL : "http://localhost:3000/";
     return Uri.parse(baseUrl + path);
+  }
+
+  String get webUrl {
+    return WEB_URL;
   }
 
   Future<Map<String, dynamic?>> get(String path,
