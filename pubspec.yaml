@@ -37,6 +37,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.0
 
 flutter:
   uses-material-design: true
@@ -64,3 +65,8 @@ flutter:
     - family: Neucha
       fonts:
         - asset: assets/fonts/Neucha-Regular.ttf
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
