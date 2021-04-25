@@ -180,15 +180,6 @@ class MainPage extends StatelessWidget {
         });
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return _buildUserContainer(context);
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    await AuthenticationService().logout();
-    await Navigator.of(context).pushReplacementNamed('/login');
-  }
-
   Future<void> _refresh() async {
     await AuthenticationService().updateAuthenticatedUser();
   }

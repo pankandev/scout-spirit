@@ -19,9 +19,19 @@ class TaskEditDialogue extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Editar tarea', style: appTheme.textTheme.headline2, textAlign: TextAlign.start,),
-                    SizedBox(height: 8.0,),
-                    Text('Escribe algo específico que quieras hacer para este objetivo', style: appTheme.textTheme.caption, textAlign: TextAlign.start,),
+                    Text(
+                      'Editar tarea',
+                      style: appTheme.textTheme.headline2,
+                      textAlign: TextAlign.start,
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      'Escribe algo específico que quieras hacer para este objetivo',
+                      style: appTheme.textTheme.caption,
+                      textAlign: TextAlign.start,
+                    ),
                     TextFormField(
                       autofocus: true,
                       keyboardType: TextInputType.text,
@@ -35,15 +45,26 @@ class TaskEditDialogue extends StatelessWidget {
                         return null;
                       },
                     ),
-                    SizedBox(height: 8.0,),
-                    RaisedButton(onPressed: () => _submit(context), color: Colors.lightBlue, child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text('Guardar', style: TextStyle(color: Colors.white),),
-                        SizedBox(width: 10.0,),
-                        Icon(Icons.arrow_forward, color: Colors.white)
-                      ],
-                    ),),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    RawMaterialButton(
+                      onPressed: () => _submit(context),
+                      fillColor: Colors.lightBlue,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Guardar',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Icon(Icons.arrow_forward, color: Colors.white)
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

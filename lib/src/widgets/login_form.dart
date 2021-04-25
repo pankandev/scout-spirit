@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
@@ -58,12 +59,11 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                RaisedButton(
+                RawMaterialButton(
                   onPressed: disabled || snapshot.error != null
                       ? null
                       : () => _login(context),
-                  disabledColor: appTheme.accentColor.withAlpha(150),
-                  color: appTheme.accentColor,
+                  fillColor: disabled || snapshot.error != null ? appTheme.accentColor.withAlpha(150) : appTheme.accentColor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

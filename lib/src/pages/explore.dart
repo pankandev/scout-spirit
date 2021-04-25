@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:scout_spirit/src/unity/unity_controller.dart';
 import 'package:scout_spirit/src/widgets/unity_app.dart';
 
@@ -14,6 +15,11 @@ class _ExplorePageState extends State<ExplorePage> {
 
     GameController controller = GameController();
     controller.on("test", onTestMethod);
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
   }
 
   @override
@@ -22,6 +28,13 @@ class _ExplorePageState extends State<ExplorePage> {
 
     GameController controller = GameController();
     controller.off();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   Future<Map<String, dynamic>?> onTestMethod(
@@ -33,8 +46,9 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: UnityApp(
-      controller: GameController(),
-      initialSceneName: "World",
-    ));
+          controller: GameController(),
+          initialSceneName: "Videogame",
+          fullscreen: true,
+        ));
   }
 }

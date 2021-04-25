@@ -1,6 +1,7 @@
 import 'package:scout_spirit/src/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
 
+
 class LoadingScreenProvider {
   static LoadingScreenProvider _instance = LoadingScreenProvider._internal();
 
@@ -12,13 +13,13 @@ class LoadingScreenProvider {
 
   BuildContext? dialogContext;
 
-  void show(BuildContext context, {String? label}) {
+  void show(BuildContext context, {String? label, OnPop? onWillPop}) {
     if (dialogContext != null) {
       return;
     }
     showDialog(context: context, builder: (context) {
       dialogContext = context;
-      return LoadingScreenPage(label: label);
+      return LoadingScreenPage(label: label, onWillPop: onWillPop);
     });
   }
 

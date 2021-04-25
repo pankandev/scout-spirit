@@ -1,11 +1,14 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart' as uuid;
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
@@ -29,7 +32,26 @@ class BeneficiariesService extends RestApiService {
     // ignore: unnecessary_null_comparison
     if (user == null)
       throw UnauthenticatedError(message: 'Trying to get current beneficiary');
-    return await getById(user.userId);
+    try {
+      return await getById(user.userId);
+    } on SocketException catch (e) {
+      if (!kReleaseMode) {
+        return Beneficiary(lastClaimedToken: -1,
+            unitUser: '',
+            boughtItems: BoughtItems(),
+            birthdate: '01-01-2000',
+            nickname: 'Test User',
+            target: null,
+            profilePicture: null,
+            nTasks: TasksCount(),
+            score: TasksCount(),
+            userId: '',
+            fullName: 'Test User',
+            groupCode: 'group',
+            districtCode: 'district');
+      }
+      throw e;
+    }
   }
 
   Future<Beneficiary?> getById(String id) async {
@@ -44,11 +66,11 @@ class BeneficiariesService extends RestApiService {
     }
   }
 
-  Future<List<Beneficiary>> getAllFromGroup(
-      String districtCode, String groupCode) async {
+  Future<List<Beneficiary>> getAllFromGroup(String districtCode,
+      String groupCode) async {
     List<dynamic> items = (await this.get(
-            "api/districts/$districtCode/groups/$groupCode/beneficiaries/"))[
-        "items"];
+        "api/districts/$districtCode/groups/$groupCode/beneficiaries/"))[
+    "items"];
     return items.map<Beneficiary>((item) => Beneficiary.fromMap(item)).toList();
   }
 
@@ -65,7 +87,9 @@ class BeneficiariesService extends RestApiService {
   }
 
   Future<String> uploadPublicFile(String identityId, File file) async {
-    String extension = file.path.split('.').last;
+    String extension = file.path
+        .split('.')
+        .last;
     String id = uuid.Uuid().v1();
     String filename = "$id.$extension";
     final String key = "$identityId/images/$filename";
@@ -75,13 +99,11 @@ class BeneficiariesService extends RestApiService {
   }
 
   Future<String> uploadProfilePicture(File file) async {
-    String userId = await AuthenticationService().authenticatedUserId;
+    String userId = AuthenticationService().authenticatedUserId;
     String identityId = await AuthenticationService().getIdentityId();
     String filename = await uploadPublicFile(identityId, file);
     String url = getImageUrl(identityId, filename);
-    await put("api/beneficiaries/$userId", {
-      "profile_picture": url
-    });
+    await put("api/beneficiaries/$userId", {"profile_picture": url});
     await AuthenticationService().updateAuthenticatedUser();
     return url;
   }

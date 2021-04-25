@@ -1,8 +1,10 @@
 import 'dart:async';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';

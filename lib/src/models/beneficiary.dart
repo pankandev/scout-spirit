@@ -183,12 +183,12 @@ class BoughtItems {
 
 class TasksCount {
   TasksCount({
-    required this.sociability,
-    required this.character,
-    required this.affectivity,
-    required this.creativity,
-    required this.spirituality,
-    required this.corporality,
+    this.sociability = 0,
+    this.character = 0,
+    this.affectivity = 0,
+    this.creativity = 0,
+    this.spirituality = 0,
+    this.corporality = 0,
   });
 
   int sociability;

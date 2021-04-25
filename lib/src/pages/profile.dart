@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
@@ -67,21 +68,37 @@ class _ProfilePageState extends State<ProfilePage> {
     AvatarService().updateAvailableAvatarRewards();
     widget.controller.on('getAvatar', getAvatar);
     widget.controller.on('getScreenshot', _getScreenshot);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     availableParts = null;
   }
 
   void dispose() {
     super.dispose();
     widget.controller.off();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   Future<Map<String, dynamic>?> getAvatar(
       Map<String, dynamic>? arguments) async {
     LoadingScreenProvider().show(context, label: "Cargando avatar...");
-    Avatar avatar = await AvatarService().getAuthenticatedAvatar();
-    LoadingScreenProvider().hide();
-    loadInitialValues(avatar);
-    return avatar.toMap();
+    try {
+      Avatar avatar = await AvatarService().getAuthenticatedAvatar();
+      LoadingScreenProvider().hide();
+      loadInitialValues(avatar);
+      return avatar.toMap();
+    } catch (e) {
+      LoadingScreenProvider().hide();
+      Navigator.pop(context);
+      return null;
+    }
   }
 
   Future<void> _save() async {

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
@@ -43,10 +45,15 @@ class AvatarService extends RestApiService {
   }
 
   Future<Avatar> getUserAvatar(String userId) async {
-    Map<String, dynamic> avatar =
-        await get('api/beneficiaries/$userId/avatar/');
-    print(avatar);
-    return Avatar.fromMap(avatar);
+    try {
+      Map<String, dynamic> avatar = await get('api/beneficiaries/$userId/avatar/');
+      return Avatar.fromMap(avatar);
+    } on SocketException catch (e) {
+      if (!kReleaseMode) {
+        return Avatar();
+      }
+      throw e;
+    }
   }
 
   Future<Avatar> getAuthenticatedAvatar() async {

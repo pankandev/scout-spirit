@@ -73,6 +73,7 @@ class RewardsService extends RestApiService {
   }
 
   Future<void> updateCategory(String category) async {
+    // ignore: close_sinks
     BehaviorSubject<List<Reward>> subject = _getCategorySubject(category);
     List<Log> rewardLogs =
         await LogsService().getByCategory(joinKey(["REWARD", category]));

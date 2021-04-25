@@ -89,24 +89,26 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                     height: 16.0,
                   ),
                   ElevatedButton(
-                      onPressed: loading ? null : () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            loading = true;
-                          });
-                          Task task = TasksService().snapActiveTask!;
-                          try {
-                            await LogsService().postProgressLog(
-                                task, controller.text);
-                          } catch (e) {
-                            setState(() {
-                              loading = false;
-                            });
-                            return;
-                          }
-                          Navigator.of(context).pop(true);
-                        }
-                      },
+                      onPressed: loading
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  loading = true;
+                                });
+                                Task task = TasksService().snapActiveTask!;
+                                try {
+                                  await LogsService().postProgressLog(
+                                      context, task, controller.text);
+                                } catch (e) {
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  return;
+                                }
+                                Navigator.of(context).pop(true);
+                              }
+                            },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.resolveWith<
                               Color>((states) => Colors.deepPurple),

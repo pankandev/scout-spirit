@@ -290,8 +290,8 @@ class _TaskViewPageState extends State<TaskViewPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        title: Text(
-                            "[$day $hour] ${log.log}"),
+                        title: Text(log.log),
+                        subtitle: Text("$day $hour"),
                       ),
                       Divider()
                     ],

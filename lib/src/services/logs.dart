@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/log.dart';
+import 'package:scout_spirit/src/providers/reward_provider.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
@@ -16,7 +18,7 @@ class LogsService extends RestApiService {
 
   LogsService._internal();
 
-  Future<void> postProgressLog(Task task, String log, {dynamic? data}) async {
+  Future<void> postProgressLog(BuildContext context, Task task, String log, {dynamic? data}) async {
     Map<String, dynamic> body = {
       'token': task.token?.token,
       'log': log,
@@ -31,6 +33,7 @@ class LogsService extends RestApiService {
     if (encodedToken != null) {
       RewardToken token = RewardToken(encodedToken);
       await RewardsService().saveReward(token);
+      await RewardChecker().checkForRewards(context);
     }
   }
 

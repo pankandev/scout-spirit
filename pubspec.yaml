@@ -19,20 +19,20 @@ dependencies:
   amplify_analytics_pinpoint: ^0.1.2
   amplify_storage_s3: ^0.1.2
   rxdart: ^0.26.0
-  dotted_border: ^1.0.7
-  provider: ^4.3.3
+  dotted_border: ^2.0.0
+  provider: ^5.0.0
   flutter_unity_widget: ^4.0.1
-  intl: ^0.15.6
+  intl: ^0.17.0
   http: ^0.13.1
   jose: ^0.3.0
-  confetti: ^0.5.5
+  confetti: ^0.6.0-nullsafety
   hive: ^2.0.2
   hive_flutter: ^1.0.0
-  fluttertoast: ^8.0.3
   device_info: ^2.0.0
   flutter_speed_dial: ^3.0.5
   image_crop: ^0.4.0
   uuid: 3.0.4
+  fluttertoast: ^8.0.6
 
 dev_dependencies:
   flutter_test:
