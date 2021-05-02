@@ -25,12 +25,7 @@ class AvatarService extends RestApiService {
   }
 
   Stream<List<AvatarPart>> getAvailableAvatarRewards() {
-    Stream<List<Reward>> avatarRewards =
-        RewardsService().getByCategory("avatar");
-    return avatarRewards.transform<List<AvatarPart>>(
-        StreamTransformer.fromHandlers(
-            handleData: (data, sink) =>
-                sink.add(data.map((e) => e as AvatarPart).toList())));
+    return RewardsService().getByCategory<AvatarPart>("avatar");
   }
 
   Stream<List<T>> getAvailableAvatarRewardsByType<T extends AvatarPart>() {

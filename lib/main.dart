@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:scout_spirit/src/forms/initialize.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
+import 'package:scout_spirit/src/models/world.dart';
 import 'package:scout_spirit/src/pages/main.dart';
 import 'package:scout_spirit/src/pages/authentication.dart';
 import 'package:scout_spirit/src/pages/signup.dart';
@@ -22,6 +23,13 @@ import 'package:scout_spirit/src/utils/development_area.dart';
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox<String>('rewards');
+  Hive.registerAdapter(WorldAdapter());
+  Hive.registerAdapter(ZoneAdapter());
+  Hive.registerAdapter(NodeAdapter());
+  Hive.registerAdapter(ZoneObjectAdapter());
+  Hive.registerAdapter(Vector3Adapter());
+  Hive.registerAdapter(QuaternionAdapter());
+  await Hive.openBox<World>('world');
   runApp(ScoutSpiritApp());
 }
 

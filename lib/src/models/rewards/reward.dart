@@ -34,7 +34,7 @@ abstract class Reward {
 
     switch (type) {
       case RewardType.ZONE:
-        return Zone.fromMap(description, id: id, release: release);
+        return ZoneReward.fromMap(description, id: id, release: release);
       case RewardType.AVATAR:
         return AvatarPart.fromMap(description, id: id, release: release);
       case RewardType.POINTS:
@@ -56,16 +56,16 @@ abstract class Reward {
   }
 }
 
-class Zone extends Reward {
-  final String code;
+class ZoneReward extends Reward {
+  final String zoneId;
 
-  Zone.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
-      : code = map["code"]!,
+  ZoneReward.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
+      : zoneId = map["code"]!,
         super(RewardType.ZONE, id: id, release: release);
 
   @override
   String toString() {
-    return "Zone(code: $code)";
+    return "Zone(code: $zoneId)";
   }
 }
 

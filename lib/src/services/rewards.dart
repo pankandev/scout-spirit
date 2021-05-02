@@ -25,15 +25,15 @@ class RewardsService extends RestApiService {
     }
     Map<String, dynamic> response;
     try {
-      response = await post(
-          'api/rewards/claim', body: body);
+      response = await post('api/rewards/claim', body: body);
     } on HttpError catch (e) {
       if (e.statusCode == 400) {
         box.delete(token.storageId);
       }
       throw e;
     }
-    List<Reward> rewards = (response["rewards"] as List).map((e) => Reward.fromMap(e)).toList();
+    List<Reward> rewards =
+        (response["rewards"] as List).map((e) => Reward.fromMap(e)).toList();
     box.delete(token.storageId);
     return rewards;
   }
@@ -75,12 +75,12 @@ class RewardsService extends RestApiService {
   Future<void> updateCategory(String category) async {
     // ignore: close_sinks
     BehaviorSubject<List<Reward>> subject = _getCategorySubject(category);
-    List<Log> rewardLogs =
+    List<Log> rewardLogs;
+    rewardLogs =
         await LogsService().getByCategory(joinKey(["REWARD", category]));
-    List<Reward> rewards = rewardLogs
-        .map((e) =>
-            Reward.fromMap(e.data!))
-        .toList();
+    print(rewardLogs);
+    List<Reward> rewards =
+        rewardLogs.map((e) => Reward.fromMap(e.data!)).toList();
     subject.sink.add(rewards);
   }
 
@@ -92,8 +92,8 @@ class RewardsService extends RestApiService {
     return subject;
   }
 
-  Stream<List<Reward>> getByCategory(String category) {
-    return _getCategorySubject(category).stream;
+  Stream<List<T>> getByCategory<T extends Reward>(String category) {
+    return _getCategorySubject(category).stream.map((event) => event as List<T>);
   }
 
   final Map<String, BehaviorSubject<List<Reward>>> rewardsByCategory = {};

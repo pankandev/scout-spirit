@@ -62,7 +62,7 @@ class GameController {
     final String method = content["method"];
     final int messageIndex = content["index"];
     if (method == "print") {
-      print(content["arguments"]);
+      print("[UNITY:LOG] ${content['arguments']}");
       await _sendResponse(messageIndex, response: null);
       return;
     }
@@ -75,9 +75,10 @@ class GameController {
         response = await _handlers[method]!(arguments);
       } on UnityFlutterError catch (e) {
         error = e;
-      } catch (e) {
+      } catch (e, s) {
         error = UnityFlutterError(
             code: "UNKNOWN", message: "An unknown error ocurred");
+        print(s);
         throw e;
       }
     } else {
