@@ -35,9 +35,15 @@ class WorldService {
   }
 
   World get initialWorld => World(zones: {
-        "start": Zone(zoneId: "Base", lastJoinTime: null, objects: [], nodes: {
-          "South": Node(zone: "start", node: "North"),
-          "North": Node(zone: "start", node: "South")
+        "start": Zone(zoneId: "Base", lastJoinTime: null, objects: [
+          ZoneObject(
+              objectId: 'id',
+              position: Vector3(5, 17, 10),
+              rotation: Quaternion(0, 0, 0, 0),
+              scale: Vector3(1, 1, 1))
+        ], nodes: {
+          "South": null,
+          "North": null
         })
       }, currentZoneId: "start", currentNodeId: "South");
 

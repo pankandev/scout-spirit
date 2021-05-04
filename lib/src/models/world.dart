@@ -57,7 +57,7 @@ class Zone {
   int? lastJoinTime;
 
   @HiveField(3)
-  Map<String, Node> nodes;
+  Map<String, Node?> nodes;
 
   factory Zone.fromMap(Map<String, dynamic> json) => Zone(
         zoneId: json["zoneId"],
@@ -73,7 +73,7 @@ class Zone {
         "objects":
             List<Map<String, dynamic>>.from(objects.map((x) => x.toMap())),
         "lastJoinTime": lastJoinTime,
-        "nodes": nodes.map((key, value) => MapEntry(key, value.toMap())),
+        "nodes": nodes.map((key, value) => MapEntry(key, value?.toMap())),
       };
 }
 
@@ -139,7 +139,7 @@ class ZoneObject {
 
 @HiveType(typeId: 5)
 class Vector3 {
-  Vector3({required this.x, required this.y, required this.z});
+  Vector3(this.x, this.y, this.z);
 
   @HiveField(0)
   final double x;
@@ -151,7 +151,7 @@ class Vector3 {
   final double z;
 
   factory Vector3.fromMap(Map<String, dynamic> json) =>
-      Vector3(x: json["x"], y: json["y"], z: json["z"]);
+      Vector3(json["x"], json["y"], json["z"]);
 
   Map<String, dynamic> toMap() {
     return {
@@ -164,8 +164,7 @@ class Vector3 {
 
 @HiveType(typeId: 6)
 class Quaternion {
-  Quaternion(
-      {required this.x, required this.y, required this.z, required this.w});
+  Quaternion(this.x, this.y, this.z, this.w);
 
   @HiveField(0)
   final double x;
@@ -180,7 +179,7 @@ class Quaternion {
   final double w;
 
   factory Quaternion.fromMap(Map<String, dynamic> json) =>
-      Quaternion(x: json["x"], y: json["y"], z: json["z"], w: json["w"]);
+      Quaternion(json["x"], json["y"], json["z"], json["w"]);
 
   Map<String, dynamic> toMap() {
     return {"x": x, "y": y, "z": z, "w": w};

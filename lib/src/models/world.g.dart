@@ -180,9 +180,9 @@ class Vector3Adapter extends TypeAdapter<Vector3> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Vector3(
-      x: fields[0] as double,
-      y: fields[1] as double,
-      z: fields[2] as double,
+      fields[0] as double,
+      fields[1] as double,
+      fields[2] as double,
     );
   }
 
@@ -220,10 +220,10 @@ class QuaternionAdapter extends TypeAdapter<Quaternion> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Quaternion(
-      x: fields[0] as double,
-      y: fields[1] as double,
-      z: fields[2] as double,
-      w: fields[3] as double,
+      fields[0] as double,
+      fields[1] as double,
+      fields[2] as double,
+      fields[3] as double,
     );
   }
 
