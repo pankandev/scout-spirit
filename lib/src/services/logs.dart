@@ -14,6 +14,22 @@ import 'package:scout_spirit/src/utils/key.dart';
 
 
 final Map<String, List<Map<String, dynamic>>> testLogs = {
+  "REWARD::DECORATION": [
+    {
+      "tag": "REWARD::DECORATION",
+      "timestamp": 1000,
+      "log": "Won a reward!",
+      "data": {
+        "description": {
+          "type": "Wood",
+          "code": "box"
+        },
+        "category": 'DECORATION',
+        "rarity": "COMMON",
+        "release-id": 1
+      },
+    }
+  ],
   "REWARD::AVATAR": [
     {
       "tag": "REWARD::AVATAR",

@@ -64,8 +64,10 @@ class Zone {
         objects: List<ZoneObject>.from(
             json["objects"].map((x) => ZoneObject.fromMap(x))),
         lastJoinTime: json["lastJoinTime"],
-        nodes: json["nodes"]
-            .map((key, value) => MapEntry(key, Node.fromMap(value))),
+        nodes: (json["nodes"] as Map)
+            .map((key, value) =>
+                MapEntry(key, value == null ? null : Node.fromMap(value)))
+            .cast<String, Node?>(),
       );
 
   Map<String, dynamic> toMap() => {

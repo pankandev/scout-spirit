@@ -1,6 +1,7 @@
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
+import 'package:scout_spirit/src/utils/map.dart';
 import 'package:uuid/uuid.dart' as uuid;
 import 'package:hive/hive.dart';
 import 'package:scout_spirit/src/models/world.dart';
@@ -62,6 +63,7 @@ class WorldService {
   }
 
   Stream<List<Zone>> getAvailableZones() {
+    RewardsService().updateCategory('zone');
     return RewardsService()
         .getByCategory<ZoneReward>('zone')
         .asyncMap((rewards) async {
@@ -78,5 +80,28 @@ class WorldService {
               zoneId: zoneId, objects: [], lastJoinTime: null, nodes: {}))
           .toList();
     });
+  }
+
+  Future<List<DecorationReward>> getAvailableItems() async {
+    await RewardsService().updateCategory('decoration');
+    String userId = AuthenticationService().authenticatedUserId;
+    List<DecorationReward> items =
+        RewardsService().getSnapByCategory<DecorationReward>('decoration');
+    LazyBox<List<String>> box =
+        await Hive.openLazyBox<List<String>>('claimedItems');
+    List<String> claimedItems = await box.get(userId) ?? [];
+    return subtractList<DecorationReward, String>(
+        items,
+        claimedItems.map((e) => DecorationReward.dummyFromCode(e)),
+        (item) => item.code).toList();
+  }
+
+  Future<World> updateZone(String id, Zone zone) async {
+    String userId = AuthenticationService().authenticatedUserId;
+    World world = await WorldService().getWorld(userId);
+    world.zones[id] = zone;
+
+    await WorldService().saveWorld(userId, world);
+    return await WorldService().getWorld(userId);
   }
 }

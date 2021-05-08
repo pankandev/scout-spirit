@@ -73,27 +73,27 @@ class RewardsService extends RestApiService {
   }
 
   Future<void> updateCategory(String category) async {
-    // ignore: close_sinks
-    BehaviorSubject<List<Reward>> subject = _getCategorySubject(category);
     List<Log> rewardLogs;
     rewardLogs =
         await LogsService().getByCategory(joinKey(["REWARD", category]));
-    print(rewardLogs);
     List<Reward> rewards =
         rewardLogs.map((e) => Reward.fromMap(e.data!)).toList();
-    subject.sink.add(rewards);
+    _getCategorySubject(category).sink.add(rewards);
   }
 
   BehaviorSubject<List<Reward>> _getCategorySubject(String category) {
     if (!rewardsByCategory.containsKey(category.toLowerCase())) {
       rewardsByCategory[category] = new BehaviorSubject<List<Reward>>();
     }
-    BehaviorSubject<List<Reward>> subject = rewardsByCategory[category]!;
-    return subject;
+    return rewardsByCategory[category]!;
   }
 
   Stream<List<T>> getByCategory<T extends Reward>(String category) {
-    return _getCategorySubject(category).stream.map((event) => event as List<T>);
+    return _getCategorySubject(category).stream.map((event) => event.cast<T>());
+  }
+  List<T> getSnapByCategory<T extends Reward>(String category) {
+    List<Reward>? value = _getCategorySubject(category).value;
+    return value?.cast<T>() ?? <T>[];
   }
 
   final Map<String, BehaviorSubject<List<Reward>>> rewardsByCategory = {};

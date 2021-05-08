@@ -42,7 +42,7 @@ abstract class Reward {
       case RewardType.NEEDS:
         return Needs.fromMap(description, id: id, release: release);
       case RewardType.DECORATION:
-        return Decoration.fromMap(description, id: id, release: release);
+        return DecorationReward.fromMap(description, id: id, release: release);
     }
   }
 
@@ -59,7 +59,8 @@ abstract class Reward {
 class ZoneReward extends Reward {
   final String zoneId;
 
-  ZoneReward.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
+  ZoneReward.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
       : zoneId = map["code"]!,
         super(RewardType.ZONE, id: id, release: release);
 
@@ -69,14 +70,20 @@ class ZoneReward extends Reward {
   }
 }
 
-class Decoration extends Reward {
+class DecorationReward extends Reward {
   final String code;
   final String type;
 
-  Decoration.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
+  DecorationReward.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
       : code = map["code"]!,
         type = map["type"]!,
         super(RewardType.DECORATION, id: id, release: release);
+
+  DecorationReward.dummyFromCode(String code)
+      : code = code,
+        type = 'DUMMY',
+        super(RewardType.DECORATION, id: 0, release: 0);
 
   @override
   String toString() {
@@ -88,10 +95,11 @@ class Needs extends Reward {
   final int hunger;
   final int thirst;
 
-  Needs.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
+  Needs.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
       : hunger = map["hunger"]!,
         thirst = map["thirst"]!,
-        super(RewardType.NEEDS,id: id, release: release);
+        super(RewardType.NEEDS, id: id, release: release);
 
   @override
   String toString() {
@@ -102,7 +110,8 @@ class Needs extends Reward {
 class Points extends Reward {
   final int amount;
 
-  Points.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
+  Points.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
       : amount = map["amount"]!,
         super(RewardType.POINTS, id: id, release: release);
 
@@ -112,13 +121,7 @@ class Points extends Reward {
   }
 }
 
-enum AvatarRewardType {
-  PANTS,
-  SHIRT,
-  EYE,
-  MOUTH,
-  NECKERCHIEF
-}
+enum AvatarRewardType { PANTS, SHIRT, EYE, MOUTH, NECKERCHIEF }
 
 abstract class AvatarPart extends Reward {
   final AvatarRewardType type;
@@ -134,19 +137,25 @@ abstract class AvatarPart extends Reward {
     return {"type": typeToName(type), "description": attributesToMap()};
   }
 
-  factory AvatarPart.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release}) {
+  factory AvatarPart.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release}) {
     Map<String, dynamic> innerDescription = map["description"];
     switch (typeFromName(map["type"])) {
       case AvatarRewardType.PANTS:
-        return AvatarPants.fromMap(innerDescription, timestamp: timestamp, id: id, release: release);
+        return AvatarPants.fromMap(innerDescription,
+            timestamp: timestamp, id: id, release: release);
       case AvatarRewardType.SHIRT:
-        return AvatarShirt.fromMap(innerDescription, timestamp: timestamp, id: id, release: release);
+        return AvatarShirt.fromMap(innerDescription,
+            timestamp: timestamp, id: id, release: release);
       case AvatarRewardType.EYE:
-        return AvatarEye.fromMap(innerDescription, timestamp: timestamp, id: id, release: release);
+        return AvatarEye.fromMap(innerDescription,
+            timestamp: timestamp, id: id, release: release);
       case AvatarRewardType.MOUTH:
-        return AvatarMouth.fromMap(innerDescription, timestamp: timestamp, id: id, release: release);
+        return AvatarMouth.fromMap(innerDescription,
+            timestamp: timestamp, id: id, release: release);
       case AvatarRewardType.NECKERCHIEF:
-        return AvatarNeckerchief.fromMap(innerDescription, timestamp: timestamp, id: id, release: release);
+        return AvatarNeckerchief.fromMap(innerDescription,
+            timestamp: timestamp, id: id, release: release);
     }
   }
 
@@ -170,8 +179,7 @@ abstract class AvatarPart extends Reward {
 
   @override
   String toString() {
-    return "AvatarPart(type: ${typeToName(
-        type)}, attributes: ${attributesToMap()}, id: $id, release: $release)";
+    return "AvatarPart(type: ${typeToName(type)}, attributes: ${attributesToMap()}, id: $id, release: $release)";
   }
 
   @override
@@ -216,11 +224,15 @@ class AvatarShirt extends AvatarPart {
     throw new AppError(message: "Unknown shirt type: $name");
   }
 
-  AvatarShirt.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
-      :
-        material = map["material"],
+  AvatarShirt.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
+      : material = map["material"],
         shirtType = shirtTypeFromName(map["type"]),
-        super(type: AvatarRewardType.SHIRT, timestamp: timestamp, id: id, release: release);
+        super(
+            type: AvatarRewardType.SHIRT,
+            timestamp: timestamp,
+            id: id,
+            release: release);
 
   @override
   bool compareWith(AvatarPart? part) {
@@ -243,10 +255,14 @@ class AvatarPants extends AvatarPart {
     };
   }
 
-  AvatarPants.fromMap(Map<String, dynamic> map, {int? timestamp, int? id, int? release})
-      :
-        material = map["material"],
-        super(type: AvatarRewardType.PANTS, timestamp: timestamp, id: id, release: release);
+  AvatarPants.fromMap(Map<String, dynamic> map,
+      {int? timestamp, int? id, int? release})
+      : material = map["material"],
+        super(
+            type: AvatarRewardType.PANTS,
+            timestamp: timestamp,
+            id: id,
+            release: release);
 
   @override
   bool compareWith(AvatarPart? part) {
@@ -268,10 +284,14 @@ class AvatarEye extends AvatarPart {
     };
   }
 
-  AvatarEye.fromMap(Map<String, dynamic> descriptionMap, {int? timestamp, int? id, int? release})
-      :
-        material = descriptionMap["material"],
-        super(type: AvatarRewardType.EYE, timestamp: timestamp, id: id, release: release);
+  AvatarEye.fromMap(Map<String, dynamic> descriptionMap,
+      {int? timestamp, int? id, int? release})
+      : material = descriptionMap["material"],
+        super(
+            type: AvatarRewardType.EYE,
+            timestamp: timestamp,
+            id: id,
+            release: release);
 
   @override
   bool compareWith(AvatarPart? part) {
@@ -293,10 +313,14 @@ class AvatarMouth extends AvatarPart {
     };
   }
 
-  AvatarMouth.fromMap(Map<String, dynamic> descriptionMap, {int? timestamp, int? id, int? release})
-      :
-        material = descriptionMap["material"],
-        super(type: AvatarRewardType.MOUTH, timestamp: timestamp, id: id, release: release);
+  AvatarMouth.fromMap(Map<String, dynamic> descriptionMap,
+      {int? timestamp, int? id, int? release})
+      : material = descriptionMap["material"],
+        super(
+            type: AvatarRewardType.MOUTH,
+            timestamp: timestamp,
+            id: id,
+            release: release);
 
   @override
   bool compareWith(AvatarPart? part) {
@@ -319,10 +343,14 @@ class AvatarNeckerchief extends AvatarPart {
     };
   }
 
-  AvatarNeckerchief.fromMap(Map<String, dynamic> descriptionMap, {int? timestamp, int? id, int? release})
-      :
-        material = descriptionMap["material"],
-        super(type: AvatarRewardType.NECKERCHIEF, timestamp: timestamp, id: id, release: release);
+  AvatarNeckerchief.fromMap(Map<String, dynamic> descriptionMap,
+      {int? timestamp, int? id, int? release})
+      : material = descriptionMap["material"],
+        super(
+            type: AvatarRewardType.NECKERCHIEF,
+            timestamp: timestamp,
+            id: id,
+            release: release);
 
   @override
   bool compareWith(AvatarPart? part) {

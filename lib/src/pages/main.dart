@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
+import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
-import 'package:scout_spirit/src/providers/confirm_provider.dart';
 import 'package:scout_spirit/src/services/districts.dart';
 import 'package:scout_spirit/src/services/groups.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
@@ -108,8 +108,7 @@ class MainPage extends StatelessWidget {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(51),
                             child: FutureBuilder<Beneficiary?>(
-                                future:
-                                    BeneficiariesService().getMyself(),
+                                future: BeneficiariesService().getMyself(),
                                 builder: (context, snapshot) {
                                   String placeholderPath =
                                       'assets/imgs/avatar.png';
@@ -160,11 +159,12 @@ class MainPage extends StatelessWidget {
                                     MaterialStateProperty.resolveWith(
                                         (states) => Colors.redAccent)),
                             onPressed: () async {
-                              bool result = await ConfirmProvider.askConfirm(
-                                  context,
-                                  question: '¿Estás listo?',
-                                  content:
-                                      'Para marcar los objetivos iniciales te recomendamos haber conversado sobre esto con tu guiadora o dirigente.');
+                              bool result = await SnackBarProvider.showConfirmAlert(
+                                  context, '¿Estás listo?',
+                                  icon: Icons.error,
+                                  body:
+                                      'Para marcar los objetivos ya cumplidos deberías ponerte de acuerdo con tu guiadora o dirigente. Si ya lo hiciste, puedes continuar',
+                                  color: Colors.blueAccent);
                               if (result) {
                                 Navigator.of(context).pushNamed('/initialize');
                               }

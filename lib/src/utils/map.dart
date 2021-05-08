@@ -26,3 +26,25 @@ List<T> fromCount<T>(Map<T, int> count) {
   });
   return result;
 }
+
+Iterable<T> subtractList<T, TC>(
+    Iterable<T> a, Iterable<T> b, TC Function(T)? compareFun) {
+  if (compareFun == null) {
+    compareFun = ((el) {
+      return el as TC;
+    });
+  }
+  List<T> allItems = a.toList();
+  allItems.addAll(b);
+  Map<TC, T> ids = Map.fromEntries(
+      allItems.map((value) => MapEntry<TC, T>(compareFun!(value), value)));
+
+  Iterable<TC> aIds = a.map(compareFun);
+  Iterable<TC> bIds = b.map(compareFun);
+  Map<TC, int> aCount = countMap(aIds);
+  Map<TC, int> bCount = countMap(bIds);
+  Map<TC, int> availableCount =
+      aggregateMap((w, r) => (r ?? 0) - (w ?? 0), aCount, bCount);
+  List<TC> count = fromCount(availableCount);
+  return count.map((e) => ids[e]!).toList();
+}

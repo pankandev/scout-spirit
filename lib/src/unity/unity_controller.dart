@@ -72,9 +72,12 @@ class GameController {
     UnityFlutterError? error;
     if (_handlers.containsKey(method)) {
       try {
+        print("[UNITY_CONTROLLER] Called method $method ($messageIndex)");
         response = await _handlers[method]!(arguments);
+        print("[UNITY_CONTROLLER] Responded to request $messageIndex with response $response");
       } on UnityFlutterError catch (e) {
         error = e;
+        print("[UNITY_CONTROLLER] Received error to request $messageIndex with error ${e.message}");
       } catch (e, s) {
         error = UnityFlutterError(
             code: "UNKNOWN", message: "An unknown error ocurred");
