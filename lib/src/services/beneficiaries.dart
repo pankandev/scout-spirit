@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart' as uuid;
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
@@ -36,15 +38,28 @@ class BeneficiariesService extends RestApiService {
       return await getById(user.userId);
     } on SocketException catch (e) {
       if (!kReleaseMode) {
-        return Beneficiary(lastClaimedToken: -1,
+        return Beneficiary(
+            lastClaimedToken: -1,
             unitUser: '',
             boughtItems: BoughtItems(),
             birthdate: '01-01-2000',
             nickname: 'Test User',
             target: null,
             profilePicture: null,
-            nTasks: TasksCount(),
-            score: TasksCount(),
+            nTasks: TasksCount(
+                corporality: 3,
+                spirituality: 5,
+                character: 4,
+                creativity: 2,
+                affectivity: 8,
+                sociability: 2),
+            score: TasksCount(
+                corporality: 3,
+                spirituality: 5,
+                character: 4,
+                creativity: 2,
+                affectivity: 8,
+                sociability: 2),
             userId: '',
             fullName: 'Test User',
             groupCode: 'group',
@@ -66,11 +81,11 @@ class BeneficiariesService extends RestApiService {
     }
   }
 
-  Future<List<Beneficiary>> getAllFromGroup(String districtCode,
-      String groupCode) async {
+  Future<List<Beneficiary>> getAllFromGroup(
+      String districtCode, String groupCode) async {
     List<dynamic> items = (await this.get(
-        "api/districts/$districtCode/groups/$groupCode/beneficiaries/"))[
-    "items"];
+            "api/districts/$districtCode/groups/$groupCode/beneficiaries/"))[
+        "items"];
     return items.map<Beneficiary>((item) => Beneficiary.fromMap(item)).toList();
   }
 
@@ -87,9 +102,7 @@ class BeneficiariesService extends RestApiService {
   }
 
   Future<String> uploadPublicFile(String identityId, File file) async {
-    String extension = file.path
-        .split('.')
-        .last;
+    String extension = file.path.split('.').last;
     String id = uuid.Uuid().v1();
     String filename = "$id.$extension";
     final String key = "$identityId/images/$filename";

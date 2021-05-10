@@ -15,6 +15,7 @@ import 'package:scout_spirit/src/services/beneficiaries.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/unity/unity_controller.dart';
 import 'package:scout_spirit/src/utils/advanced_page_controller.dart';
+import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/page_view_input.dart';
 import 'package:scout_spirit/src/widgets/screenshot_display.dart';
 import 'package:scout_spirit/src/widgets/unity_app.dart';
@@ -120,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Editar perfil'), actions: [
+      appBar: AppBar(title: Text('Editar Ávatar'), actions: [
         IconButton(icon: Icon(Icons.save), onPressed: touched ? _save : null),
         IconButton(
             icon: Icon(Icons.camera_alt),
@@ -148,6 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SafeArea(
         child: Stack(children: [
+          Background(),
           UnityApp(
             controller: widget.controller,
             initialSceneName: 'Avatar',
@@ -175,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     snapshot.data!.nickname,
                     style: TextStyle(
                         fontSize: 48.0,
-                        fontFamily: 'Neucha',
+                        fontFamily: 'ConcertOne',
                         color: Colors.white),
                   ),
                   if (partType != null)
@@ -183,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       categoriesTitles[partType!]!,
                       style: TextStyle(
                           fontSize: 24.0,
-                          fontFamily: 'Neucha',
+                          fontFamily: 'ConcertOne',
                           color: Colors.white),
                     ),
                 ],

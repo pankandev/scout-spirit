@@ -51,7 +51,7 @@ class AuthenticationPage extends StatelessWidget {
               height: 18.0,
             ),
             ClickableText(
-                label: '¿Aún no tienes cuenta?', onTap: () => Navigator.of(context).pushNamed('/signup'))
+                label: 'Aún no tienes cuenta?\nPresiona aquí', onTap: () => Navigator.of(context).pushNamed('/signup'))
           ],
         ));
   }

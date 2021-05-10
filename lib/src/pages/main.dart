@@ -8,6 +8,8 @@ import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
 import 'package:scout_spirit/src/services/districts.dart';
 import 'package:scout_spirit/src/services/groups.dart';
+import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/widgets/scout_button.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/reward_overlay.dart';
@@ -23,61 +25,100 @@ class MainPage extends StatelessWidget {
         Provider(create: (_) => AuthenticationService()),
       ],
       child: Scaffold(
-        body: _buildBody(context),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromRGBO(30, 30, 30, 1),
-          unselectedItemColor: Colors.white,
-          onTap: (index) => _onTap(context, index),
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(label: 'Grupo', icon: Icon(Icons.group)),
-            BottomNavigationBarItem(
-                label: '¡Explorar!', icon: Icon(ScoutSpiritIcons.campfire)),
-            BottomNavigationBarItem(
-                label: 'Bitácora', icon: Icon(ScoutSpiritIcons.fleur_de_lis)),
-          ],
-        ),
+        body: Stack(children: [
+          _buildBody(context),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
+            child: Align(
+                alignment: Alignment.bottomRight,
+                child: _buildPlayButton(context)),
+          )
+        ]),
       ),
     );
-  }
-
-  void _onTap(BuildContext context, int button) {
-    if (button == 1) {
-      Navigator.of(context).pushNamed('/explore');
-    }
   }
 
   Stack _buildBody(BuildContext context) {
     return Stack(
       children: <Widget>[
         Background(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: RefreshIndicator(
-            onRefresh: _refresh,
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
+        RefreshIndicator(
+          onRefresh: _refresh,
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 136.0),
               child: SafeArea(
                 child: RewardOverlay(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SizedBox(
+                        height: 4.0,
+                      ),
+                      _buildHeader(context),
+                      SizedBox(
                         height: 10.0,
                       ),
                       _buildUserContainer(context),
-                      MainDivider(),
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      StreamBuilder<User?>(
+                          stream: AuthenticationService().userStream,
+                          builder: (context, snapshot) {
+                            return snapshot.data?.beneficiary != null
+                                ? _buildAlert(
+                                    context, snapshot.data!.beneficiary!)
+                                : Container();
+                          }),
+                      SizedBox(
+                        height: 23.0,
+                      ),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Text('Objetivo personal'),
+                          _buildSubHeader('Objetivo en progreso'),
                           SizedBox(
-                            height: 10.0,
+                            height: 24.0,
                           ),
                           ActiveTaskContainer()
                         ],
                       ),
-                      MainDivider(),
+                      SizedBox(
+                        height: 24.0,
+                      ),
+                      _buildSubHeader('Qué te gustaría ver?'),
+                      SizedBox(
+                        height: 24.0,
+                      ),
+                      ScoutButton(
+                        onPressed: () => Navigator.pushNamed(context, '/binnacle'),
+                        label: 'Bitácora',
+                        icon: Icons.book_outlined,
+                        labelSize: 26.0,
+                        labelColor: Colors.white,
+                        fillColor: Color.fromRGBO(204, 3, 99, 1),
+                        accentColor: Color.fromRGBO(255, 22, 162, 1),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 18.0, vertical: 21.0),
+                      ),
+                      SizedBox(
+                        height: 24.0,
+                      ),
+                      ScoutButton(
+                        onPressed: () {},
+                        label: 'Registros',
+                        labelSize: 26.0,
+                        labelColor: Colors.white,
+                        icon: Icons.account_tree_outlined,
+                        fillColor: Color.fromRGBO(53, 146, 255, 1),
+                        accentColor: Color.fromRGBO(22, 199, 255, 1),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 18.0, vertical: 21.0),
+                      )
                     ],
                   ),
                 ),
@@ -89,6 +130,38 @@ class MainPage extends StatelessWidget {
     );
   }
 
+  Text _buildSubHeader(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+          color: Colors.white, fontFamily: 'ConcertOne', fontSize: 22.0),
+    );
+  }
+
+  Widget _buildAlert(BuildContext context, Beneficiary beneficiary) {
+    return ScoutButton(
+        label:
+            'No has indicado tus objetivos pre-completados. Presiona aquí para indicarlos',
+        icon: Icons.warning_amber_rounded,
+        iconSize: 48.0,
+        fillColor: appTheme.errorColor,
+        accentColor: Colors.pink,
+        labelColor: Colors.white,
+        spreadRadius: 2.0,
+        shadowAlpha: 0.3,
+        onPressed: () async {
+          bool result = await SnackBarProvider.showConfirmAlert(
+              context, 'Estás listo?',
+              icon: Icons.error,
+              body:
+                  'Para marcar los objetivos ya cumplidos deberías ponerte de acuerdo con tu guiadora o dirigente. Si ya lo hiciste, puedes continuar',
+              color: Colors.blueAccent);
+          if (result) {
+            Navigator.of(context).pushNamed('/initialize');
+          }
+        });
+  }
+
   Widget _buildUserContainer(BuildContext context) {
     return StreamBuilder<User?>(
         stream: AuthenticationService().userStream,
@@ -97,82 +170,70 @@ class MainPage extends StatelessWidget {
           return Container(
             decoration:
                 BoxDecoration(borderRadius: BorderRadius.circular(12.0)),
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: EdgeInsets.only(bottom: 8.0, right: 18.0, left: 6.0),
             child: snapshot.hasData
-                ? Column(
+                ? Flex(
+                    direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
-                        height: 102,
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(51),
-                            child: FutureBuilder<Beneficiary?>(
-                                future: BeneficiariesService().getMyself(),
-                                builder: (context, snapshot) {
-                                  String placeholderPath =
-                                      'assets/imgs/avatar.png';
-                                  String? data = snapshot.data?.profilePicture;
-                                  return data != null
-                                      ? FadeInImage(
-                                          image: NetworkImage(data),
-                                          placeholder:
-                                              AssetImage(placeholderPath))
-                                      : Image.asset(placeholderPath);
-                                })),
+                      Expanded(
+                        flex: 8,
+                        child: _buildProfilePicture(),
                       ),
                       SizedBox(
-                        height: 10.0,
+                        width: 24.0,
                       ),
-                      Text(
-                        beneficiary!.nickname,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      OutlinedButton(
-                        style: ButtonStyle(
-                            overlayColor: MaterialStateProperty.resolveWith(
-                                (states) => Colors.white24),
-                            backgroundColor: MaterialStateProperty.resolveWith(
-                                (states) => Colors.transparent),
-                            side: MaterialStateProperty.resolveWith(
-                                (states) => BorderSide(color: Colors.white))),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/profile'),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Text(
-                            'Editar perfil',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                      Expanded(
+                        flex: 9,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '¡Buenos días!',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'ConcertOne'),
+                            ),
+                            SizedBox(
+                              height: 2.0,
+                            ),
+                            Text(
+                              beneficiary!.nickname,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontFamily: 'ConcertOne'),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            ScoutButton(
+                                label: 'Editar ávatar',
+                                fillColor: Colors.white,
+                                blurRadius: 5.0,
+                                labelSize: 17.0,
+                                shadowAlpha: 0.3,
+                                accentColor: Color.lerp(Colors.white,
+                                    Color.fromRGBO(93, 36, 255, 1), 0.2)!,
+                                labelColor: Color.fromRGBO(93, 36, 255, 1),
+                                onPressed: () =>
+                                    Navigator.pushNamed(context, '/profile')),
+                            SizedBox(
+                              height: 3.0,
+                            ),
+                            Text(
+                              '${beneficiary.totalScore} puntos',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'ConcertOne'),
+                            ),
+                          ],
                         ),
                       ),
-                      if (beneficiary.setBaseTasks == null ||
-                          !beneficiary.setBaseTasks!)
-                        FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.resolveWith(
-                                        (states) => Colors.redAccent)),
-                            onPressed: () async {
-                              bool result = await SnackBarProvider.showConfirmAlert(
-                                  context, '¿Estás listo?',
-                                  icon: Icons.error,
-                                  body:
-                                      'Para marcar los objetivos ya cumplidos deberías ponerte de acuerdo con tu guiadora o dirigente. Si ya lo hiciste, puedes continuar',
-                                  color: Colors.blueAccent);
-                              if (result) {
-                                Navigator.of(context).pushNamed('/initialize');
-                              }
-                            },
-                            child:
-                                Text('No has indicado tus objetivos iniciales'),
-                          ),
-                        )
                     ],
                   )
                 : CircularProgressIndicator(),
@@ -180,8 +241,141 @@ class MainPage extends StatelessWidget {
         });
   }
 
+  Widget _buildProfilePicture() {
+    return Container(
+      decoration: BoxDecoration(boxShadow: <BoxShadow>[
+        BoxShadow(color: Color.fromRGBO(52, 97, 255, 1), blurRadius: 12.0)
+      ], shape: BoxShape.circle, color: Colors.red),
+      child: ClipOval(
+        child: FutureBuilder<Beneficiary?>(
+            future: BeneficiariesService().getMyself(),
+            builder: (context, snapshot) {
+              String placeholderPath = 'assets/imgs/default_profile.jpg';
+              String? data = snapshot.data?.profilePicture;
+              return data != null
+                  ? FadeInImage(
+                      image: NetworkImage(data),
+                      placeholder: AssetImage(placeholderPath))
+                  : Image.asset(placeholderPath);
+            }),
+      ),
+    );
+  }
+
   Future<void> _refresh() async {
     await AuthenticationService().updateAuthenticatedUser();
+  }
+
+  Widget _buildPlayButton(BuildContext context) {
+    return Flex(
+      mainAxisSize: MainAxisSize.min,
+      direction: Axis.vertical,
+      children: [
+        Flexible(
+            flex: 1,
+            child: Text(
+              'Ir al mundo',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'ConcertOne',
+                  fontSize: 19.0,
+                  shadows: [Shadow(color: Colors.white, blurRadius: 5.0)]),
+            )),
+        SizedBox(
+          height: 12.0,
+        ),
+        Flexible(
+          flex: 7,
+          child: Container(
+            decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
+              BoxShadow(
+                  color: Color.fromRGBO(0, 255, 163, 1).withAlpha(128),
+                  blurRadius: 6.0,
+                  spreadRadius: 6.0),
+            ]),
+            child: RawMaterialButton(
+                shape: CircleBorder(),
+                fillColor: Colors.transparent,
+                splashColor: Colors.white24,
+                highlightColor: Colors.white60,
+                elevation: 0.0,
+                child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                          center: Alignment(0.8, -0.8),
+                          radius: 1.0,
+                          colors: [
+                            Color.fromRGBO(0, 255, 163, 1),
+                            Color.fromRGBO(0, 209, 255, 1)
+                          ]),
+                      shape: BoxShape.circle),
+                  child: StreamBuilder<User?>(
+                      stream: AuthenticationService().userStream,
+                      builder: (context, snapshot) {
+                        User? user = snapshot.data;
+                        return Icon(
+                          user == null
+                              ? ScoutSpiritIcons.fleur_de_lis
+                              : (user.unit == Unit.Scouts
+                                  ? ScoutSpiritIcons.fleur_de_lis
+                                  : ScoutSpiritIcons.trebol),
+                          color: Colors.white,
+                          size: 48.0,
+                        );
+                      }),
+                ),
+                onPressed: () => Navigator.of(context).pushNamed('/explore')),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        RawMaterialButton(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)),
+            highlightColor: Colors.transparent,
+            onPressed: () async {
+              bool result = await SnackBarProvider.showConfirmAlert(
+                  context, 'Seguro que quieres cerrar sesión?',
+                  color: Colors.blueAccent,
+                  okLabel: 'Sí',
+                  cancelLabel: 'Cancelar');
+              if (result) {
+                AuthenticationService().logout();
+                await Navigator.of(context).pushReplacementNamed('/');
+              }
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Cerrar sesión',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'ConcertOne',
+                      fontSize: 16.0),
+                ),
+                SizedBox(
+                  width: 9.0,
+                ),
+                Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                  size: 21.0,
+                )
+              ],
+            ))
+      ],
+    );
   }
 }
 

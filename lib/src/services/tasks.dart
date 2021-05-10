@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
@@ -20,6 +23,27 @@ class CompleteTaskResponse {
         task = Task.fromMap(map["task"]);
 }
 
+final List<Task> testTasks = [
+  Task(score: 32,
+      originalObjective: Objective.fromCode('puberty::corporality::1.1').copyWith(
+          objective: 'Original objective 1'),
+      personalObjective: Objective.fromCode('puberty::corporality::1.2').copyWith(
+          objective: 'Personal objective 1'),
+      tasks: []),
+  Task(score: 32,
+      originalObjective: Objective.fromCode('puberty::affectivity::1.1').copyWith(
+          objective: 'Original objective 2'),
+      personalObjective: Objective.fromCode('puberty::affectivity::1.2').copyWith(
+          objective: 'Personal objective 2'),
+      tasks: []),
+  Task(score: 32,
+      originalObjective: Objective.fromCode('puberty::spirituality::1.1').copyWith(
+          objective: 'Original objective 2'),
+      personalObjective: Objective.fromCode('puberty::spirituality::1.2').copyWith(
+          objective: 'Personal objective 2'),
+      tasks: []),
+];
+
 class TasksService extends RestApiService {
   final BehaviorSubject<Task?> taskSubject = BehaviorSubject<Task>();
 
@@ -35,8 +59,8 @@ class TasksService extends RestApiService {
     return _instance;
   }
 
-  Future<void> startObjective(
-      Objective personalObjective, List<SubTask> tasks) async {
+  Future<void> startObjective(Objective personalObjective,
+      List<SubTask> tasks) async {
     if (tasks.length == 0) throw new AppError(message: 'Tasks list is empty');
     User user = AuthenticationService().snapAuthenticatedUser!;
     Map<String, dynamic> payload = {
@@ -44,7 +68,8 @@ class TasksService extends RestApiService {
       "description": personalObjective.rawObjective
     };
     await post(
-        'api/users/${user.id}/tasks/${user.stageName}/${personalObjective.areaName}/${personalObjective.line}.${personalObjective.subline}',
+        'api/users/${user.id}/tasks/${user.stageName}/${personalObjective
+            .areaName}/${personalObjective.line}.${personalObjective.subline}',
         body: payload);
     await getActiveTask();
   }
@@ -65,7 +90,7 @@ class TasksService extends RestApiService {
     Task? task;
     try {
       Map<String, dynamic> response =
-          await get('api/users/${user.id}/tasks/active');
+      await get('api/users/${user.id}/tasks/active');
       task = Task.fromMap(response);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
@@ -78,10 +103,12 @@ class TasksService extends RestApiService {
     return task;
   }
 
-  Future<List<Task>> getUserTasksByArea(
-      User user, DevelopmentStage stage, DevelopmentArea area) async {
+  Future<List<Task>> getUserTasksByArea(User user, DevelopmentStage stage,
+      DevelopmentArea area) async {
     try {
-      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(area)}/');
+      Map<String, dynamic> response = await get(
+          'api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(
+              area)}/');
       List items = response["items"];
       List<Task> tasks = items.map((item) => Task.fromLiteMap(item)).toList();
       return tasks;
@@ -96,7 +123,7 @@ class TasksService extends RestApiService {
     Task? task;
     try {
       Map<String, dynamic> response =
-          await get('api/users/${user.id}/tasks/${stageToString(stage)}/');
+      await get('api/users/${user.id}/tasks/${stageToString(stage)}/');
       task = Task.fromMap(response);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
@@ -109,13 +136,26 @@ class TasksService extends RestApiService {
     return task;
   }
 
-  Future<Task?> getUserTasks(User user) async {
+  BehaviorSubject<List<Task>> _userTasksSubject = BehaviorSubject<List<Task>>();
+
+  Stream<List<Task>> get userTasks => _userTasksSubject.stream;
+
+  Future<void> updateUserTasks() async {
     try {
-      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/');
-      var items = response["items"];
-      return items.map((item) => Task.fromMap(item)).toList();
-    } on HttpError catch (e) {
+      String userId = AuthenticationService().authenticatedUserId;
+      Map<String, dynamic> response = await get('api/users/$userId/tasks/');
+      List items = response["items"];
+      _userTasksSubject.sink
+          .add(items.map((item) => Task.fromMap(item)).toList());
+    } on HttpError catch (e, s) {
+      print(s);
       throw e;
+    } on SocketException catch (e) {
+      if (!kReleaseMode) {
+        _userTasksSubject.sink.add(testTasks);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -124,7 +164,8 @@ class TasksService extends RestApiService {
     Task? task;
     try {
       Map<String, dynamic> response = await get(
-          'api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(area)}/$line/$subline');
+          'api/users/${user.id}/tasks/${stageToString(stage)}/${areaToString(
+              area)}/$line/$subline');
       task = Task.fromMap(response);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
@@ -139,12 +180,13 @@ class TasksService extends RestApiService {
 
   void dispose() {
     taskSubject.close();
+    _userTasksSubject.close();
   }
 
   Future<CompleteTaskResponse> completeActiveTask() async {
     User user = AuthenticationService().snapAuthenticatedUser!;
     Map<String, dynamic> data =
-        await post('api/users/${user.id}/tasks/active/complete');
+    await post('api/users/${user.id}/tasks/active/complete');
     await getActiveTask();
     CompleteTaskResponse response = CompleteTaskResponse.fromMap(data);
     await RewardsService().saveReward(response.reward);
@@ -154,7 +196,8 @@ class TasksService extends RestApiService {
   Future<void> initializeObjectives(
       Map<DevelopmentArea, List<Objective>> objectives) async {
     String userId = AuthenticationService().authenticatedUserId;
-    Map<String, dynamic> response = await post('/api/users/$userId/tasks/initialize/', body: {
+    Map<String, dynamic> response =
+    await post('/api/users/$userId/tasks/initialize/', body: {
       'objectives': objectives.values
           .expand((element) => element)
           .map(

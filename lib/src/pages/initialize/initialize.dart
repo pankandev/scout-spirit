@@ -92,7 +92,7 @@ class _InitializePageState extends State<InitializePage> {
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 48.0,
-                                            fontFamily: 'Neucha'),
+                                            fontFamily: 'ConcertOne'),
                                       )
                                     ],
                                   ),

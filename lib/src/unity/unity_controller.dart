@@ -53,6 +53,9 @@ class GameController {
   }
 
   Future<void> goToScene(String sceneName) async {
+    if (_controller == null) {
+      return;
+    }
     await _controller!
         .postMessage(RECEIVER_GAME_OBJECT, SCENE_LOADING_METHOD, sceneName);
   }

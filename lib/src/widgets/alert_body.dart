@@ -33,10 +33,10 @@ class AlertBody extends StatelessWidget {
           Icon(icon, size: 64.0, color: color),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 24.0,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Neucha'),
+                fontFamily: 'ConcertOne'),
           ),
           SizedBox(
             height: 16.0,

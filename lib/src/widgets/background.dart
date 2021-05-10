@@ -12,8 +12,8 @@ class Background extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: <Color>[
-            Color.fromRGBO(73, 233, 255, 1),
-            Color.fromRGBO(70, 26, 194, 1),
+            Color.fromRGBO(77, 148, 255, 1),
+            Color.fromRGBO(99, 39, 226, 1),
           ]
         )
       ),

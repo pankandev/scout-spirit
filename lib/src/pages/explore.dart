@@ -26,10 +26,7 @@ class _ExplorePageState extends State<ExplorePage> {
     controller.on('AddNewZone', addNewZone);
     controller.on('RequestItem', requestItem);
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
   @override
@@ -39,12 +36,7 @@ class _ExplorePageState extends State<ExplorePage> {
     GameController controller = GameController();
     controller.off();
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
   Future<Map<String, dynamic>> getWorld(Map<String, dynamic>? arguments) async {

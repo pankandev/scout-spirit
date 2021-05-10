@@ -48,7 +48,7 @@ class AreasGrid extends StatelessWidget {
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 48.0,
-                            fontFamily: 'Neucha'),
+                            fontFamily: 'ConcertOne'),
                       )
                     ],
                   ),

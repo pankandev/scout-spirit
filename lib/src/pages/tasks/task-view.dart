@@ -14,6 +14,10 @@ import 'package:scout_spirit/src/providers/reward_provider.dart';
 import 'package:scout_spirit/src/pages/progress_log.dart';
 
 class TaskViewPage extends StatefulWidget {
+  final Task? task;
+
+  const TaskViewPage({Key? key, this.task}) : super(key: key);
+
   @override
   _TaskViewPageState createState() => _TaskViewPageState();
 }
@@ -32,7 +36,10 @@ class _TaskViewPageState extends State<TaskViewPage> {
   }
 
   Future<void> _initFutures() async {
-    taskFuture = TasksService().getActiveTask().then((value) {
+    taskFuture = (widget.task != null
+            ? Future.value(widget.task)
+            : TasksService().getActiveTask())
+        .then((value) {
       taskController.value = value;
       return value != null;
     });
@@ -46,8 +53,6 @@ class _TaskViewPageState extends State<TaskViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return FutureBuilder<bool>(
       future: taskFuture,
       builder: (_, taskSnapshot) {
@@ -69,7 +74,8 @@ class _TaskViewPageState extends State<TaskViewPage> {
                         backgroundColor: (user != null && task != null)
                             ? ObjectivesDisplay.getAreaIconData(
                                     user.unit, task.originalObjective.area)
-                                .colorScheme.primary
+                                .colorScheme
+                                .primary
                             : Colors.grey,
                         shadowColor: Colors.transparent,
                         actions: completed != null
@@ -123,14 +129,13 @@ class _TaskViewPageState extends State<TaskViewPage> {
                               ]
                             : null,
                       ),
-                      floatingActionButton: FloatingActionButton(
+                      floatingActionButton: isActive ? FloatingActionButton(
                         onPressed: task != null ? () => _openLogEditor() : null,
                         child: Icon(Icons.edit),
                         backgroundColor: Colors.pinkAccent,
-                      ),
+                      ) : null,
                       body: (user != null && task != null)
-                          ? _buildTaskView(
-                              arguments['unit'], arguments['isActive'])
+                          ? _buildTaskView(user.unit)
                           : Center(child: CircularProgressIndicator()));
                 },
               );
@@ -139,7 +144,9 @@ class _TaskViewPageState extends State<TaskViewPage> {
     );
   }
 
-  Widget _buildTaskView(Unit unit, bool isActive) {
+  bool get isActive => widget.task == null;
+
+  Widget _buildTaskView(Unit unit) {
     Size size = MediaQuery.of(context).size;
     return Stack(children: [
       _buildForm(unit, size, isActive),
@@ -167,6 +174,10 @@ class _TaskViewPageState extends State<TaskViewPage> {
                     iconSize: (size.width / 1.918) * 1.5),
               ),
               _buildSubTasks(isActive),
+              Text(
+                'Registros',
+                style: TextStyle(color: Colors.white, fontSize: 24.0),
+              ),
               _buildOldLogs(),
             ],
           ),
@@ -284,8 +295,10 @@ class _TaskViewPageState extends State<TaskViewPage> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   Log log = snapshot.data![index];
-                  final String day = "${padZero(log.time.day, 2)}/${padZero(log.time.month, 2)}/${padZero(log.time.year, 4)}";
-                  final String hour = "${padZero(log.time.hour, 2)}:${padZero(log.time.minute, 2)}:${padZero(log.time.second, 2)}";
+                  final String day =
+                      "${padZero(log.time.day, 2)}/${padZero(log.time.month, 2)}/${padZero(log.time.year, 4)}";
+                  final String hour =
+                      "${padZero(log.time.hour, 2)}:${padZero(log.time.minute, 2)}:${padZero(log.time.second, 2)}";
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

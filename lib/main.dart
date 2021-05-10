@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:scout_spirit/src/forms/initialize.dart';
+import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/world.dart';
+import 'package:scout_spirit/src/pages/binnacle.dart';
 import 'package:scout_spirit/src/pages/main.dart';
 import 'package:scout_spirit/src/pages/authentication.dart';
 import 'package:scout_spirit/src/pages/signup.dart';
@@ -56,6 +58,7 @@ class ScoutSpiritApp extends StatelessWidget {
         },
         '/home': (_) => MainPage(),
         '/profile': (_) => ProfilePage(),
+        '/binnacle': (_) => BinnaclePage(),
         '/explore': (_) => ExplorePage(),
         '/rewards/claim': (context) => RewardsPage(
             rewards:
@@ -63,7 +66,11 @@ class ScoutSpiritApp extends StatelessWidget {
         '/tasks/start': (context) => TaskStartFormPage(
             area:
                 ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
-        '/tasks/view': (context) => TaskViewPage()
+        '/tasks/view': (context) {
+          Task task = ModalRoute.of(context)!.settings.arguments! as Task;
+          return TaskViewPage(task: task);
+        },
+        '/tasks/active': (context) => TaskViewPage()
       },
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/widgets/scout_button.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -53,38 +54,17 @@ class _LoginFormState extends State<LoginForm> {
     return StreamBuilder<bool>(
         stream: _bloc.formValidStream,
         builder: (context, snapshot) {
-          return Container(
-            width: double.infinity,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RawMaterialButton(
-                  onPressed: disabled || snapshot.error != null
-                      ? null
-                      : () => _login(context),
-                  fillColor: disabled || snapshot.error != null ? appTheme.accentColor.withAlpha(150) : appTheme.accentColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Entrar',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      if (loading)
-                        SizedBox(
-                            width: 12.0,
-                            height: 12.0,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.8,
-                              valueColor: new AlwaysStoppedAnimation<Color>(
-                                  Colors.white),
-                            ))
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          return ScoutButton(
+            label: 'Entrar',
+            padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 12.0),
+            onPressed: disabled || snapshot.error != null
+                ? null
+                : () => _login(context),
+            labelColor: Colors.white,
+            fillColor: disabled || snapshot.error != null
+                ? appTheme.accentColor.withAlpha(150)
+                : appTheme.accentColor,
+            accentColor: appTheme.accentColor,
           );
         });
   }
@@ -100,7 +80,8 @@ class _LoginFormState extends State<LoginForm> {
               decoration: InputDecoration(
                   labelText: 'Contraseña',
                   suffixIcon: Icon(Icons.https),
-                  errorText: wasPasswordTouched ? snapshot.error as String : null),
+                  errorText:
+                      wasPasswordTouched ? snapshot.error as String : null),
               onChanged: (value) {
                 if (!wasPasswordTouched)
                   setState(() => wasPasswordTouched = true);
@@ -139,9 +120,11 @@ class _LoginFormState extends State<LoginForm> {
     bool errored = false;
     AuthenticationService service = AuthenticationService();
     try {
-      errored = !await service.login(context, this._bloc.email, this._bloc.password);
+      errored =
+          !await service.login(context, this._bloc.email, this._bloc.password);
     } on UserNotConfirmedException {
-      await Navigator.of(context).pushNamed('/confirm', arguments: this._bloc.email);
+      await Navigator.of(context)
+          .pushNamed('/confirm', arguments: this._bloc.email);
       setState(() {
         this.loading = false;
       });
