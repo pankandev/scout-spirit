@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/initialize.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/providers/reward_provider.dart';
-import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
-import 'package:scout_spirit/src/utils/objectives_icons.dart';
+import 'package:scout_spirit/src/widgets/areas_grid.dart';
 
 class InitializePage extends StatefulWidget {
   @override
@@ -35,16 +34,21 @@ class _InitializePageState extends State<InitializePage> {
                 bool ready = snapshot.hasData &&
                     snapshot.data!.length == DevelopmentArea.values.length;
                 return TextButton(
-                    onPressed:
-                        ready && !loading ? () => _initialize() : null,
+                    onPressed: ready && !loading ? () => _initialize() : null,
                     child: Row(children: [
-                      Icon(Icons.check, color: ready && !loading ? Colors.white : Colors.white.withAlpha(64)),
+                      Icon(Icons.check,
+                          color: ready && !loading
+                              ? Colors.white
+                              : Colors.white.withAlpha(64)),
                       SizedBox(
                         width: 8.0,
                       ),
                       Text(
                         "Guardar objetivos iniciales",
-                        style: TextStyle(color: ready && !loading ? Colors.white : Colors.white.withAlpha(64)),
+                        style: TextStyle(
+                            color: ready && !loading
+                                ? Colors.white
+                                : Colors.white.withAlpha(64)),
                       )
                     ]));
               })
@@ -57,48 +61,8 @@ class _InitializePageState extends State<InitializePage> {
             builder: (context, snapshot) {
               return !snapshot.hasData
                   ? Center(child: CircularProgressIndicator())
-                  : GridView.count(
-                      crossAxisCount: 2,
-                      children: DevelopmentArea.values.map((area) {
-                        AreaDisplayData display =
-                            ObjectivesDisplay.getUserAreaIconData(
-                                AuthenticationService().snapAuthenticatedUser!,
-                                area);
-                        return TextButton(
-                            style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.resolveWith(
-                                  (states) => Colors.white.withAlpha(72)),
-                              shape: MaterialStateProperty.resolveWith(
-                                  (states) => RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero)),
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith((states) =>
-                                      snapshot.data!.containsKey(area)
-                                          ? display.color
-                                          : display.disabledColor),
-                            ),
-                            onPressed: () => _initializeArea(context, area),
-                            child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(64.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(display.icon,
-                                          color: Colors.white, size: 256.0),
-                                      SizedBox(height: 64.0),
-                                      Text(
-                                        display.name,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 48.0,
-                                            fontFamily: 'ConcertOne'),
-                                      )
-                                    ],
-                                  ),
-                                )));
-                      }).toList(),
-                    );
+                  : AreasGrid(
+                      onAreaPressed: (area) => _initializeArea(context, area));
             }),
       ),
     );
@@ -113,7 +77,8 @@ class _InitializePageState extends State<InitializePage> {
     form.initializeArea(area);
     dynamic? response = await Navigator.of(context)
         .pushNamed('/initialize/area', arguments: {'area': area, 'form': form});
-    bool canceled = response == null || response.runtimeType != bool || !response;
+    bool canceled =
+        response == null || response.runtimeType != bool || !response;
     if (canceled) {
       if (old == null) {
         form.resetArea(area);

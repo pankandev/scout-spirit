@@ -38,9 +38,13 @@ class _NewZoneDialogState extends State<NewZoneDialog> {
     return zones.length > 0
         ? ListView.builder(
             shrinkWrap: true,
-            itemBuilder: (ctx, index) => ListTile(
-                  leading: Text(zones[index].zoneId),
-                ),
+            itemBuilder: (ctx, index) {
+              Zone zone = zones[index];
+              return ListTile(
+                leading: Text(zone.zoneId),
+                onTap: () => Navigator.pop(context, zone),
+              );
+            },
             itemCount: zones.length)
         : AlertBody(
             title: 'Camino bloqueado',

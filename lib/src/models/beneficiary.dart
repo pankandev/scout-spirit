@@ -2,6 +2,7 @@
 //
 //     final beneficiary = beneficiaryFromJson(jsonString);
 
+import 'dart:math' as math;
 import 'dart:convert';
 
 import 'package:jose/jose.dart';
@@ -9,7 +10,10 @@ import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
 import 'package:scout_spirit/src/services/objectives.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
+import 'package:scout_spirit/src/utils/development_stage.dart';
 import 'package:scout_spirit/src/utils/json.dart';
+
+import 'log.dart';
 
 Beneficiary beneficiaryFromJson(String str) =>
     Beneficiary.fromMap(json.decode(str));
@@ -25,7 +29,7 @@ class TaskToken {
 
   bool get isExpired {
     DateTime expires =
-    DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
+        DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
     DateTime now = DateTime.now().toUtc();
     return now.isAfter(expires);
   }
@@ -38,8 +42,7 @@ class TaskToken {
 
   factory TaskToken(String encodedToken) {
     Map<String, dynamic> payload = json.decode(
-        JsonWebSignature
-            .fromCompactSerialization(encodedToken)
+        JsonWebSignature.fromCompactSerialization(encodedToken)
             .unverifiedPayload
             .stringContent);
     return TaskToken._fromTokenPayload(encodedToken, payload);
@@ -61,6 +64,11 @@ class Task {
   bool? eligibleForReward;
   TaskToken? token;
 
+  DevelopmentStage get stage => originalObjective.stage;
+  DevelopmentArea get area => originalObjective.area;
+  int get line => originalObjective.line;
+  int get subline => originalObjective.subline;
+
   Task({
     required this.score,
     required this.originalObjective,
@@ -72,10 +80,8 @@ class Task {
 
   Task.fromMap(Map<String, dynamic> map)
       : score = map['score'],
-        tasks = List.from(map['tasks'].map((task) =>
-            SubTask(
-                description: task['description'],
-                completed: task['completed']))),
+        tasks = List.from(map['tasks'].map((task) => SubTask(
+            description: task['description'], completed: task['completed']))),
         personalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['personal-objective']),
         originalObjective = Objective.fromCode(map['objective'])
@@ -86,10 +92,8 @@ class Task {
 
   Task.fromLiteMap(Map<String, dynamic> map)
       : score = 0,
-        tasks = List.from(map['tasks'].map((task) =>
-            SubTask(
-                description: task['description'],
-                completed: task['completed']))),
+        tasks = List.from(map['tasks'].map((task) => SubTask(
+            description: task['description'], completed: task['completed']))),
         personalObjective = Objective.fromCode(map['objective'])
             .copyWith(objective: map['personal-objective']),
         originalObjective = Objective.fromCode(map['objective'])
@@ -105,21 +109,22 @@ class Task {
 }
 
 class Beneficiary {
-  Beneficiary({this.completed,
-    required this.lastClaimedToken,
-    required this.unitUser,
-    required this.boughtItems,
-    required this.birthdate,
-    required this.nickname,
-    required this.target,
-    required this.profilePicture,
-    required this.nTasks,
-    required this.score,
-    required this.userId,
-    required this.fullName,
-    required this.groupCode,
-    required this.districtCode,
-    this.setBaseTasks});
+  Beneficiary(
+      {this.completed,
+      required this.lastClaimedToken,
+      required this.unitUser,
+      required this.boughtItems,
+      required this.birthdate,
+      required this.nickname,
+      required this.target,
+      required this.profilePicture,
+      required this.nTasks,
+      required this.score,
+      required this.userId,
+      required this.fullName,
+      required this.groupCode,
+      required this.districtCode,
+      this.setBaseTasks});
 
   dynamic completed;
   String unitUser;
@@ -156,12 +161,11 @@ class Beneficiary {
         setBaseTasks: json["set_base_tasks"]);
   }
 
-  int get totalScore {
-    return score.totalScore;
-  }
+  int get totalScore => score.total;
 
-  Map<String, dynamic> toJson() =>
-      {
+  int get totalTasks => nTasks.total;
+
+  Map<String, dynamic> toJson() => {
         "completed": completed,
         "unit-user": unitUser,
         "bought_items": boughtItems.toJson(),
@@ -181,6 +185,18 @@ class Beneficiary {
   String toString() {
     return "Beneficiary(fullName: '$fullName', nickname: '$nickname', userId: $userId, district: $districtCode, group: $groupCode)";
   }
+}
+
+class FullTask extends Task {
+  final List<Log> logs;
+
+  FullTask.fromTask({required Task task, required this.logs}):
+      super(score: task.score,
+        originalObjective: task.originalObjective,
+        personalObjective: task.personalObjective,
+        tasks: task.tasks,
+        created: task.created,
+        completed: task.completed);
 }
 
 class BoughtItems {
@@ -215,8 +231,12 @@ class TasksCount {
   int spirituality;
   int corporality;
 
-  int get totalScore {
-    return sociability + character + affectivity + creativity + spirituality +
+  int get total {
+    return sociability +
+        character +
+        affectivity +
+        creativity +
+        spirituality +
         corporality;
   }
 
@@ -231,17 +251,16 @@ class TasksCount {
     ];
   }
 
-  factory TasksCount.fromJson(Map<String, dynamic>? json) =>
-      json != null
-          ? TasksCount(
-        sociability: JsonUtils.to<int>(json["sociability"])!,
-        character: JsonUtils.to<int>(json["character"])!,
-        affectivity: JsonUtils.to<int>(json["affectivity"])!,
-        creativity: JsonUtils.to<int>(json["creativity"])!,
-        spirituality: JsonUtils.to<int>(json["spirituality"])!,
-        corporality: JsonUtils.to<int>(json["corporality"])!,
-      )
-          : TasksCount(
+  factory TasksCount.fromJson(Map<String, dynamic>? json) => json != null
+      ? TasksCount(
+          sociability: JsonUtils.to<int>(json["sociability"])!,
+          character: JsonUtils.to<int>(json["character"])!,
+          affectivity: JsonUtils.to<int>(json["affectivity"])!,
+          creativity: JsonUtils.to<int>(json["creativity"])!,
+          spirituality: JsonUtils.to<int>(json["spirituality"])!,
+          corporality: JsonUtils.to<int>(json["corporality"])!,
+        )
+      : TasksCount(
           sociability: 0,
           character: 0,
           affectivity: 0,
@@ -249,8 +268,7 @@ class TasksCount {
           spirituality: 0,
           corporality: 0);
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "sociability": sociability,
         "character": character,
         "affectivity": affectivity,
@@ -258,4 +276,30 @@ class TasksCount {
         "spirituality": spirituality,
         "corporality": corporality,
       };
+
+  double get integrityFactor {
+    int max = values.fold<int>(
+        0, (previousValue, element) => math.max(previousValue, element));
+    List<double> normalized = values.map((e) => e / max).toList();
+    double internalArea =
+        normalized.asMap().keys.fold<double>(0.0, (double prev, int index) {
+      // calculate area of each triangle inside radar chart
+      double a = normalized[index];
+      double b = normalized[(index + 1) % normalized.length];
+      double area = 0.5 * a * b * math.sin(2 * math.pi / normalized.length);
+      return prev + area;
+    });
+    double fullArea =
+        0.5 * math.sin(2 * math.pi / normalized.length) * normalized.length;
+    return internalArea / fullArea * 100;
+  }
+
+  List<int> get values => [
+        corporality,
+        affectivity,
+        creativity,
+        character,
+        sociability,
+        spirituality
+      ];
 }

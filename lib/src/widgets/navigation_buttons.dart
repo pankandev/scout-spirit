@@ -2,51 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
-class NavigationButtons extends StatefulWidget {
-  final PageController? pageController;
-  final Function(int page)? onPageChange;
+class NavigationButtons extends StatelessWidget {
+  final int page;
   final List<String> labels;
+  final Function(int page)? onPageChange;
 
-  const NavigationButtons(
-      {Key? key,
-      this.pageController,
-      required this.labels,
-      required this.onPageChange})
-      : super(key: key);
-
-  @override
-  _NavigationButtonsState createState() => _NavigationButtonsState();
-}
-
-class _NavigationButtonsState extends State<NavigationButtons> {
-  int page = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    page = widget.pageController?.initialPage ?? 0;
-    widget.pageController?.addListener(updatePage);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.pageController?.removeListener(updatePage);
-  }
-
-  void updatePage() {
-    setState(() {
-      page = widget.pageController!.page!.round();
-    });
-  }
+  const NavigationButtons({Key? key, this.page = 0, required this.labels, required this.onPageChange}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Flex(
         direction: Axis.horizontal,
-        children: widget.labels.asMap().keys.map((index) {
-          String label = widget.labels[index];
+        children: labels.asMap().keys.map((index) {
+          String label = labels[index];
           return index == page
               ? Expanded(
                   child: Padding(
@@ -74,8 +43,8 @@ class _NavigationButtonsState extends State<NavigationButtons> {
   }
 
   Widget _buildEmptyButton(int index, String label) {
-    Function(int page)? onChange = widget.onPageChange;
+    Function(int page)? onChange = onPageChange;
     return ScoutOutlinedButton(
-        label: label, onPressed: onChange != null ? onChange(index) : null);
+        label: label, onPressed: onChange != null ? () => onChange(index) : null);
   }
 }

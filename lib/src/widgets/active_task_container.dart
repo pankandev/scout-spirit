@@ -125,7 +125,7 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
   }
 
   void _onTaskTap(BuildContext context, User user) {
-    Navigator.of(context).pushNamed('/tasks/view', arguments: <String, dynamic>{
+    Navigator.of(context).pushNamed('/tasks/active', arguments: <String, dynamic>{
       'isActive': true,
       'task': user.beneficiary!.target,
       'unit': user.unit,

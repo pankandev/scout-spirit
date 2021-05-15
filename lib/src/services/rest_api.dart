@@ -5,14 +5,24 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:http/http.dart' as http;
 
 const WEB_URL = "https://d1jw7u4jmw9fzl.cloudfront.net/";
+const LOCALHOST_URL = "http://localhost:3000/";
+const EMULATOR_URL = "http://10.0.2.2:3000/";
 
 abstract class RestApiService {
+  static bool _isEmulator = false;
+
+  static Future<void> updateEmulatorCheck() async {
+    AndroidDeviceInfo info = await DeviceInfoPlugin().androidInfo;
+    _isEmulator = !info.isPhysicalDevice;
+  }
+
   Future<String?> _getToken() async {
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
             options: CognitoSessionOptions(getAWSCredentials: true))
@@ -47,12 +57,16 @@ abstract class RestApiService {
     if (path.length > 0 && path[0] == '/') {
       path = path.substring(1);
     }
-    String baseUrl = kReleaseMode ? WEB_URL : "http://localhost:3000/";
+    String baseUrl = kReleaseMode ? webUrl : testUrl;
     return Uri.parse(baseUrl + path);
   }
 
   String get webUrl {
     return WEB_URL;
+  }
+
+  String get testUrl {
+    return _isEmulator ? EMULATOR_URL : LOCALHOST_URL;
   }
 
   Future<Map<String, dynamic?>> get(String path,

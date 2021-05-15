@@ -50,8 +50,10 @@ class User {
 
   String get stageName => stageToString(stage);
 
-  static String getAttribute(String key, List<AuthUserAttribute> attributes) =>
-      attributes.firstWhere((element) => element.userAttributeKey == key).value;
+  static String? getAttribute(String key, List<AuthUserAttribute> attributes) =>
+      attributes.cast<AuthUserAttribute?>()
+          .firstWhere((element) => element?.userAttributeKey == key,
+              orElse: () => null)?.value;
 
   static DateFormat get birthDateFormat => new DateFormat("dd-MM-yyyy");
 
@@ -59,12 +61,12 @@ class User {
       List<AuthUserAttribute> attributes)
       : id = user.userId,
         email = user.username,
-        nickname = getAttribute('nickname', attributes),
-        name = getAttribute('name', attributes),
-        familyName = getAttribute('family_name', attributes),
-        birthDate =
-            birthDateFormat.parse(getAttribute('birthdate', attributes)),
-        unit = unitFromName(getAttribute('gender', attributes)),
+        nickname = getAttribute('nickname', attributes) ?? '',
+        name = getAttribute('name', attributes) ?? '',
+        familyName = getAttribute('family_name', attributes) ?? '',
+        birthDate = birthDateFormat
+            .parse(getAttribute('birthdate', attributes) ?? '01-01-2021'),
+        unit = unitFromName(getAttribute('gender', attributes) ?? 'scouts'),
         beneficiary = beneficiary;
 
   @override

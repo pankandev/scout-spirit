@@ -7,3 +7,7 @@ String padZero(int num, int nZeros) {
 String dateToString(DateTime dateTime) {
   return "${padZero(dateTime.day, 2)}-${padZero(dateTime.month, 2)}-${padZero(dateTime.year, 2)}";
 }
+
+String dateTimeToString(DateTime dateTime) {
+  return "${padZero(dateTime.day, 2)}/${padZero(dateTime.month, 2)}/${padZero(dateTime.year, 2)} ${padZero(dateTime.hour, 2)}:${padZero(dateTime.minute, 2)}:${padZero(dateTime.second, 2)}";
+}

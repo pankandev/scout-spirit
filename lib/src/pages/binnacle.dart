@@ -6,6 +6,7 @@ import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
+import 'package:scout_spirit/src/widgets/navigation_buttons.dart';
 import 'package:scout_spirit/src/widgets/radar_chart.dart';
 import 'package:scout_spirit/src/widgets/header_back.dart';
 import 'package:scout_spirit/src/widgets/task_container.dart';
@@ -39,10 +40,12 @@ class _BinnaclePageState extends State<BinnaclePage> {
                       child: Column(children: [
                     HeaderBack(
                       label: 'Bitácora',
-                      onBack: () => Navigator.pop(context),
+                      onBack: () {
+                        Navigator.pop(context);
+                      },
                     ),
                     _buildHeader(user),
-                    _buildBody(user),
+                    _buildBody(context, user),
                   ]));
                 }),
           )
@@ -104,13 +107,17 @@ class _BinnaclePageState extends State<BinnaclePage> {
         ]);
   }
 
-  Widget _buildBody(User? user) {
+  Widget _buildBody(BuildContext context, User? user) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 24.0),
+        padding: EdgeInsets.symmetric(horizontal: 21.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            NavigationButtons(
+                labels: ['Bitácora', 'Estadísticas'],
+                page: 0,
+                onPageChange: (index) => Navigator.of(context).pushReplacementNamed('/stats')),
             Text(
               'Objetivo en progreso',
               style: TextStyle(

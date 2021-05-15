@@ -3,20 +3,23 @@ import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/task.dart';
 import 'package:scout_spirit/src/models/log.dart';
 import 'package:scout_spirit/src/models/user.dart';
-import 'package:scout_spirit/src/providers/provider_consumer.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/services/logs.dart';
+import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/datetime.dart';
-import 'package:scout_spirit/src/utils/objectives_icons.dart';
+import 'package:scout_spirit/src/widgets/background.dart';
+import 'package:scout_spirit/src/widgets/header_back.dart';
 import 'package:scout_spirit/src/widgets/task_container.dart';
 import 'package:scout_spirit/src/providers/reward_provider.dart';
 import 'package:scout_spirit/src/pages/progress_log.dart';
 
 class TaskViewPage extends StatefulWidget {
-  final Task? task;
+  final bool editable;
+  final Task task;
 
-  const TaskViewPage({Key? key, this.task}) : super(key: key);
+  const TaskViewPage({Key? key, required this.task, this.editable = false})
+      : super(key: key);
 
   @override
   _TaskViewPageState createState() => _TaskViewPageState();
@@ -24,7 +27,6 @@ class TaskViewPage extends StatefulWidget {
 
 class _TaskViewPageState extends State<TaskViewPage> {
   final ValueNotifier<Task?> taskController = ValueNotifier<Task?>(null);
-  late Future<bool> taskFuture;
   Future<List<Log>> logs = Future.value([]);
   bool dirty = false;
   bool loading = false;
@@ -32,124 +34,86 @@ class _TaskViewPageState extends State<TaskViewPage> {
   @override
   void initState() {
     super.initState();
-    _initFutures();
+    _updateFutures();
   }
 
-  Future<void> _initFutures() async {
-    taskFuture = (widget.task != null
-            ? Future.value(widget.task)
-            : TasksService().getActiveTask())
-        .then((value) {
-      taskController.value = value;
-      return value != null;
-    });
-    bool taskFound = await taskFuture;
+  Future<void> _updateFutures() async {
+    Task? task = widget.task;
     setState(() {
-      logs = taskFound
-          ? LogsService().getProgressLogs(taskController.value!)
-          : logs;
+      logs = LogsService().getProgressLogs(task);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: taskFuture,
-      builder: (_, taskSnapshot) {
-        return StreamBuilder<User?>(
-            stream: AuthenticationService().userStream,
-            builder: (context, userSnapshot) {
-              User? user = userSnapshot.data;
-              return ProviderConsumer<Task?>(
-                controller: taskController,
-                builder: (controller) {
-                  Task? task = taskController.value;
-                  bool? completed = task?.tasks.fold<bool>(
-                      true, (prev, element) => prev && element.completed);
-                  bool disabled = loading || !dirty;
-                  return Scaffold(
-                      backgroundColor: Colors.white,
-                      appBar: AppBar(
-                        iconTheme: IconThemeData(color: Colors.white),
-                        backgroundColor: (user != null && task != null)
-                            ? ObjectivesDisplay.getAreaIconData(
-                                    user.unit, task.originalObjective.area)
-                                .colorScheme
-                                .primary
-                            : Colors.grey,
-                        shadowColor: Colors.transparent,
-                        actions: completed != null
-                            ? [
-                                TextButton(
-                                    onPressed: disabled
-                                        ? null
-                                        : (completed
-                                            ? () => _complete()
-                                            : () => _save()),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        loading
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: FittedBox(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          Colors.white54),
-                                                )),
-                                              )
-                                            : Icon(
-                                                completed
-                                                    ? Icons.check
-                                                    : Icons.save,
-                                                color: disabled
-                                                    ? Colors.white54
-                                                    : Colors.white,
-                                              ),
-                                        SizedBox(
-                                          width: 8.0,
-                                        ),
-                                        Text(
-                                          loading
-                                              ? 'Guardando...'
-                                              : (completed
-                                                  ? 'Guardar y completar'
-                                                  : 'Guardar'),
-                                          style: TextStyle(
-                                              color: disabled
-                                                  ? Colors.white54
-                                                  : Colors.white),
-                                        ),
-                                      ],
-                                    ))
-                              ]
+    return StreamBuilder<User?>(
+        stream: AuthenticationService().userStream,
+        builder: (context, userSnapshot) {
+          User? user = userSnapshot.data;
+          Task task = widget.task;
+          return user == null
+              ? Center(child: CircularProgressIndicator())
+              : StreamBuilder<FullTask>(
+                  stream: TasksService().getTaskStream(
+                      user.id, task.stage, task.area, task.line, task.subline),
+                  builder: (context, snapshot) {
+                    Task? task = snapshot.data;
+                    bool? completed = task?.tasks.fold<bool>(
+                        true, (prev, element) => prev && element.completed);
+                    bool disabled = loading || !dirty;
+                    return Scaffold(
+                        backgroundColor: Colors.transparent,
+                        floatingActionButton: isEditable
+                            ? FloatingActionButton(
+                                onPressed: task != null || disabled
+                                    ? () => _openLogEditor()
+                                    : null,
+                                child: Icon(Icons.edit),
+                                backgroundColor: Colors.pinkAccent,
+                              )
                             : null,
-                      ),
-                      floatingActionButton: isActive ? FloatingActionButton(
-                        onPressed: task != null ? () => _openLogEditor() : null,
-                        child: Icon(Icons.edit),
-                        backgroundColor: Colors.pinkAccent,
-                      ) : null,
-                      body: (user != null && task != null)
-                          ? _buildTaskView(user.unit)
-                          : Center(child: CircularProgressIndicator()));
-                },
-              );
-            });
-      },
-    );
+                        body: Stack(
+                          children: [
+                            Background(),
+                            SafeArea(
+                              child: SingleChildScrollView(
+                                  child: Column(
+                                children: [
+                                  HeaderBack(
+                                      onBack: () => Navigator.of(context).pop(),
+                                      label: 'Objetivo',
+                                      trailing: isEditable
+                                          ? IconButton(
+                                              icon: Icon((completed ?? false)
+                                                  ? Icons.check
+                                                  : Icons.save),
+                                              color: Colors.white,
+                                              disabledColor: Colors.white54,
+                                              onPressed: (completed ?? false)
+                                                  ? _complete
+                                                  : (dirty ? _save : null),
+                                            )
+                                          : null),
+                                  (user != null && task != null)
+                                      ? _buildTaskView(user.unit)
+                                      : Center(
+                                          child: CircularProgressIndicator())
+                                ],
+                              )),
+                            )
+                          ],
+                        ));
+                  },
+                );
+        });
   }
 
-  bool get isActive => widget.task == null;
+  bool get isEditable => widget.editable;
 
   Widget _buildTaskView(Unit unit) {
     Size size = MediaQuery.of(context).size;
     return Stack(children: [
-      _buildForm(unit, size, isActive),
+      _buildForm(unit, size, isEditable),
     ]);
   }
 
@@ -173,10 +137,23 @@ class _TaskViewPageState extends State<TaskViewPage> {
                     unit: unit,
                     iconSize: (size.width / 1.918) * 1.5),
               ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Text(
+                'Tareas',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.0,
+                    fontFamily: 'ConcertOne'),
+              ),
               _buildSubTasks(isActive),
               Text(
                 'Registros',
-                style: TextStyle(color: Colors.white, fontSize: 24.0),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.0,
+                    fontFamily: 'ConcertOne'),
               ),
               _buildOldLogs(),
             ],
@@ -195,29 +172,59 @@ class _TaskViewPageState extends State<TaskViewPage> {
             child: ListView(
               physics: BouncingScrollPhysics(),
               shrinkWrap: true,
-              children: task.tasks.asMap().keys.map((index) {
-                final SubTask subtask = task.tasks[index];
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CheckboxListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12.0, horizontal: 18.0),
-                          child: Text(subtask.description),
-                        ),
-                        value: subtask.completed,
-                        onChanged: isActive
-                            ? (bool? value) => _onSubTaskTap(index, value!)
-                            : null),
-                    Divider(
-                      height: 1,
-                    )
-                  ],
-                );
-              }).toList(),
+              children: task.tasks.length == 0
+                  ? [_buildPlaceholder('Sin tareas definidas')]
+                  : task.tasks.asMap().keys.map((index) {
+                      final SubTask subtask = task.tasks[index];
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          CheckboxListTile(
+                              title: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 18.0),
+                                child: Text(
+                                  subtask.description,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'ConcertOne'),
+                                ),
+                              ),
+                              selectedTileColor: Colors.white,
+                              tileColor: Colors.white12,
+                              activeColor: Colors.white,
+                              checkColor: appTheme.primaryColor,
+                              value: subtask.completed,
+                              onChanged: isActive
+                                  ? (bool? value) =>
+                                      _onSubTaskTap(index, value!)
+                                  : null),
+                          Divider(
+                            color: Colors.white,
+                            height: 1,
+                          )
+                        ],
+                      );
+                    }).toList(),
             ),
           );
+  }
+
+  Widget _buildPlaceholder(String message) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 24.0),
+      child: Text(
+        message,
+        style: TextStyle(
+            color: Color.lerp(Colors.white, Colors.grey, 0.2),
+            fontFamily: 'ConcertOne',
+            fontSize: 18.0),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   Future<void> _save() async {
@@ -289,27 +296,29 @@ class _TaskViewPageState extends State<TaskViewPage> {
     return FutureBuilder<List<Log>>(
         future: logs,
         builder: (context, snapshot) => snapshot.hasData
-            ? ListView.builder(
-                physics: BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  Log log = snapshot.data![index];
-                  final String day =
-                      "${padZero(log.time.day, 2)}/${padZero(log.time.month, 2)}/${padZero(log.time.year, 4)}";
-                  final String hour =
-                      "${padZero(log.time.hour, 2)}:${padZero(log.time.minute, 2)}:${padZero(log.time.second, 2)}";
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        title: Text(log.log),
-                        subtitle: Text("$day $hour"),
-                      ),
-                      Divider()
-                    ],
-                  );
-                })
+            ? (snapshot.data!.length == 0
+                ? _buildPlaceholder('Sin registros')
+                : ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      Log log = snapshot.data![index];
+                      final String day =
+                          "${padZero(log.time.day, 2)}/${padZero(log.time.month, 2)}/${padZero(log.time.year, 4)}";
+                      final String hour =
+                          "${padZero(log.time.hour, 2)}:${padZero(log.time.minute, 2)}:${padZero(log.time.second, 2)}";
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            title: Text(log.log),
+                            subtitle: Text("$day $hour"),
+                          ),
+                          Divider()
+                        ],
+                      );
+                    }))
             : Center(child: CircularProgressIndicator()));
   }
 }

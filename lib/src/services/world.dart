@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:flutter/services.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
@@ -31,6 +35,10 @@ class WorldService {
     } while (world.zones.containsKey(zoneId));
 
     world.zones[zoneId] = zone;
+    List<String> nodes = zone.nodes.keys.toList();
+    String startNode = nodes[new Random().nextInt(nodes.length)];
+    world.currentZoneId = zoneId;
+    world.currentNodeId = startNode;
     await box.put(id, world);
     return world;
   }
@@ -62,23 +70,31 @@ class WorldService {
     return await getWorld(AuthenticationService().authenticatedUserId);
   }
 
+  Future<Zone> getDefaultZone(String zoneId) async {
+    Map<String, dynamic> zone = json
+        .decode(await rootBundle.loadString('assets/jsons/resources/zones/$zoneId.json'));
+    return Zone.fromMap(zone);
+  }
+
   Stream<List<Zone>> getAvailableZones() {
     RewardsService().updateCategory('zone');
     return RewardsService()
         .getByCategory<ZoneReward>('zone')
         .asyncMap((rewards) async {
       World world = await getMyWorld();
-      Iterable<String> worldZones = world.zones.values.map((e) => e.zoneId);
+      Iterable<String> filteredZones =
+          world.zones.keys.where((element) => element != 'start');
+      Iterable<String> worldZones =
+          filteredZones.map((zoneKey) => world.zones[zoneKey]!.zoneId);
       Iterable<String> rewardZones = rewards.map((reward) => reward.zoneId);
       Map<String, int> worldCount = mapUtils.countMap(worldZones);
       Map<String, int> rewardCount = mapUtils.countMap(rewardZones);
       Map<String, int> availableCount = mapUtils.aggregateMap(
           (w, r) => (r ?? 0) - (w ?? 0), worldCount, rewardCount);
-      return mapUtils
-          .fromCount(availableCount)
-          .map((zoneId) => new Zone(
-              zoneId: zoneId, objects: [], lastJoinTime: null, nodes: {}))
-          .toList();
+      List<String> count = mapUtils.fromCount(availableCount);
+      List<Zone> zones =
+          await Future.wait(count.map((zoneId) => getDefaultZone(zoneId)));
+      return zones;
     });
   }
 

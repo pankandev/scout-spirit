@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
+import 'package:scout_spirit/src/utils/colors.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 
@@ -17,6 +18,7 @@ class AreasGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     return GridView.count(
       crossAxisCount: 2,
       children: DevelopmentArea.values.map((area) {
@@ -25,34 +27,47 @@ class AreasGrid extends StatelessWidget {
         bool isDisabled = onAreaPressed == null ||
             (disabledBuilder != null && disabledBuilder!(area));
         bool isGrey = greyBuilder != null && greyBuilder!(area);
-        return TextButton(
-            style: ButtonStyle(
-              overlayColor: MaterialStateProperty.resolveWith(
-                  (states) => Colors.white.withAlpha(72)),
-              shape: MaterialStateProperty.resolveWith((states) =>
-                  RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-              backgroundColor: MaterialStateProperty.resolveWith(
-                  (states) => isGrey ? display.disabledColor : display.color),
-            ),
+        return RawMaterialButton(
+            fillColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.white54,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             onPressed: isDisabled ? null : () => onAreaPressed!(area),
-            child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Padding(
-                  padding: const EdgeInsets.all(64.0),
-                  child: Column(
-                    children: [
-                      Icon(display.icon, color: Colors.white, size: 256.0),
-                      SizedBox(height: 64.0),
-                      Text(
-                        display.name,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 48.0,
-                            fontFamily: 'ConcertOne'),
-                      )
+            padding: EdgeInsets.zero,
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                      isGrey ? getGreyColor(display.color) : display.color,
+                      isGrey
+                          ? getGreyColor(display.accentColor)
+                          : display.accentColor
                     ],
-                  ),
-                )));
+                        stops: [
+                      0,
+                      1
+                    ])),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(display.icon, color: Colors.white, size: 0.2 * screenSize.width),
+                    SizedBox(height: 12.0),
+                    Text(
+                      display.name,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.0,
+                          fontFamily: 'ConcertOne'),
+                    )
+                  ],
+                ),
+              ),
+            ));
       }).toList(),
     );
   }

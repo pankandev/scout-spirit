@@ -35,7 +35,7 @@ class TaskContainer extends StatelessWidget {
             boxShadow: <BoxShadow>[
               BoxShadow(color: Colors.white54, blurRadius: 12.0)
             ]),
-        child: InkWell(
+        child: GestureDetector(
           onTap: onTap,
           child: Stack(children: [
             Positioned(
@@ -45,7 +45,7 @@ class TaskContainer extends StatelessWidget {
                     unit: unit,
                     area: task.personalObjective.area,
                     size: iconSize,
-                    opacity: 0.57,
+                    opacity: 0.47,
                   )),
               right: -iconSize / 3,
               bottom: -iconSize / 3,
@@ -53,39 +53,55 @@ class TaskContainer extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
               child: Flex(
-                direction: Axis.vertical,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                direction: Axis.horizontal,
                 children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        display.name,
-                        style: TextStyle(
-                            fontSize: 12.0,
+                  Expanded(
+                    flex: 2,
+                    child: Flex(
+                      direction: Axis.vertical,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              display.name,
+                              style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: display.color.withOpacity(0.8),
+                                  fontFamily: 'ConcertOne'),
+                            ),
+                            SizedBox(
+                              height: 2.0,
+                            ),
+                            Text(
+                              task.personalObjective.rawObjective,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontFamily: 'ConcertOne',
+                                  color: Color.fromRGBO(139, 139, 139, 1)),
+                            ),
+                          ],
+                        ),
+                        if (label != null)
+                          ScoutOutlinedButton(
+                            onPressed: onTap,
+                            icon: Icons.visibility,
+                            label: label!,
+                            borderWidth: 2.0,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 5.0, horizontal: 12.0),
                             color: display.color.withOpacity(0.8),
-                            fontFamily: 'ConcertOne'),
-                      ),
-                      SizedBox(height: 2.0,),
-                      Text(
-                        task.personalObjective.rawObjective,
-                        style: TextStyle(
-                            fontSize: 21.0,
-                            fontFamily: 'ConcertOne',
-                            color: Color.fromRGBO(139, 139, 139, 1)),
-                      ),
-                    ],
+                          )
+                      ],
+                    ),
                   ),
-                  if (label != null) ScoutOutlinedButton(
-                    onPressed: onTap,
-                    icon: Icons.visibility,
-                    label: label!,
-                    borderWidth: 2.0,
-                    padding: EdgeInsets.symmetric(
-                        vertical: 5.0, horizontal: 12.0),
-                    color: display.color.withOpacity(0.8),
+                  Spacer(
+                    flex: 1,
                   )
                 ],
               ),

@@ -14,7 +14,18 @@ import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/reward_overlay.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -45,7 +56,6 @@ class MainPage extends StatelessWidget {
         RefreshIndicator(
           onRefresh: _refresh,
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
             child: Padding(
               padding:
                   const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 136.0),
@@ -109,7 +119,21 @@ class MainPage extends StatelessWidget {
                         height: 24.0,
                       ),
                       ScoutButton(
-                        onPressed: () {},
+                        onPressed: () => Navigator.of(context).pushNamed('/stats'),
+                        label: 'Estadísticas',
+                        labelSize: 26.0,
+                        labelColor: Colors.white,
+                        icon: Icons.insights,
+                        fillColor: Color.fromRGBO(89, 15, 246, 1),
+                        accentColor: Color.fromRGBO(0, 48, 217, 1),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 18.0, vertical: 21.0),
+                      ),
+                      SizedBox(
+                        height: 24.0,
+                      ),
+                      ScoutButton(
+                        onPressed: () => Navigator.of(context).pushNamed('/logs'),
                         label: 'Registros',
                         labelSize: 26.0,
                         labelColor: Colors.white,

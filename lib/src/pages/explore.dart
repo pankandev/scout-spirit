@@ -78,7 +78,6 @@ class _ExplorePageState extends State<ExplorePage> {
     Zone? newZone = await showDialog<Zone>(
         context: context, builder: (_) => NewZoneDialog());
     if (newZone == null || !(newZone is Zone)) {
-      print(newZone);
       return null;
     }
     String id = uuid.Uuid().v4();

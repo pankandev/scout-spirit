@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
-import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/widgets/background.dart';
 
 class JoinPage extends StatelessWidget {
   final TextEditingController codeController = TextEditingController();
@@ -10,29 +10,49 @@ class JoinPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-          child: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
+      body: Stack(
+        children: [
+          Background(),
+          SafeArea(
+              child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.group,
-                    size: 56.0,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.group,
+                        size: 56.0,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        'Unirse a un grupo',
+                        style: TextStyle(
+                            fontFamily: 'ConcertOne',
+                            fontSize: 26.0,
+                            color: Colors.white),
+                      )
+                    ],
                   ),
-                  Text(
-                    'Unirse a un grupo',
-                    style: appTheme.textTheme.headline1,
-                  )
-                ],
-              ),
-              JoinGroupForm(codeController: codeController),
-            ]),
-      )),
+                  SizedBox(
+                    height: 32.0,
+                  ),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.0),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(color: Colors.white, blurRadius: 12.0)
+                          ]),
+                      child: JoinGroupForm(codeController: codeController)),
+                ]),
+          )),
+        ],
+      ),
     );
   }
 }
@@ -50,31 +70,50 @@ class JoinGroupForm extends StatefulWidget {
 }
 
 class _JoinGroupFormState extends State<JoinGroupForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: formKey,
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 24.0),
-        child: Flex(
-          direction: Axis.horizontal,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: widget.codeController,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Este campo es obligatorio'
-                    : null,
-                decoration: InputDecoration(labelText: 'Código de grupo'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                'Código de grupo',
+                style:
+                    TextStyle(color: Colors.black87, fontFamily: 'UbuntuCondensed'),
               ),
             ),
-            TextButton(
-                child: Icon(Icons.arrow_right_alt_sharp),
-                onPressed: () => _joinGroup(context))
+            Flex(
+              direction: Axis.horizontal,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    enabled: !loading,
+                    controller: widget.codeController,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Este campo es obligatorio'
+                        : null,
+                    decoration: InputDecoration(
+                        labelText: 'Código de grupo',
+                        border: OutlineInputBorder()),
+                  ),
+                ),
+                TextButton(
+                    child: Icon(Icons.arrow_right_alt_sharp),
+                    onPressed: loading ? null : () => _joinGroup(context))
+              ],
+            ),
           ],
         ),
       ),
@@ -82,7 +121,10 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
   }
 
   Future<void> _joinGroup(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        loading = true;
+      });
       try {
         await BeneficiariesService().joinGroup(widget.codeController.text);
         await Navigator.of(context).pushReplacementNamed('/');
@@ -97,6 +139,10 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
         }
       } on AppError {
         SnackBarProvider.showMessage(context, 'Código Incorrecto');
+      } finally {
+        setState(() {
+          loading = false;
+        });
       }
     }
   }

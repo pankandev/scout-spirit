@@ -192,4 +192,23 @@ class LogsService extends RestApiService {
     List<Map<String, dynamic>> items = List.from(response["items"]);
     return items.map((e) => Log.fromMap(e)).toList();
   }
+
+  Future<List<Log>> getMyLogs() async {
+    String userId = AuthenticationService().authenticatedUserId;
+    Map<String, dynamic> response;
+    try {
+      response = await this.get('/api/users/$userId/logs/');
+    } on SocketException catch (e, s) {
+      if (!kReleaseMode) {
+        response = {
+          "items": testLogs.values.expand((element) => element)
+        };
+      } else {
+        print(s);
+        throw e;
+      }
+    }
+    List<Map<String, dynamic>> items = List.from(response["items"]);
+    return items.map((e) => Log.fromMap(e)).toList();
+  }
 }

@@ -47,6 +47,7 @@ flutter:
   assets:
     - assets/jsons/resources/objectives/
     - assets/jsons/resources/lines.json
+    - assets/jsons/resources/zones/
     - assets/imgs/
     - assets/imgs/avatar/eyes/
     - assets/imgs/avatar/mouths/

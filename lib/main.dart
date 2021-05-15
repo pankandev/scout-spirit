@@ -11,14 +11,18 @@ import 'package:scout_spirit/src/pages/authentication.dart';
 import 'package:scout_spirit/src/pages/signup.dart';
 import 'package:scout_spirit/src/pages/startup.dart';
 import 'package:scout_spirit/src/pages/confirm.dart';
+import 'package:scout_spirit/src/pages/logs.dart';
+import 'package:scout_spirit/src/pages/stats.dart';
 import 'package:scout_spirit/src/pages/explore.dart';
 import 'package:scout_spirit/src/pages/join.dart';
 import 'package:scout_spirit/src/pages/profile.dart';
+import 'package:scout_spirit/src/services/rest_api.dart';
 import 'package:scout_spirit/src/widgets/reward_view.dart';
 import 'package:scout_spirit/src/pages/initialize/initialize.dart';
 import 'package:scout_spirit/src/pages/initialize/initialize_area.dart';
 import 'package:scout_spirit/src/pages/tasks/task-start-form.dart';
 import 'package:scout_spirit/src/pages/tasks/task-view.dart';
+import 'package:scout_spirit/src/widgets/active_task_view.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 
@@ -32,6 +36,7 @@ void main() async {
   Hive.registerAdapter(Vector3Adapter());
   Hive.registerAdapter(QuaternionAdapter());
   await Hive.openBox<World>('world');
+  await RestApiService.updateEmulatorCheck();
   runApp(ScoutSpiritApp());
 }
 
@@ -68,9 +73,11 @@ class ScoutSpiritApp extends StatelessWidget {
                 ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
         '/tasks/view': (context) {
           Task task = ModalRoute.of(context)!.settings.arguments! as Task;
-          return TaskViewPage(task: task);
+          return TaskViewPage(task: task, editable: false,);
         },
-        '/tasks/active': (context) => TaskViewPage()
+        '/tasks/active': (context) => ActiveTaskView(),
+        '/logs': (context) => LogsPage(),
+        '/stats': (context) => StatsPage()
       },
     );
   }
