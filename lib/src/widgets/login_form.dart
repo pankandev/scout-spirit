@@ -62,8 +62,8 @@ class _LoginFormState extends State<LoginForm> {
                 : () => _login(context),
             labelColor: Colors.white,
             fillColor: disabled || snapshot.error != null
-                ? appTheme.accentColor.withAlpha(150)
-                : appTheme.accentColor,
+                ? Colors.grey[500]!
+                : appTheme.primaryColor,
             accentColor: appTheme.accentColor,
           );
         });
@@ -78,6 +78,8 @@ class _LoginFormState extends State<LoginForm> {
               obscureText: true,
               autocorrect: false,
               decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                  border: OutlineInputBorder(),
                   labelText: 'Contraseña',
                   suffixIcon: Icon(Icons.https),
                   errorText:
@@ -98,6 +100,8 @@ class _LoginFormState extends State<LoginForm> {
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
         decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+            border: OutlineInputBorder(),
             labelText: 'Correo',
             suffixIcon: Icon(Icons.alternate_email,
                 color: wasEmailTouched && snapshot.error != null

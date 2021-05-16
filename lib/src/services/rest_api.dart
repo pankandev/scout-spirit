@@ -11,7 +11,7 @@ import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:http/http.dart' as http;
 
-const WEB_URL = "https://d1jw7u4jmw9fzl.cloudfront.net/";
+const WEB_URL = "https://d43k9sss5csvt.cloudfront.net/";
 const LOCALHOST_URL = "http://localhost:3000/";
 const EMULATOR_URL = "http://10.0.2.2:3000/";
 

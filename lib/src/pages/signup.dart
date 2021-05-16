@@ -1,6 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:scout_spirit/src/forms/register.dart';
 import 'package:scout_spirit/src/models/credentials.dart';
 import 'package:scout_spirit/src/models/user.dart';
@@ -11,6 +12,7 @@ import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/validators/email.dart';
 import 'package:scout_spirit/src/providers/provider_consumer.dart';
 import 'package:scout_spirit/src/utils/datetime.dart';
+import 'package:scout_spirit/src/widgets/background.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -18,36 +20,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final PageController _pageController = PageController(initialPage: 0);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        int currentPage = _pageController.page!.round();
-        if (currentPage == 0) return true;
-        await _pageController.animateToPage(currentPage - 1,
-            duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
-        return false;
-      },
-      child: Scaffold(
-        body: SingleChildScrollView(
-            child: SignUpForm(pageController: _pageController)),
-      ),
-    );
-  }
-}
-
-class SignUpForm extends StatefulWidget {
-  final PageController pageController;
-
-  SignUpForm({required this.pageController});
-
-  @override
-  _SignUpFormState createState() => _SignUpFormState();
-}
-
-class _SignUpFormState extends State<SignUpForm> {
   bool loading = false;
 
   bool wasEmailTouched = false;
@@ -59,18 +31,86 @@ class _SignUpFormState extends State<SignUpForm> {
 
   final RegisterFormBloc form = RegisterFormBloc();
 
+  int _currentStep = 0;
+
   Widget _buildLoginForm(BuildContext context, {bool disabled = false}) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: SafeArea(
-        child: PageView(
-            controller: widget.pageController,
-            physics: NeverScrollableScrollPhysics(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Crear cuenta',
+          style: appTheme.textTheme.headline2?.copyWith(fontSize: 24.0),
+        ),
+        Stepper(
+          type: StepperType.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          controlsBuilder: (context,
+                  {void Function()? onStepCancel,
+                  void Function()? onStepContinue}) =>
+              Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildCredentialsPage(context, disabled: disabled),
-              _buildBasicDataPage(context, disabled: disabled),
-            ]),
-      ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.only(top: 16.0),
+                  child: RawMaterialButton(
+                      elevation: !loading ? 2 : 0,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0)),
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: loading
+                              ? MainAxisAlignment.spaceBetween
+                              : MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Continuar',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            if (loading)
+                              SizedBox(
+                                  height: 18.0,
+                                  width: 18.0,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor:
+                                          AlwaysStoppedAnimation(Colors.white)))
+                          ],
+                        ),
+                      ),
+                      onPressed: !loading ? onStepContinue : null,
+                      fillColor: !loading
+                          ? appTheme.primaryColor
+                          : appTheme.primaryColor.withOpacity(0.8)),
+                ),
+              )
+            ],
+          ),
+          currentStep: _currentStep,
+          steps: <Step>[
+            Step(
+                title: Text('Credenciales'),
+                isActive: true,
+                state:
+                    _currentStep > 0 ? StepState.complete : StepState.disabled,
+                content: _buildCredentialsPage(context, disabled: disabled)),
+            Step(
+                title: Text('Datos básicos'),
+                isActive: _currentStep > 0,
+                state:
+                    _currentStep > 1 ? StepState.complete : StepState.disabled,
+                content: _buildBasicDataPage(context, disabled: disabled)),
+          ],
+          onStepContinue: _continue,
+          onStepCancel: _cancel,
+          onStepTapped: (int step) {
+            setState(() {
+              _currentStep = step;
+            });
+          },
+        ),
+      ],
     );
   }
 
@@ -78,138 +118,47 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
         key: _credentialsFormKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              flex: 4,
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 24.0, horizontal: 36.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      _buildEmailField(disabled: disabled),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      _buildPasswordField(disabled: disabled),
-                      _buildConfirmPasswordField(disabled: disabled),
-                    ],
-                  ),
-                ),
-              ),
+            SizedBox(
+              height: 10.0,
             ),
-            Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 24.0, horizontal: 36.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          if (_credentialsFormKey.currentState!.validate()) {
-                            goToPage(1);
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Continuar'),
-                            Icon(Icons.arrow_right_alt_sharp)
-                          ],
-                        )),
-                  ],
-                ))
+            _buildEmailField(disabled: disabled),
+            SizedBox(
+              height: 10.0,
+            ),
+            _buildPasswordField(disabled: disabled),
+            SizedBox(
+              height: 10.0,
+            ),
+            _buildConfirmPasswordField(disabled: disabled),
           ],
         ));
-  }
-
-  Future<void> goToPage(int page) async {
-    await widget.pageController.animateToPage(page,
-        duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
 
   Widget _buildBasicDataPage(BuildContext context, {bool disabled = false}) {
     return Form(
       key: _basicDataFormKey,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            flex: 4,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 24.0, horizontal: 36.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildNicknameField(disabled: disabled),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildNameField(disabled: disabled),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildLastNameField(disabled: disabled),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildDatePicker(disabled: disabled),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    _buildUnitPicker(disabled: disabled)
-                  ],
-                ),
-              ),
-            ),
+          _buildNicknameField(disabled: disabled),
+          SizedBox(
+            height: 10.0,
           ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 36.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                    onPressed: !loading
-                        ? () {
-                            if (_basicDataFormKey.currentState!.validate() && form.unitController.value != null) {
-                              _register(context);
-                            } else {
-                              setState(() {
-                                triedToValidate = true;
-                              });
-                            }
-                          }
-                        : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Crear cuenta'),
-                        Icon(Icons.arrow_right_alt_sharp)
-                      ],
-                    )),
-                SizedBox(
-                  height: 10.0,
-                ),
-              ],
-            ),
-          )
+          _buildNameField(disabled: disabled),
+          SizedBox(
+            height: 10.0,
+          ),
+          _buildLastNameField(disabled: disabled),
+          SizedBox(
+            height: 10.0,
+          ),
+          _buildDatePicker(disabled: disabled),
+          SizedBox(
+            height: 10.0,
+          ),
+          _buildUnitPicker(disabled: disabled)
         ],
       ),
     );
@@ -220,23 +169,22 @@ class _SignUpFormState extends State<SignUpForm> {
         controller: form.passwordController,
         enabled: !disabled,
         obscureText: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         autocorrect: false,
-        decoration: InputDecoration(
-            labelText: 'Contraseña', suffixIcon: Icon(Icons.https)),
+        decoration: getInputDecoration('Contraseña', Icons.https),
         validator: (String? value) {
-          if (value == null ||value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           if (value.length < 6) {
             return 'La contraseña debe tener al menos 6 carácteres';
           }
 
-          bool containsNumber = RegExp('[0-9]').hasMatch(value);
           bool containsUppercase = RegExp('[A-Z]').hasMatch(value);
           bool containsLowercase = RegExp('[a-z]').hasMatch(value);
 
-          if (!containsNumber || !containsUppercase || !containsLowercase) {
-            return 'La contraseña debe tener un número, mayúsculas y minúsculas';
+          if (!containsUppercase || !containsLowercase) {
+            return 'La contraseña debe tener al menos una letra minúscula y un número';
           }
 
           return value.isEmpty ? 'Este campo es obligatorio' : null;
@@ -251,11 +199,11 @@ class _SignUpFormState extends State<SignUpForm> {
         controller: form.repeatPasswordController,
         enabled: !disabled,
         obscureText: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         autocorrect: false,
-        decoration: InputDecoration(
-            labelText: 'Repetir contraseña', suffixIcon: Icon(Icons.https)),
+        decoration: getInputDecoration('Repetir contraseña', Icons.https),
         validator: (String? value) {
-          if (value == null ||value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           if (value != form.passwordController.text) {
@@ -271,12 +219,10 @@ class _SignUpFormState extends State<SignUpForm> {
         enabled: !disabled,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
-        decoration: InputDecoration(
-          labelText: 'Correo',
-          suffixIcon: Icon(Icons.alternate_email),
-        ),
+        decoration: getInputDecoration('Correo', Icons.alternate_email),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (String? value) {
-          if (value == null ||value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           if (!validateEmailFunc(value)) {
@@ -292,8 +238,9 @@ class _SignUpFormState extends State<SignUpForm> {
         enabled: !disabled,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
-        decoration: InputDecoration(
-            labelText: 'Nombre', suffixIcon: Icon(Icons.person)),
+        decoration:
+            getInputDecoration('Nombre', Icons.person, isRequired: true),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (String? value) {
           if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
@@ -308,12 +255,11 @@ class _SignUpFormState extends State<SignUpForm> {
         enabled: !disabled,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
-        decoration: InputDecoration(
-          labelText: 'Apellidos',
-          suffixIcon: Icon(Icons.person),
-        ),
+        decoration:
+            getInputDecoration('Apellidos', Icons.person, isRequired: true),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (String? value) {
-          if (value == null ||value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           return null;
@@ -326,16 +272,24 @@ class _SignUpFormState extends State<SignUpForm> {
         enabled: !disabled,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
-        decoration: InputDecoration(
-          labelText: 'Apodo',
-          suffixIcon: Icon(Icons.person),
-        ),
+        decoration: getInputDecoration('Apodo', Icons.person, isRequired: true),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (String? value) {
-          if (value == null ||value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Este campo es obligatorio';
           }
           return null;
         });
+  }
+
+  InputDecoration getInputDecoration(String label, IconData icon,
+      {bool isRequired = false}) {
+    return InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+        labelText: label + (isRequired ? '*' : ''),
+        errorMaxLines: 3,
+        suffixIcon: Icon(icon),
+        border: OutlineInputBorder());
   }
 
   final TextEditingController birthDateTextController = TextEditingController();
@@ -349,10 +303,10 @@ class _SignUpFormState extends State<SignUpForm> {
             enabled: !disabled,
             keyboardType: TextInputType.emailAddress,
             autocorrect: false,
-            decoration: InputDecoration(
-              labelText: 'Fecha de nacimiento',
-              suffixIcon: Icon(Icons.date_range),
-            ),
+            decoration: getInputDecoration(
+                'Fecha de nacimiento', Icons.date_range,
+                isRequired: true),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             readOnly: true,
             onTap: () async {
               DateTime now = DateTime.now();
@@ -376,55 +330,88 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  bool triedToValidate = false;
+  bool triedToValidateDate = false;
 
   Widget _buildUnitPicker({bool disabled = false}) {
+    Color? unselectedColor = appTheme.textTheme.caption?.color;
+    Color selectedColor = Colors.white;
     return ProviderConsumer<Unit?>(
       controller: form.unitController,
       builder: (controller) => InputDecorator(
-        decoration: InputDecoration(
-            labelText: 'Unidad',
-            errorText: !triedToValidate || form.unitController.value != null
-                ? null
-                : 'Este campo es obligatorio',
-            border: InputBorder.none),
-        child: Flex(
-            direction: Axis.vertical,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RadioListTile<Unit?>(
-                value: Unit.Scouts,
-                groupValue: controller.value,
-                onChanged: (Unit? value) => form.unitController.value = value,
-                title: Row(
-                  children: [
-                    Icon(ScoutSpiritIcons.fleur_de_lis,
-                        color: appTheme.textTheme.caption!.color),
-                    SizedBox(width: 10.0),
-                    Text('Tropa', style: appTheme.textTheme.caption),
-                  ],
+          decoration: InputDecoration(
+              labelText: 'Unidad',
+              errorText:
+                  !triedToValidateDate || form.unitController.value != null
+                      ? null
+                      : 'Este campo es obligatorio',
+              border: InputBorder.none),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return ToggleButtons(
+              fillColor: appTheme.primaryColor,
+              splashColor: appTheme.primaryColor.withOpacity(0.9),
+              color: Colors.black,
+              constraints:
+                  BoxConstraints(minWidth: constraints.maxWidth / 2.05),
+              isSelected: [
+                controller.value == Unit.Scouts,
+                controller.value == Unit.Guides
+              ],
+              onPressed: (int value) {
+                switch (value) {
+                  case 0:
+                    controller.value = Unit.Scouts;
+                    break;
+                  case 1:
+                    controller.value = Unit.Guides;
+                    break;
+                }
+              },
+              children: [
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(ScoutSpiritIcons.fleur_de_lis,
+                          color: controller.value == Unit.Scouts
+                              ? selectedColor
+                              : unselectedColor),
+                      SizedBox(
+                        height: 6.0,
+                      ),
+                      Text('Tropa',
+                          style: appTheme.textTheme.caption?.copyWith(
+                              color: controller.value == Unit.Scouts
+                                  ? selectedColor
+                                  : unselectedColor)),
+                    ],
+                  ),
                 ),
-              ),
-              RadioListTile<Unit>(
-                value: Unit.Guides,
-                groupValue: controller.value,
-                onChanged: (Unit? value) {
-                  form.unitController.value = value;
-                },
-                title: Row(
-                  children: [
-                    Icon(ScoutSpiritIcons.trebol,
-                        color: appTheme.textTheme.caption!.color),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Text('Compañía', style: appTheme.textTheme.caption),
-                  ],
-                ),
-              ),
-            ]),
-      ),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(ScoutSpiritIcons.trebol,
+                          color: controller.value == Unit.Guides
+                              ? selectedColor
+                              : unselectedColor),
+                      SizedBox(
+                        height: 6.0,
+                      ),
+                      Text('Compañía',
+                          style: appTheme.textTheme.caption?.copyWith(
+                              color: controller.value == Unit.Guides
+                                  ? selectedColor
+                                  : unselectedColor)),
+                    ],
+                  ),
+                )
+              ],
+            );
+          })),
     );
   }
 
@@ -445,7 +432,7 @@ class _SignUpFormState extends State<SignUpForm> {
           unit: credentials.unit);
     } on UsernameExistsException {
       SnackBarProvider.showMessage(
-          context, 'Un usuario con este correo ya existe');
+          context, 'Un usuario con este correo ya existe', color: appTheme.errorColor, gravity: ToastGravity.TOP);
       errored = true;
     }
 
@@ -461,6 +448,65 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildLoginForm(context, disabled: loading);
+    return WillPopScope(
+      onWillPop: _cancel,
+      child: Scaffold(
+          body: Stack(
+        children: [
+          Background(),
+          SingleChildScrollView(
+            child: SafeArea(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0, horizontal: 12.0),
+                child: Container(
+                    padding: EdgeInsets.only(top: 24.0),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.0),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(color: Colors.white70, blurRadius: 12.0)
+                        ]),
+                    child: _buildLoginForm(context, disabled: loading)),
+              ),
+            ),
+          ),
+        ],
+      )),
+    );
+  }
+
+  void _continue() {
+    if (_currentStep == 0) {
+      if (_credentialsFormKey.currentState!.validate()) {
+        setState(() {
+          _currentStep = 1;
+        });
+      }
+    } else {
+      if (_basicDataFormKey.currentState!.validate() &&
+          form.unitController.value != null) {
+        _register(context);
+      } else {
+        setState(() {
+          triedToValidateDate = true;
+        });
+      }
+    }
+  }
+
+  Future<bool> _cancel() async {
+    if (_currentStep == 0) {
+      bool response = await SnackBarProvider.showConfirmAlert(
+          context, 'Seguro que quieres cancelar el registro?');
+      if (response) {
+        Navigator.pop(context);
+      }
+      return response;
+    }
+    setState(() {
+      _currentStep = 0;
+    });
+    return false;
   }
 }

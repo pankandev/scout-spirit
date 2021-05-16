@@ -73,7 +73,10 @@ class ScoutSpiritApp extends StatelessWidget {
                 ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
         '/tasks/view': (context) {
           Task task = ModalRoute.of(context)!.settings.arguments! as Task;
-          return TaskViewPage(task: task, editable: false,);
+          return TaskViewPage(
+            task: task,
+            editable: false,
+          );
         },
         '/tasks/active': (context) => ActiveTaskView(),
         '/logs': (context) => LogsPage(),

@@ -4,7 +4,7 @@ import 'package:scout_spirit/src/pages/alert_dialog.dart';
 
 class SnackBarProvider {
   static void showMessage(BuildContext context, String text,
-      {ToastGravity gravity = ToastGravity.BOTTOM,
+      {ToastGravity gravity = ToastGravity.TOP,
       Color color = Colors.black,
       Color textColor = Colors.white,
       IconData? icon,
@@ -13,13 +13,13 @@ class SnackBarProvider {
     fToast.init(context);
 
     Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 42.0, vertical: 18.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 9.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(48.0),
         color: color,
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (icon != null)
             Icon(
@@ -29,9 +29,9 @@ class SnackBarProvider {
             ),
           if (icon != null)
             SizedBox(
-              width: 24.0,
+              width: 12.0,
             ),
-          Text(text, style: TextStyle(fontSize: 28.0, color: textColor)),
+          Text(text, style: TextStyle(fontSize: 14.0, color: textColor)),
         ],
       ),
     );
