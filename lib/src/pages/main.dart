@@ -23,7 +23,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -105,7 +104,8 @@ class _MainPageState extends State<MainPage> {
                         height: 24.0,
                       ),
                       ScoutButton(
-                        onPressed: () => Navigator.pushNamed(context, '/binnacle'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/binnacle'),
                         label: 'Bitácora',
                         icon: Icons.book_outlined,
                         labelSize: 26.0,
@@ -119,7 +119,8 @@ class _MainPageState extends State<MainPage> {
                         height: 24.0,
                       ),
                       ScoutButton(
-                        onPressed: () => Navigator.of(context).pushNamed('/stats'),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/stats'),
                         label: 'Estadísticas',
                         labelSize: 26.0,
                         labelColor: Colors.white,
@@ -133,7 +134,8 @@ class _MainPageState extends State<MainPage> {
                         height: 24.0,
                       ),
                       ScoutButton(
-                        onPressed: () => Navigator.of(context).pushNamed('/logs'),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/logs'),
                         label: 'Registros',
                         labelSize: 26.0,
                         labelColor: Colors.white,
@@ -142,7 +144,8 @@ class _MainPageState extends State<MainPage> {
                         accentColor: Color.fromRGBO(22, 199, 255, 1),
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
-                      )
+                      ),
+                      _buildCredits()
                     ],
                   ),
                 ),
@@ -165,7 +168,7 @@ class _MainPageState extends State<MainPage> {
   Widget _buildAlert(BuildContext context, Beneficiary beneficiary) {
     return ScoutButton(
         label:
-            'No has indicado tus objetivos pre-completados. Presiona aquí para indicarlos',
+            'No has indicado tus objetivos pre-existentes. Presiona aquí para indicarlos',
         icon: Icons.warning_amber_rounded,
         iconSize: 48.0,
         fillColor: appTheme.errorColor,
@@ -178,7 +181,7 @@ class _MainPageState extends State<MainPage> {
               context, 'Estás listo?',
               icon: Icons.error,
               body:
-                  'Para marcar los objetivos ya cumplidos deberías ponerte de acuerdo con tu guiadora o dirigente. Si ya lo hiciste, puedes continuar',
+                  'Para marcar los objetivos ya cumplidos deberías ponerte de acuerdo con tu guiadora o dirigente.\n\nSi ya lo hiciste, puedes continuar',
               color: Colors.blueAccent);
           if (result) {
             Navigator.of(context).pushNamed('/initialize');
@@ -399,6 +402,116 @@ class _MainPageState extends State<MainPage> {
               ],
             ))
       ],
+    );
+  }
+
+  Widget _buildCredits() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Créditos',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 21.0,
+                fontFamily: 'Ubuntu',
+                fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 21.0,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ClipOval(
+                child: Container(
+                    width: 81.0,
+                    height: 81.0,
+                    child: Image(image: AssetImage('assets/imgs/spiral.jpg'))))
+          ]),
+          SizedBox(
+            height: 8.0,
+          ),
+          Flexible(
+            child: Column(
+              children: [
+                Text(
+                  'Desarrollado por',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(color: Colors.white, fontFamily: 'Ubuntu'),
+                ),
+                Text(
+                  'Paths Ankan',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 21.0,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Ubuntu'),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 21.0,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Personaje por',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Ubuntu'),
+                      ),
+                      Text(
+                        'Frano\n@franopx',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21.0,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Ubuntu'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Modelos por',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Ubuntu'),
+                      ),
+                      Text(
+                        'Nanchark\n@nanchark',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21.0,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Ubuntu'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -48,8 +48,8 @@ class StatsPage extends StatelessWidget {
             ? Flex(
                 direction: Axis.horizontal,
                 children: <Widget>[
-                  Expanded(child: _buildUserData(user)),
-                  Expanded(child: _buildRadar(user)),
+                  Expanded(flex: 4, child: _buildUserData(user)),
+                  Expanded(flex: 5, child: _buildRadar(user)),
                 ],
               )
             : Center(
@@ -61,6 +61,14 @@ class StatsPage extends StatelessWidget {
     Beneficiary? beneficiary = user.beneficiary;
     Unit unit = user.unit;
     return RadarChart(
+        bottomWidget: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Mantén presionado uno de los íconos en el gráfico para ver su significado',
+            style: TextStyle(color: Colors.white, fontFamily: 'UbuntuCondensed', fontSize: 15),
+            textAlign: TextAlign.center,
+          ),
+        ),
         constraints: BoxConstraints(minHeight: double.infinity),
         items: getCountValues(
             unit, beneficiary != null ? beneficiary.score : TasksCount()));
@@ -70,7 +78,7 @@ class StatsPage extends StatelessWidget {
     return count.items.map((item) {
       AreaDisplayData displayData =
           ObjectivesDisplay.getAreaIconData(unit, item.area);
-      return RadarItem(label: displayData.name, value: item.value.toDouble());
+      return RadarItem(label: displayData.name, value: item.value.toDouble(), icon: displayData.icon);
     });
   }
 
@@ -155,7 +163,10 @@ class StatsPage extends StatelessWidget {
                 SizedBox(
                   height: 16.0,
                 ),
-                _buildStatsBoxes(beneficiary.score)
+                _buildStatsBoxes(beneficiary.score),
+                SizedBox(
+                  height: 16.0,
+                ),
               ],
             ),
       padding: EdgeInsets.symmetric(horizontal: 21.0),

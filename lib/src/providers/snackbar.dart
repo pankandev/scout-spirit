@@ -46,7 +46,7 @@ class SnackBarProvider {
       Duration animationDuration = const Duration(milliseconds: 600),
       String body = '',
       String cancelLabel = 'Cancelar',
-      String okLabel = 'OK'}) async {
+      String okLabel = 'OK 👌'}) async {
     return await showGeneralDialog<bool>(
             context: context,
             barrierColor: Colors.black.withOpacity(0.5),

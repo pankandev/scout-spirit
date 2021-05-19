@@ -38,6 +38,14 @@ class _LogsPageState extends State<LogsPage> {
                   ),
                 ),
                 Expanded(
+                    child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Text(
+                    'Aquí puedes ver todas las acciones que has realizado en la aplicación',
+                    style: TextStyle(fontFamily: 'Ubuntu', color: Colors.white),
+                  ),
+                )),
+                Expanded(
                   flex: 10,
                   child: FutureBuilder<List<Log>>(
                       future: logs,
@@ -46,12 +54,42 @@ class _LogsPageState extends State<LogsPage> {
                         return data != null
                             ? ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: data.length,
-                                itemBuilder: (ctx, index) => Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0, vertical: 12.0),
-                                      child: LogCard(log: data[index]),
-                                    ))
+                                itemCount: data.length > 0 ? data.length : 1,
+                                itemBuilder: (ctx, index) => data.length == 0
+                                    ? Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 24.0, horizontal: 16.0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              '(。_。)',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 48.0,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: 24.0,
+                                            ),
+                                            Text(
+                                              'Sin registros',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 1.6,
+                                                  fontFamily: 'Ubuntu'),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0, vertical: 12.0),
+                                        child: LogCard(log: data[index]),
+                                      ))
                             : Center(child: CircularProgressIndicator());
                       }),
                 ),

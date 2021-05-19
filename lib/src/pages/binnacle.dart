@@ -58,7 +58,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
     return count.items.map((item) {
       AreaDisplayData displayData =
           ObjectivesDisplay.getAreaIconData(unit, item.area);
-      return RadarItem(label: displayData.name, value: item.value.toDouble());
+      return RadarItem(
+          label: displayData.name,
+          value: item.value.toDouble(),
+          icon: displayData.icon);
     });
   }
 
@@ -70,8 +73,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
             ? Flex(
                 direction: Axis.horizontal,
                 children: <Widget>[
-                  Expanded(child: _buildUserData(user)),
-                  Expanded(child: _buildRadar(user)),
+                  Expanded(flex: 4, child: _buildUserData(user)),
+                  Expanded(flex: 5, child: _buildRadar(user)),
                 ],
               )
             : Center(
@@ -83,6 +86,14 @@ class _BinnaclePageState extends State<BinnaclePage> {
     Beneficiary? beneficiary = user.beneficiary;
     Unit unit = user.unit;
     return RadarChart(
+        bottomWidget: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Mantén presionado uno de los íconos en el gráfico para ver su significado',
+            style: TextStyle(color: Colors.white, fontFamily: 'UbuntuCondensed', fontSize: 15),
+            textAlign: TextAlign.center,
+          ),
+        ),
         constraints: BoxConstraints(minHeight: double.infinity),
         items: getCountValues(
             unit, beneficiary != null ? beneficiary.nTasks : TasksCount()));
@@ -117,7 +128,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
             NavigationButtons(
                 labels: ['Bitácora', 'Estadísticas'],
                 page: 0,
-                onPageChange: (index) => Navigator.of(context).pushReplacementNamed('/stats')),
+                onPageChange: (index) =>
+                    Navigator.of(context).pushReplacementNamed('/stats')),
             Text(
               'Objetivo en progreso',
               style: TextStyle(

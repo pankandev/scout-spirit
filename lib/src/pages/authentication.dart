@@ -46,12 +46,7 @@ class AuthenticationPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            LoginForm(),
-            SizedBox(
-              height: 18.0,
-            ),
-            ClickableText(
-                label: 'Aún no tienes cuenta?\nPresiona aquí', onTap: () => Navigator.of(context).pushNamed('/signup'))
+            LoginForm()
           ],
         ));
   }
@@ -60,5 +55,4 @@ class AuthenticationPage extends StatelessWidget {
     return await _pageController.animateToPage(page,
         duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
-
 }

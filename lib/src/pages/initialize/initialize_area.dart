@@ -63,7 +63,7 @@ class _InitializeAreaPageState extends State<InitializeAreaPage> {
             SizedBox(
               width: 16.0,
             ),
-            Text(displayData.name),
+            Expanded(child: Text(displayData.name)),
           ],
         ),
       ),

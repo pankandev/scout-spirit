@@ -13,7 +13,7 @@ class ClickableText extends StatelessWidget {
         child: Text(
           this.label,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16.0, fontFamily: 'ConcertOne'),
+          style: TextStyle(fontSize: 16.0, fontFamily: 'Ubuntu'),
         ),
         onTap: onTap);
   }

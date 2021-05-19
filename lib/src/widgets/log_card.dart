@@ -46,7 +46,7 @@ class LogCard extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 12.0,
                                   color: Color.fromRGBO(139, 139, 139, 1),
-                                  fontFamily: 'Neucha',
+                                  fontFamily: 'Ubuntu',
                                   fontWeight: FontWeight.w700),
                             ),
                             SizedBox(

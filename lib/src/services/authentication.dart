@@ -42,7 +42,6 @@ class AuthenticationService {
     CognitoAuthSession authSession = await Amplify.Auth.fetchAuthSession(
             options: CognitoSessionOptions(getAWSCredentials: true))
         as CognitoAuthSession;
-    print(authSession.identityId);
     return authSession.identityId;
   }
 

@@ -9,6 +9,7 @@ import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/providers/loading_screen.dart';
+import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/avatar.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
@@ -32,13 +33,13 @@ final Map<AvatarPartEnum, _PartTypeDisplay> categories = {
   AvatarPartEnum.PANTS:
       _PartTypeDisplay("Cambiar pantalones", Icons.account_box),
   AvatarPartEnum.SHIRT: _PartTypeDisplay("Cambiar polera", Icons.account_box),
-  AvatarPartEnum.MOUTH: _PartTypeDisplay("Cambiar boca", Icons.account_box),
+  AvatarPartEnum.MOUTH: _PartTypeDisplay("Cambiar boca", Icons.theater_comedy),
   AvatarPartEnum.LEFT_EYE:
-      _PartTypeDisplay("Cambiar ojo izquierdo", Icons.account_box),
+      _PartTypeDisplay("Cambiar ojo izquierdo", Icons.visibility),
   AvatarPartEnum.RIGHT_EYE:
-      _PartTypeDisplay("Cambiar ojo derecho", Icons.account_box),
+      _PartTypeDisplay("Cambiar ojo derecho", Icons.visibility),
   AvatarPartEnum.NECKERCHIEF:
-      _PartTypeDisplay("Cambiar pañoleta", Icons.account_box),
+      _PartTypeDisplay("Cambiar pañoleta", ScoutSpiritIcons.fleur_de_lis),
 };
 
 final Map<AvatarPartEnum, String> categoriesTitles = {
@@ -180,12 +181,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontFamily: 'ConcertOne',
                         color: Colors.white),
                   ),
+                  SizedBox(height: 16.0,),
                   if (partType != null)
                     Text(
                       categoriesTitles[partType!]!,
                       style: TextStyle(
-                          fontSize: 24.0,
-                          fontFamily: 'ConcertOne',
+                          fontSize: 21.0,
+                          fontFamily: 'Ubuntu',
                           color: Colors.white),
                     ),
                 ],

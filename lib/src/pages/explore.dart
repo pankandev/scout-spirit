@@ -56,7 +56,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => SnackBarProvider.showConfirmAlert(context, '¿Seguro que quieres salir?'),
+      onWillPop: () async => SnackBarProvider.showConfirmAlert(context, 'Seguro que quieres salir?', okLabel: 'Salir 🚪'),
       child: Scaffold(
           body: UnityApp(
         controller: GameController(),

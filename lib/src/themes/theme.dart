@@ -19,3 +19,5 @@ final appTheme = ThemeData.light().copyWith(
 );
 
 final TextStyle mutedTextTheme = ThemeData.light().textTheme.caption!;
+
+final TextStyle codeStyle = TextStyle(fontSize: 24.0, fontFamily: 'Ubuntu', letterSpacing: 12.0);

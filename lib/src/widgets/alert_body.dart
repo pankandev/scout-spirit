@@ -14,7 +14,7 @@ class AlertBody extends StatelessWidget {
       {Key? key,
       required this.title,
       this.body = '',
-      this.okLabel = 'OK',
+      this.okLabel = 'OK 👌',
       this.onOk,
       this.onCancel,
       this.cancelLabel = 'Cancelar',
@@ -34,30 +34,38 @@ class AlertBody extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 24.0,
-                fontFamily: 'ConcertOne'),
+            style: TextStyle(fontSize: 24.0, fontFamily: 'ConcertOne'),
           ),
           SizedBox(
             height: 16.0,
           ),
-          if (body.isNotEmpty) Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
-            child: Text(body, style: TextStyle(fontSize: 16.0), textAlign: TextAlign.center,),
-          ),
+          if (body.isNotEmpty)
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
+              child: Text(
+                body,
+                style: TextStyle(fontSize: 16.0, fontFamily: 'Ubuntu'),
+                textAlign: TextAlign.center,
+              ),
+            ),
           Flex(
             direction: Axis.horizontal,
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (this.onCancel != null) RawMaterialButton(
-                onPressed: this.onCancel,
-                child: Text(
-                  this.cancelLabel,
-                  style: TextStyle(fontWeight: FontWeight.w600),
+              if (this.onCancel != null)
+                RawMaterialButton(
+                  onPressed: this.onCancel,
+                  child: Text(
+                    this.cancelLabel,
+                    style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'Ubuntu'),
+                  ),
                 ),
-              ),
-              if (this.onCancel != null) SizedBox(width: 16.0,),
+              if (this.onCancel != null)
+                SizedBox(
+                  width: 16.0,
+                ),
               RawMaterialButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0)),
@@ -66,7 +74,9 @@ class AlertBody extends StatelessWidget {
                 child: Text(
                   this.okLabel,
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, color: Colors.white),
+                      fontFamily: 'Ubuntu',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
                 ),
               )
             ],

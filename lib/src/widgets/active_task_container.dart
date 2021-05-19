@@ -76,20 +76,27 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'No has indicado un ojetivo en progreso aun',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'ConcertOne',
-                      fontSize: 18.0),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      'No has indicado un ojetivo\nen progreso aun 😅',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'ConcertOne',
+                          fontSize: 18.0),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 12.0,
                 ),
-                ScoutOutlinedButton(
-                  onPressed: () => _onCreate(context),
-                  label: 'Seleccionar un objetivo',
-                  icon: Icons.edit,
+                Expanded(
+                  child: ScoutOutlinedButton(
+                    onPressed: () => _onCreate(context),
+                    label: 'Seleccionar un objetivo',
+                    icon: Icons.edit,
+                  ),
                 )
               ],
             ),

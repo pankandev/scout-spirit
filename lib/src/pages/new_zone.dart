@@ -47,8 +47,8 @@ class _NewZoneDialogState extends State<NewZoneDialog> {
             },
             itemCount: zones.length)
         : AlertBody(
-            title: 'Camino bloqueado',
-            body: '¡Desbloquea más zonas rellenando\ntu bitácora!',
+            title: 'Camino bloqueado 😮',
+            body: '¡Desbloquea más zonas avanzando\nen tu bitácora!',
             onOk: () => Navigator.pop(context));
   }
 }

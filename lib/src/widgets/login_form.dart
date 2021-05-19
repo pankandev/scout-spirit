@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/widgets/clickable_text.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 
 class LoginForm extends StatefulWidget {
@@ -27,27 +28,29 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildLoginForm(BuildContext context, {bool disabled = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
           SizedBox(height: 10.0),
           Text('Acceso', style: appTheme.textTheme.headline1),
           SizedBox(
-            height: 10.0,
+            height: 36.0,
           ),
           _buildEmailField(disabled: disabled),
           SizedBox(
-            height: 10.0,
+            height: 32.0,
           ),
           _buildPasswordField(disabled: disabled),
           SizedBox(
             height: 50.0,
           ),
           _buildLoginButton(context, disabled: disabled),
-        ],
-      ),
-    );
+          SizedBox(
+            height: 18.0,
+          ),
+          ClickableText(
+              label: 'Aún no tienes cuenta?\nPresiona aquí',
+              onTap: () => Navigator.of(context).pushNamed('/signup')),
+        ]));
   }
 
   Widget _buildLoginButton(BuildContext context, {bool disabled = true}) {

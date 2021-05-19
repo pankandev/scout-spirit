@@ -2,6 +2,8 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:scout_spirit/src/models/district.dart';
+import 'package:scout_spirit/src/models/group.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
 // ignore: import_of_legacy_library_into_null_safe
@@ -89,16 +91,11 @@ class BeneficiariesService extends RestApiService {
     return items.map<Beneficiary>((item) => Beneficiary.fromMap(item)).toList();
   }
 
-  Future<void> joinGroup(String code) async {
-    List<String> split = code.split('::');
-    if (split.length != 3) {
-      throw new AppError(message: 'Code does not have three parts');
-    }
-    final district = split[0];
-    final group = split[1];
-    final realCode = split[2];
-    await this.post("api/districts/$district/groups/$group/beneficiaries/join",
-        body: {"code": realCode});
+  Future<void> joinGroup(District district, Group group, String code) async {
+    String districtCode = district.code;
+    String groupCode = group.code;
+    await this.post("api/districts/$districtCode/groups/$groupCode/beneficiaries/join",
+        body: {"code": code});
   }
 
   Future<String> uploadPublicFile(String identityId, File file) async {
