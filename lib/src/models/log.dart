@@ -19,6 +19,10 @@ Map<String, LogDisplay> tagsDisplay = {
       name: 'Recompensa',
       icon: Icons.favorite_border,
       getLog: (log) => 'Ganó una recompensa'),
+  'COMPLETED': LogDisplay(
+      name: 'Completar obetivo',
+      icon: Icons.favorite_border,
+      getLog: (log) => 'Completó un objetivo!!! 🥳'),
 };
 
 class Log {
@@ -27,10 +31,11 @@ class Log {
   final String log;
   final Map<String, dynamic>? data;
 
-  LogDisplay get display =>
-      tagsDisplay[parentTag] ??
+  LogDisplay get display {
+    return tagsDisplay[parentTag] ??
       LogDisplay(
           name: 'Registro desconocido', icon: Icons.help, getLog: (log) => 'Registro desconocido');
+  }
 
   String get displayLog => display.getLog(this);
 

@@ -1,4 +1,3 @@
-
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
@@ -17,19 +16,37 @@ class Line {
   }
 }
 
-class Objective {
+class ObjectiveKey {
   final int line;
   final int subline;
   final DevelopmentStage stage;
   final DevelopmentArea area;
+
+  ObjectiveKey(
+      {required this.line,
+      required this.subline,
+      required this.stage,
+      required this.area});
+
+  String get stageName {
+    return stage.toString().split('.')[1].toLowerCase();
+  }
+
+  String get areaName {
+    return area.toString().split('.')[1].toLowerCase();
+  }
+}
+
+class Objective extends ObjectiveKey {
   final String rawObjective;
 
   Objective(
-      {required this.stage,
-      required this.area,
-      required this.line,
-      required this.subline,
-      required this.rawObjective});
+      {required DevelopmentStage stage,
+      required DevelopmentArea area,
+      required int line,
+      required int subline,
+      required this.rawObjective})
+      : super(stage: stage, area: area, line: line, subline: subline);
 
   static Objective fromCode(String code) {
     List<String> sections = code.split('::');
@@ -47,21 +64,16 @@ class Objective {
     return getUserObjective(user);
   }
 
-  String get stageName {
-    return stage.toString().split('.')[1].toLowerCase();
-  }
-
-  String get areaName {
-    return area.toString().split('.')[1].toLowerCase();
-  }
-
   String getUserObjective(User user) {
+    Unit unit = user.unit;
     return rawObjective
-        .replaceAll("{OsAs}", user.unit == Unit.Guides ? "as" : "os")
-        .replaceAll("{OA}", user.unit == Unit.Guides ? "a" : "o")
-        .replaceAll("{GuiaScout}", user.unit == Unit.Guides ? "Guía" : "Scout")
-        .replaceAll(
-            "{Unidad}", user.unit == Unit.Guides ? "Compañía" : "Tropa");
+        .replaceAll("{OsAs}", unit == Unit.Guides ? 'as' : 'os')
+        .replaceAll("{OA}", unit == Unit.Guides ? 'a' : 'o')
+        .replaceAll("{GuiaScout}", unit == Unit.Guides ? 'Guía' : 'Scout')
+        .replaceAll("{GuiasScouts}", unit == Unit.Guides ? 'Guías' : 'Scouts')
+        .replaceAll("{Unidad}", unit == Unit.Guides ? 'Compañía' : 'Tropa')
+        .replaceAll("{MyGender}", unit == Unit.Guides ? 'mujer' : 'hombre')
+        .replaceAll("{OtherGender}", unit == Unit.Guides ? 'hombre' : 'mujer');
   }
 
   @override

@@ -74,12 +74,15 @@ class _ProfilePageState extends State<ProfilePage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     availableParts = null;
   }
 
   void dispose() {
     super.dispose();
     widget.controller.off();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,

@@ -34,16 +34,19 @@ class _MainPageState extends State<MainPage> {
         Provider(create: (_) => DistrictsService()),
         Provider(create: (_) => AuthenticationService()),
       ],
-      child: Scaffold(
-        body: Stack(children: [
-          _buildBody(context),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-            child: Align(
-                alignment: Alignment.bottomRight,
-                child: _buildPlayButton(context)),
-          )
-        ]),
+      child: WillPopScope(
+        onWillPop: () async => SnackBarProvider.showConfirmAlert(context, 'Seguro que quieres salir?', okLabel: 'Salir 🚪'),
+        child: Scaffold(
+          body: Stack(children: [
+            _buildBody(context),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
+              child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: _buildPlayButton(context)),
+            )
+          ]),
+        ),
       ),
     );
   }

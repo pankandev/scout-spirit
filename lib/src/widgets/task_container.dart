@@ -74,7 +74,7 @@ class TaskContainer extends StatelessWidget {
                                   fontFamily: 'ConcertOne'),
                             ),
                             SizedBox(
-                              height: 2.0,
+                              height: 8.0,
                             ),
                             Text(
                               task.personalObjective.rawObjective,
@@ -82,7 +82,7 @@ class TaskContainer extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontSize: 15.0,
-                                  fontFamily: 'ConcertOne',
+                                  fontFamily: 'UbuntuCondensed',
                                   color: Color.fromRGBO(139, 139, 139, 1)),
                             ),
                           ],

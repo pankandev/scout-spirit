@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/pages/tasks/task-view.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
 
@@ -12,16 +11,13 @@ class ActiveTaskView extends StatefulWidget {
 
 class _ActiveTaskViewState extends State<ActiveTaskView> {
   @override
+  void initState() {
+    super.initState();
+    TasksService().fetchActiveTask();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Task?>(
-        stream: TasksService().activeTask,
-        builder: (context, snapshot) => snapshot.hasData
-            ? TaskViewPage(
-                task: snapshot.data!,
-                editable: true,
-              )
-            : Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ));
+    return TaskViewPage(readonly: false, objectiveKey: null);
   }
 }

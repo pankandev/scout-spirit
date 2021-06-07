@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ConfirmProvider {
   static Future<bool> askConfirm(BuildContext context,
-      {required String question, String? content}) async {
+      {required String question, String? content, String confirmLabel = 'Sí!', String cancelLabel = 'Cancelar'}) async {
     bool? result = await showDialog<bool>(
         context: context, builder: (context) =>
         AlertDialog(
@@ -18,14 +18,14 @@ class ConfirmProvider {
                         states) => Colors.grey)
                 ),
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text('Cancelar'))
+                child: Text(cancelLabel))
             ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith((
                         states) => Colors.blueAccent)
                 ),
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Sí!')),
+                child: Text(confirmLabel)),
           ],
         ));
     if (result == null) {

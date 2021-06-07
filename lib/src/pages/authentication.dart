@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/widgets/login_form.dart';
-import 'package:scout_spirit/src/widgets/clickable_text.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 
 class AuthenticationPage extends StatelessWidget {

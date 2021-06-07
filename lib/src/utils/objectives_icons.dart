@@ -14,6 +14,7 @@ class AreaDisplayData {
       {required this.icon, required this.colorScheme, required this.area});
 
   Color get color => colorScheme.primary;
+
   Color get accentColor => colorScheme.secondary;
 
   Color get disabledColor {
@@ -76,27 +77,40 @@ final Map<DevelopmentArea, AreaDisplayData> _scoutIcons = {
 final Map<DevelopmentArea, AreaDisplayData> _guidesIcons = {
   DevelopmentArea.Corporality: AreaDisplayData(
       icon: ScoutSpiritIcons.corporality,
-      colorScheme: ColorScheme.dark(primary: Colors.lightGreen),
+      colorScheme: ColorScheme.dark(
+          primary: Color.fromRGBO(111, 207, 52, 1),
+          secondary: Color.fromRGBO(76, 167, 19, 1.0)),
       area: DevelopmentArea.Corporality),
   DevelopmentArea.Creativity: AreaDisplayData(
       icon: ScoutSpiritIcons.creativity,
-      colorScheme: ColorScheme.dark(primary: Colors.deepOrange),
+      colorScheme: ColorScheme.dark(
+          primary: Color.fromRGBO(243, 115, 43, 1),
+          secondary: Color.fromRGBO(243, 163, 43, 1.0)),
       area: DevelopmentArea.Creativity),
   DevelopmentArea.Character: AreaDisplayData(
       icon: ScoutSpiritIcons.character,
-      colorScheme: ColorScheme.dark(primary: Colors.white),
+      colorScheme: ColorScheme.dark(
+          primary: Color.fromRGBO(146, 59, 137, 1),
+          secondary: Color.fromRGBO(210, 106, 198, 1.0)),
       area: DevelopmentArea.Character),
   DevelopmentArea.Affectivity: AreaDisplayData(
       icon: ScoutSpiritIcons.affectivity,
-      colorScheme: ColorScheme.dark(primary: Colors.white),
+      colorScheme: ColorScheme.dark(
+          primary: Color.fromRGBO(107, 217, 214, 1),
+          secondary: Color.fromRGBO(40, 155, 152, 1.0)),
       area: DevelopmentArea.Affectivity),
   DevelopmentArea.Sociability: AreaDisplayData(
       icon: ScoutSpiritIcons.sociability,
-      colorScheme: ColorScheme.dark(primary: Colors.white),
+      colorScheme: ColorScheme.dark(
+          primary: Color.fromRGBO(240, 217, 97, 1),
+          secondary: Color.fromRGBO(222, 145, 60, 1.0)),
       area: DevelopmentArea.Sociability),
   DevelopmentArea.Spirituality: AreaDisplayData(
       icon: ScoutSpiritIcons.spirituality,
-      colorScheme: ColorScheme.dark(primary: Colors.white),
+      colorScheme: ColorScheme.dark(
+        primary: Color.fromRGBO(15, 93, 137, 1),
+        secondary: Color.fromRGBO(33, 128, 191, 1.0),
+      ),
       area: DevelopmentArea.Spirituality),
 };
 

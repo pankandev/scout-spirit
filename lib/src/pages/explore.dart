@@ -37,6 +37,12 @@ class _ExplorePageState extends State<ExplorePage> {
     controller.off();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   Future<Map<String, dynamic>> getWorld(Map<String, dynamic>? arguments) async {

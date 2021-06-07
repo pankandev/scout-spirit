@@ -20,13 +20,13 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
   @override
   void initState() {
     super.initState();
-    TasksService().getActiveTask();
+    TasksService().fetchActiveTask();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Task?>(
-        stream: TasksService().activeTask,
+        stream: TasksService().activeTaskStream,
         builder: (context, snapshot) {
           Task? task = snapshot.data;
           return AspectRatio(
@@ -132,11 +132,6 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
   }
 
   void _onTaskTap(BuildContext context, User user) {
-    Navigator.of(context).pushNamed('/tasks/active', arguments: <String, dynamic>{
-      'isActive': true,
-      'task': user.beneficiary!.target,
-      'unit': user.unit,
-      'editable': false
-    });
+    Navigator.of(context).pushNamed('/tasks/active');
   }
 }

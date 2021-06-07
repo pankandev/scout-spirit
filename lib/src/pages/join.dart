@@ -4,6 +4,7 @@ import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/district.dart';
 import 'package:scout_spirit/src/models/group.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
+import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
 import 'package:scout_spirit/src/services/groups.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
@@ -46,6 +47,46 @@ class _JoinPageState extends State<JoinPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                            flex: 4,
+                            child: RawMaterialButton(
+                              onPressed: () async {
+                                await AuthenticationService().logout();
+                                Navigator.pushReplacementNamed(context, '/');
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 12.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Icon(
+                                      Icons.logout,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Cerrar sesión',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Ubuntu',
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )),
+                        Flexible(flex: 4, child: Container())
+                      ],
+                    ),
+                  ),
                   Icon(
                     Icons.group,
                     size: 56.0,
@@ -108,7 +149,7 @@ class _JoinPageState extends State<JoinPage> {
             StreamBuilder<District>(
                 stream: selectedDistrict,
                 builder: (context, snapshot) {
-                  return snapshot.data != null
+                  return snapshot.data != null && selectedGroup != null
                       ? Container(
                           decoration: BoxDecoration(
                               color: Colors.white,

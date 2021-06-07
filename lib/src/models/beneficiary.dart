@@ -69,11 +69,14 @@ class Task {
   int get line => originalObjective.line;
   int get subline => originalObjective.subline;
 
+  ObjectiveKey get key => originalObjective;
+
   Task({
     required this.score,
     required this.originalObjective,
     required this.personalObjective,
     required this.tasks,
+    this.token,
     this.created,
     this.completed,
   });
@@ -195,6 +198,7 @@ class FullTask extends Task {
         originalObjective: task.originalObjective,
         personalObjective: task.personalObjective,
         tasks: task.tasks,
+        token: task.token,
         created: task.created,
         completed: task.completed);
 }

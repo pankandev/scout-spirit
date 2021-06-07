@@ -182,11 +182,12 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
     bool errored = false;
     try {
       await TasksService().startObjective(form.personalObjective!, form.tasks);
-    } catch (e) {
+    } catch (e, s) {
       errored = true;
       setState(() {
         loading = false;
       });
+      print(s);
       throw e;
     }
     if (!errored) {

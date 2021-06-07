@@ -2,6 +2,7 @@ import 'dart:async';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/material.dart';
@@ -101,12 +102,16 @@ class AuthenticationService {
       BuildContext context, String email, String password) async {
     SignInResult result;
     try {
+      await Amplify.Auth.signOut();
       result = await Amplify.Auth.signIn(username: email, password: password);
     } on NotAuthorizedException {
       SnackBarProvider.showMessage(context, 'Contraseña incorrecta');
       return false;
     } on UserNotFoundException {
       SnackBarProvider.showMessage(context, 'Correo electrónico no registrado');
+      return false;
+    } catch (_) {
+      SnackBarProvider.showMessage(context, 'Error desconocido');
       return false;
     }
     if (!result.isSignedIn) {

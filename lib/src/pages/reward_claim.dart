@@ -38,28 +38,35 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
         backgroundColor: Colors.transparent,
         body: Stack(children: [
           Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 64.0, horizontal: 16.0),
               child: Card(
-                  child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 24.0, horizontal: 36.0),
-                      child: Flex(
-                        direction: Axis.vertical,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '¡Felicitaciones!',
-                            style: appTheme.textTheme.headline1,
-                          ),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                          Text('Elige una recompensa!'),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                          _buildBoxesList(),
-                        ],
-                      )))),
+                  child: SingleChildScrollView(
+                child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 24.0, horizontal: 36.0),
+                    child: Flex(
+                      direction: Axis.vertical,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '¡Felicitaciones!',
+                          style: appTheme.textTheme.headline1,
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        Text('Elige una recompensa!'),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        _buildBoxesList(),
+                      ],
+                    )),
+              )),
+            ),
+          ),
           Align(
               alignment: Alignment.topCenter,
               child: ConfettiWidget(
@@ -78,14 +85,25 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
   }
 
   Widget _buildBoxesList() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 2,
       children: widget.reward.body.boxes
           .asMap()
           .keys
-          .map((index) => ElevatedButton(
-              child: Text('Recompensa #$index'),
-              onPressed: loading ? null : () => claimReward(boxIndex: index)))
+          .map((index) => Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: RawMaterialButton(
+                    fillColor: loading ? Colors.grey[700] : appTheme.primaryColor,
+                    textStyle: TextStyle(color: Colors.white),
+                    shape: CircleBorder(),
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text('#$index'),
+                    ),
+                    onPressed:
+                        loading ? null : () => claimReward(boxIndex: index)),
+              ))
           .toList(),
     );
   }

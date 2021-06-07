@@ -51,11 +51,12 @@ final List<Task> testTasks = [
 
 // DevelopmentStage stage, DevelopmentArea area, int line, int subline
 class TasksService extends RestApiService {
-  final BehaviorSubject<Task?> taskSubject = BehaviorSubject<Task>();
+  final BehaviorSubject<FullTask?> activeTaskSubject =
+      BehaviorSubject<FullTask>();
 
-  Stream<Task?> get activeTask => taskSubject.stream;
+  Stream<FullTask?> get activeTaskStream => activeTaskSubject.stream;
 
-  Task? get snapActiveTask => taskSubject.value;
+  FullTask? get snapActiveTask => activeTaskSubject.value;
 
   static TasksService _instance = TasksService._internal();
 
@@ -83,7 +84,7 @@ class TasksService extends RestApiService {
     await post(
         'api/users/${user.id}/tasks/${user.stageName}/${personalObjective.areaName}/${personalObjective.line}.${personalObjective.subline}',
         body: payload);
-    await getActiveTask();
+    await fetchActiveTask();
   }
 
   Future<Task?> updateActiveTask(List<SubTask> subTasks) async {
@@ -94,25 +95,34 @@ class TasksService extends RestApiService {
       "description": target.personalObjective.rawObjective
     };
     await put('api/users/${user.id}/tasks/active', payload);
-    return await getActiveTask();
+    return await fetchActiveTask();
   }
 
-  Future<Task?> getActiveTask() async {
+  Future<FullTask?> fetchActiveTask({bool onlyLogs = false}) async {
     User user = AuthenticationService().snapAuthenticatedUser!;
     Task? task;
+    List<Log> logs;
     try {
-      Map<String, dynamic> response =
-          await get('api/users/${user.id}/tasks/active');
-      task = Task.fromMap(response);
+      if (onlyLogs) {
+        task = snapActiveTask!;
+      } else {
+        Map<String, dynamic> response =
+            await get('api/users/${user.id}/tasks/active');
+        task = Task.fromMap(response);
+      }
+      logs = await LogsService().getProgressLogs(task);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
         task = null;
+        logs = [];
       } else {
         throw e;
       }
     }
-    taskSubject.sink.add(task);
-    return task;
+    FullTask? fullTask =
+        task != null ? FullTask.fromTask(task: task, logs: logs) : null;
+    activeTaskSubject.add(fullTask);
+    return fullTask;
   }
 
   BehaviorSubject<FullTask> _getTaskSubject(String userId,
@@ -152,18 +162,19 @@ class TasksService extends RestApiService {
     return _getTaskSubject(userId, stage, area, line, subline);
   }
 
-  Future<bool> updateTask(String userId, DevelopmentStage stage,
+  Future<FullTask?> fetchTask(String userId, DevelopmentStage stage,
       DevelopmentArea area, int line, int subline) async {
-    FullTask? fullTask = await getFullTask(userId, stage, area, line, subline);
+    FullTask? fullTask =
+        await fetchFullTask(userId, stage, area, line, subline);
     if (fullTask != null) {
-      _getTaskSubject(userId, stage, area, line, subline).sink.add(fullTask);
+      _getTaskSubject(userId, stage, area, line, subline).add(fullTask);
     }
-    return fullTask != null;
+    return fullTask;
   }
 
-  Future<FullTask?> getFullTask(String userId, DevelopmentStage stage,
+  Future<FullTask?> fetchFullTask(String userId, DevelopmentStage stage,
       DevelopmentArea area, int line, int subline) async {
-    Task? task = await getUserTask(userId, stage, area, line, subline);
+    Task? task = await fetchUserTask(userId, stage, area, line, subline);
     if (task != null) {
       List<Log> logs = await LogsService().getProgressLogs(task);
       return FullTask.fromTask(task: task, logs: logs);
@@ -185,33 +196,16 @@ class TasksService extends RestApiService {
     }
   }
 
-  Future<Task?> getUserTasksByStage(User user, DevelopmentStage stage) async {
-    Task? task;
-    try {
-      Map<String, dynamic> response =
-          await get('api/users/${user.id}/tasks/${stageToString(stage)}/');
-      task = Task.fromMap(response);
-    } on HttpError catch (e) {
-      if (e.statusCode == 404) {
-        task = null;
-      } else {
-        throw e;
-      }
-    }
-    taskSubject.sink.add(task);
-    return task;
-  }
-
   BehaviorSubject<List<Task>> _userTasksSubject = BehaviorSubject<List<Task>>();
 
   Stream<List<Task>> get userTasks => _userTasksSubject.stream;
 
-  Future<Task?> getUserTask(String userId, DevelopmentStage stage,
+  Future<Task?> fetchUserTask(String userId, DevelopmentStage stage,
       DevelopmentArea area, int line, int subline) async {
     Task? task;
     try {
       Map<String, dynamic> response = await get(
-          'api/users/$userId/tasks/${stageToString(stage)}/${areaToString(area)}/$line/$subline');
+          'api/users/$userId/tasks/${stageToString(stage)}/${areaToString(area)}/$line.$subline');
       task = Task.fromMap(response);
     } on HttpError catch (e) {
       if (e.statusCode == 404) {
@@ -220,7 +214,6 @@ class TasksService extends RestApiService {
         throw e;
       }
     }
-    taskSubject.sink.add(task);
     return task;
   }
 
@@ -229,14 +222,13 @@ class TasksService extends RestApiService {
       String userId = AuthenticationService().authenticatedUserId;
       Map<String, dynamic> response = await get('api/users/$userId/tasks/');
       List items = response["items"];
-      _userTasksSubject.sink
-          .add(items.map((item) => Task.fromMap(item)).toList());
+      _userTasksSubject.add(items.map((item) => Task.fromMap(item)).toList());
     } on HttpError catch (e, s) {
       print(s);
       throw e;
     } on SocketException catch (e) {
       if (!kReleaseMode) {
-        _userTasksSubject.sink.add(testTasks);
+        _userTasksSubject.add(testTasks);
       } else {
         throw e;
       }
@@ -244,7 +236,7 @@ class TasksService extends RestApiService {
   }
 
   void dispose() {
-    taskSubject.close();
+    activeTaskSubject.close();
     _userTasksSubject.close();
   }
 
@@ -252,7 +244,7 @@ class TasksService extends RestApiService {
     User user = AuthenticationService().snapAuthenticatedUser!;
     Map<String, dynamic> data =
         await post('api/users/${user.id}/tasks/active/complete');
-    await getActiveTask();
+    await fetchActiveTask();
     CompleteTaskResponse response = CompleteTaskResponse.fromMap(data);
     await RewardsService().saveReward(response.reward);
     return response;
