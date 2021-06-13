@@ -135,7 +135,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'ConcertOne',
-                  fontSize: 32.0),
+                  fontSize: 24.0),
             ),
             SizedBox(
               height: 16.0,
@@ -149,7 +149,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'ConcertOne',
-                  fontSize: 32.0),
+                  fontSize: 24.0),
             ),
             SizedBox(
               height: 16.0,

@@ -14,13 +14,13 @@ class InitializeFormBloc {
     _selectedObjectives.sink.add({});
   }
 
-  Map<DevelopmentArea, List<Objective>> get value => _selectedObjectives.value!;
+  Map<DevelopmentArea, List<Objective>> get value => _selectedObjectives.value;
   set value(Map<DevelopmentArea, List<Objective>> newValue) {
     _selectedObjectives.sink.add(newValue);
   }
 
   addObjective(Objective objective) {
-    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value!;
+    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value;
     if (!value.containsKey(objective.area)) {
       value[objective.area] = [];
     }
@@ -29,7 +29,7 @@ class InitializeFormBloc {
   }
 
   int removeObjective(Objective objective) {
-    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value!;
+    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value;
     int found = findObjective(objective);
     if (found != -1) {
       value[objective.area]!.removeAt(found);
@@ -39,7 +39,7 @@ class InitializeFormBloc {
   }
 
   int findObjective(Objective objective) {
-    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value!;
+    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value;
     if (!value.containsKey(objective.area)) {
       return -1;
     }
@@ -68,7 +68,7 @@ class InitializeFormBloc {
   }
 
   bool initializeArea(DevelopmentArea area) {
-    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value!;
+    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value;
     if (!value.containsKey(area)) {
       value[area] = [];
       _selectedObjectives.sink.add(value);
@@ -78,7 +78,7 @@ class InitializeFormBloc {
   }
 
   void resetArea(DevelopmentArea area) {
-    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value!;
+    Map<DevelopmentArea, List<Objective>> value = _selectedObjectives.value;
     value.remove(area);
     _selectedObjectives.sink.add(value);
   }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
-import 'package:scout_spirit/src/widgets/clickable_text.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 
 class LoginForm extends StatefulWidget {
@@ -47,9 +46,13 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             height: 18.0,
           ),
-          ClickableText(
-              label: 'Aún no tienes cuenta?\nPresiona aquí',
-              onTap: () => Navigator.of(context).pushNamed('/signup')),
+          ScoutButton(
+            label: 'Aún no tienes cuenta?\nPresiona aquí',
+            onPressed: loading ? null : () => Navigator.of(context).pushNamed('/signup'),
+            fillColor: appTheme.primaryColor,
+            accentColor: appTheme.accentColor,
+            labelColor: Colors.white,
+          ),
         ]));
   }
 

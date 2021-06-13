@@ -6,8 +6,8 @@ class ScoutAlertDialog<T> extends StatelessWidget {
   final IconData icon;
   final String title;
   final String body;
-  final String cancelLabel;
-  final String okLabel;
+  final String? cancelLabel;
+  final String? okLabel;
   final T okValue;
 
   const ScoutAlertDialog(
@@ -26,19 +26,20 @@ class ScoutAlertDialog<T> extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
         child: AlertBody(
           color: color,
           icon: icon,
           title: title,
           body: body,
-          cancelLabel: cancelLabel,
-          okLabel: okLabel,
-          onOk: () {
+          cancelLabel: cancelLabel ?? '',
+          okLabel: okLabel ?? '',
+          onOk: okLabel != null ? () {
             Navigator.pop(context, okValue);
-          },
-          onCancel: () {
+          } : null,
+          onCancel: cancelLabel != null ? () {
             Navigator.pop(context, T == bool ? false : null);
-          },
+          } : null,
         ),
       ),
     );

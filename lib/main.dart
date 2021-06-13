@@ -68,9 +68,7 @@ class ScoutSpiritApp extends StatelessWidget {
         '/rewards/claim': (context) => RewardsPage(
             rewards:
                 ModalRoute.of(context)!.settings.arguments! as List<Reward>),
-        '/tasks/start': (context) => TaskStartFormPage(
-            area:
-                ModalRoute.of(context)!.settings.arguments! as DevelopmentArea),
+        '/tasks/start': (context) => TaskStartFormPage(),
         '/tasks/view': (context) {
           Task task = ModalRoute.of(context)!.settings.arguments! as Task;
           return TaskViewPage(

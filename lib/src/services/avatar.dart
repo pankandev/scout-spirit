@@ -14,7 +14,7 @@ class AvatarService extends RestApiService {
 
   BehaviorSubject<Avatar> _authenticatedAvatar = new BehaviorSubject<Avatar>();
 
-  Avatar get snapAuthenticatedAvatar => _authenticatedAvatar.value!;
+  Avatar get snapAuthenticatedAvatar => _authenticatedAvatar.value;
 
   Stream<Avatar?> get authenticatedAvatar => _authenticatedAvatar.stream;
 
@@ -61,14 +61,14 @@ class AvatarService extends RestApiService {
   Future<Avatar> updateAuthenticatedAvatar() async {
     String userId = AuthenticationService().authenticatedUserId;
     Map<String, dynamic> response =
-        await put('api/beneficiaries/$userId/avatar/', _authenticatedAvatar.value!.toIdMap());
+        await put('api/beneficiaries/$userId/avatar/', _authenticatedAvatar.value.toIdMap());
     Avatar newAvatar = Avatar.fromMap(response);
     _authenticatedAvatar.sink.add(newAvatar);
     return newAvatar;
   }
 
   Avatar changeAvatarClothes(AvatarPartEnum type, AvatarPart? part) {
-    Avatar avatar = _authenticatedAvatar.value!;
+    Avatar avatar = _authenticatedAvatar.value;
     avatar = avatar.copyChanging(type, part);
     _authenticatedAvatar.sink.add(avatar);
     return avatar;

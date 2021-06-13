@@ -27,11 +27,15 @@ class ObjectivesService {
     Map<DevelopmentArea, List<Line>> newCache = cache = {};
     lines.keys.forEach((areaName) {
       DevelopmentArea area = areaFromName(areaName);
-      List areaLines = lines[areaName];
-      newCache[area] = areaLines
-          .map<Line>((lineMap) => Line(
-              name: lineMap["name"], image: lineMap["image"], objectives: {}))
+      List<Map<String, dynamic>> areaLines = (lines[areaName] as List).cast<Map<String, dynamic>>();
+      List<Line> thisLines = areaLines
+          .asMap()
+          .keys
+          .map<Line>((index) => Line(
+              index: index, name: areaLines[index]["name"], objectives: {}))
           .toList();
+      thisLines.sort((a, b) => a.index - b.index);
+      newCache[area] = thisLines;
     });
 
     await Future.wait(
@@ -43,19 +47,19 @@ class ObjectivesService {
       stageLines.forEach((String areaName, dynamic lines) {
         // iterate areas
         DevelopmentArea area = areaFromName(areaName);
-        lines.asMap().forEach((int line, dynamic objectives) {
+        lines.asMap().forEach((int lineIndex, dynamic objectives) {
           // iterate lines
           List<Objective> cacheObjectives =
-              newCache[area]![line].objectives[stage] = [];
+              newCache[area]![lineIndex].objectives[stage] = [];
           List.castFrom<dynamic, String>(List.from(objectives))
               .asMap()
-              .forEach((subline, String objectiveContent) {
+              .forEach((sublineIndex, String objectiveContent) {
             // iterate sub-lines
             Objective objective = Objective(
                 stage: stage,
                 area: area,
-                line: line + 1,
-                subline: subline + 1,
+                line: lineIndex + 1,
+                subline: sublineIndex + 1,
                 rawObjective: objectiveContent);
             cacheObjectives.add(objective);
           });
@@ -68,12 +72,35 @@ class ObjectivesService {
     if (!initialized)
       throw AppError(message: 'Trying to use uninitialized service');
     Map<DevelopmentArea, List<Line>> lines = cache!;
-    return lines.keys
+    List<Objective> objectives = lines.keys
         .map<Iterable<Objective>>((area) => lines[area]!
             .map((l) => l.objectives[stage]!)
             .expand<Objective>((l) => l))
         .expand((l) => l)
         .toList();
+    objectives.sort((a, b) => a.area.index - b.area.index);
+    return objectives;
+  }
+
+  Map<DevelopmentArea, List<Line>> groupObjectives(List<Objective> objectives) {
+    Map<DevelopmentArea, List<Line>> grouped = {};
+    for (Objective objective in objectives) {
+      List<Line> areaGroup = grouped[objective.area] ?? [];
+      grouped[objective.area] = areaGroup;
+
+      Line lineGroup = areaGroup.firstWhere(
+          (element) => element.index == objective.line - 1, orElse: () {
+        Line line = getLine(objective.area, objective.line);
+        Line newLine = Line(index: line.index, name: line.name, objectives: {
+          DevelopmentStage.Prepuberty: [],
+          DevelopmentStage.Puberty: []
+        });
+        areaGroup.add(newLine);
+        return newLine;
+      });
+      lineGroup.objectives[objective.stage]!.add(objective);
+    }
+    return grouped;
   }
 
   List<Objective> getAllByArea(DevelopmentStage stage, DevelopmentArea area) {

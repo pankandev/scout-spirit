@@ -90,7 +90,7 @@ class _LogsPageState extends State<LogsPage> {
                                             horizontal: 16.0, vertical: 12.0),
                                         child: LogCard(log: data[index]),
                                       ))
-                            : Center(child: CircularProgressIndicator());
+                            : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.white)));
                       }),
                 ),
               ],

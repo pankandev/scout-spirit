@@ -1,4 +1,5 @@
 import 'package:scout_spirit/src/models/user.dart';
+import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
@@ -10,7 +11,7 @@ class AreaDisplayData {
 
   String get name => _areaNames[area]!;
 
-  AreaDisplayData(
+  const AreaDisplayData(
       {required this.icon, required this.colorScheme, required this.area});
 
   Color get color => colorScheme.primary;
@@ -115,12 +116,17 @@ final Map<DevelopmentArea, AreaDisplayData> _guidesIcons = {
 };
 
 class ObjectivesDisplay {
-  static AreaDisplayData getAreaIconData(Unit unit, DevelopmentArea area) {
+  static AreaDisplayData defaultDisplayData = AreaDisplayData(
+      icon: Icons.help,
+      colorScheme: appTheme.colorScheme,
+      area: DevelopmentArea.Corporality);
+
+  static AreaDisplayData getAreaIconData(Unit unit, DevelopmentArea? area) {
     switch (unit) {
       case Unit.Guides:
-        return _guidesIcons[area]!;
+        return _guidesIcons[area] ?? defaultDisplayData;
       case Unit.Scouts:
-        return _scoutIcons[area]!;
+        return _scoutIcons[area] ?? defaultDisplayData;
     }
   }
 

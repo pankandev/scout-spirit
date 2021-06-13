@@ -93,7 +93,7 @@ class RewardsService extends RestApiService {
   }
   List<T> getSnapByCategory<T extends Reward>(String category) {
     List<Reward>? value = _getCategorySubject(category).value;
-    return value?.cast<T>() ?? <T>[];
+    return value.cast<T>();
   }
 
   final Map<String, BehaviorSubject<List<Reward>>> rewardsByCategory = {};

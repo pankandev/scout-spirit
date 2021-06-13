@@ -39,6 +39,38 @@ class SnackBarProvider {
     fToast.showToast(child: toast, gravity: gravity);
   }
 
+  static Future<void> showPopTooltip(BuildContext context, String title,
+      {Color color = Colors.deepPurpleAccent,
+      IconData icon = Icons.help,
+      Curve animationCurve = Curves.bounceOut,
+      Duration animationDuration = const Duration(milliseconds: 600),
+      String body = '',
+      String okLabel = 'Entendido 👌'}) async {
+    await showGeneralDialog(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          return Transform.scale(
+              scale: animationCurve.transform(a1.value),
+              child: Opacity(
+                opacity: animationCurve.transform(a1.value),
+                child: widget,
+              ));
+        },
+        transitionDuration: animationDuration,
+        barrierDismissible: true,
+        barrierLabel: '',
+        pageBuilder: (context, a1, a2) => ScoutAlertDialog(
+              color: color,
+              icon: icon,
+              title: title,
+              body: body,
+              okLabel: okLabel,
+              okValue: true,
+              cancelLabel: null,
+            ));
+  }
+
   static Future<bool> showConfirmAlert(BuildContext context, String title,
       {Color color = Colors.redAccent,
       IconData icon = Icons.warning_amber_rounded,

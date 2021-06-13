@@ -5,11 +5,13 @@ import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/forms/task_start.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
+import 'package:scout_spirit/src/widgets/header_back.dart';
 import 'package:scout_spirit/src/widgets/objective_card.dart';
-import 'package:scout_spirit/src/themes/theme.dart';
 
 class PersonalObjectiveForm extends StatefulWidget {
-  PersonalObjectiveForm({Key? key}) : super(key: key);
+  final Function()? onBack;
+
+  PersonalObjectiveForm({Key? key, this.onBack}) : super(key: key);
 
   @override
   _PersonalObjectiveFormState createState() => _PersonalObjectiveFormState();
@@ -33,77 +35,90 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 24.0),
-        child: Column(
-          children: [
-            Card(
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          HeaderBack(onBack: widget.onBack, label: 'Hazlo tuyo',),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 24.0),
+            child: Column(
+              children: [
+                StreamBuilder<Objective?>(
+                    stream:
+                    Provider.of<TaskStartForm>(context).originalObjectiveStream,
+                    builder: (ctx, snapshot) {
+                      return snapshot.data != null
+                          ? ObjectiveCard(objective: snapshot.data!)
+                          : Container();
+                    }),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Row(
                   children: [
-                    Text('Objetivo Personal',
-                        style: appTheme.textTheme.headline2),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                        '¿Qué objetivo te propones a ti mismo para completar el que seleccionaste según tus intereses?',
-                        style: mutedTextTheme),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                        'Puede ser algo bien general, en el siguiente paso definirás qué quieres hacer con más detalle',
-                        style: mutedTextTheme),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Form(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: fieldController,
-                            maxLines: 8,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Este campo está vacío";
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              TaskStartForm form = Provider.of<TaskStartForm>(
-                                  context,
-                                  listen: false);
-                              form.personalObjective = form.originalObjective!
-                                  .copyWith(objective: value);
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Objetivo personal',
-                              alignLabelWithHint: true,
-                              border: OutlineInputBorder(),
-                              hintText: 'Para realizar este objetivo voy a...',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    Expanded(child: Icon(Icons.arrow_downward, color: Colors.white)),
+                    Expanded(child: Icon(Icons.arrow_downward, color: Colors.white)),
+                    Expanded(child: Icon(Icons.arrow_downward, color: Colors.white))
                   ],
                 ),
-              ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Form(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              keyboardType: TextInputType.text,
+                              controller: fieldController,
+                              maxLines: 8,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Este campo está vacío";
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                TaskStartForm form = Provider.of<TaskStartForm>(
+                                    context,
+                                    listen: false);
+                                form.personalObjective = form.originalObjective!
+                                    .copyWith(objective: value);
+                              },
+                              textAlign: TextAlign.justify,
+                              style: TextStyle(
+                                  color: Colors.white, fontFamily: 'Ubuntu', fontSize: 14.0, height: 1.5),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.white70, width: 2.0)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.white70, width: 2.0)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.white, width: 2.0)),
+                                  hintText: 'Para lograr este objetivo yo...',
+                                  hintStyle: TextStyle(
+                                      color: Colors.white70, fontFamily: 'Ubuntu')),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            SizedBox(
-              height: 10.0,
-            ),
-            if (Provider.of<TaskStartForm>(context).originalObjective != null)
-              ObjectiveCard(
-                objective:
-                    Provider.of<TaskStartForm>(context).originalObjective!,
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

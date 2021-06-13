@@ -65,7 +65,10 @@ class StatsPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             'Mantén presionado uno de los íconos en el gráfico para ver su significado',
-            style: TextStyle(color: Colors.white, fontFamily: 'UbuntuCondensed', fontSize: 15),
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'UbuntuCondensed',
+                fontSize: 15),
             textAlign: TextAlign.center,
           ),
         ),
@@ -78,7 +81,10 @@ class StatsPage extends StatelessWidget {
     return count.items.map((item) {
       AreaDisplayData displayData =
           ObjectivesDisplay.getAreaIconData(unit, item.area);
-      return RadarItem(label: displayData.name, value: item.value.toDouble(), icon: displayData.icon);
+      return RadarItem(
+          label: displayData.name,
+          value: item.value.toDouble(),
+          icon: displayData.icon);
     });
   }
 
@@ -128,6 +134,7 @@ class StatsPage extends StatelessWidget {
                 ),
                 Flex(
                   direction: Axis.horizontal,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                         flex: 2,
@@ -141,6 +148,8 @@ class StatsPage extends StatelessWidget {
                           label: 'Factor de Desarrollo Integral',
                           value:
                               '${roundToDigits(beneficiary.nTasks.integrityFactor, 2)}%',
+                          tooltip:
+                              'Mientras mayor sea tu Factor de Desarrollo Integral, significa que has progresado de forma más integra en las diferentes áreas de desarrollo.\n\n¡Avanza lo más posible en diferentes áreas para mejorar este valor!',
                         )),
                     Expanded(
                         flex: 2,

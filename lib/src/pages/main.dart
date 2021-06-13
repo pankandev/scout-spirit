@@ -13,6 +13,8 @@ import 'package:scout_spirit/src/widgets/scout_button.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/reward_overlay.dart';
+import 'package:scout_spirit/src/widgets/icon_tooltip.dart';
+import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -35,7 +37,9 @@ class _MainPageState extends State<MainPage> {
         Provider(create: (_) => AuthenticationService()),
       ],
       child: WillPopScope(
-        onWillPop: () async => SnackBarProvider.showConfirmAlert(context, 'Seguro que quieres salir?', okLabel: 'Salir 🚪'),
+        onWillPop: () async => SnackBarProvider.showConfirmAlert(
+            context, 'Seguro que quieres salir?',
+            okLabel: 'Salir 🚪'),
         child: Scaffold(
           body: Stack(children: [
             _buildBody(context),
@@ -92,7 +96,9 @@ class _MainPageState extends State<MainPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          _buildSubHeader('Objetivo en progreso'),
+                          _buildSubHeader('Objetivo en progreso',
+                              tooltip:
+                                  'Tu objetivo en progreso corresponde a aquel objetivo en el que estás trabajando actualmente'),
                           SizedBox(
                             height: 24.0,
                           ),
@@ -106,45 +112,36 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                         height: 24.0,
                       ),
-                      ScoutButton(
+                      ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, '/binnacle'),
                         label: 'Bitácora',
+                        labelSize: 23.0,
                         icon: Icons.book_outlined,
-                        labelSize: 26.0,
-                        labelColor: Colors.white,
-                        fillColor: Color.fromRGBO(204, 3, 99, 1),
-                        accentColor: Color.fromRGBO(255, 22, 162, 1),
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
                       ),
                       SizedBox(
                         height: 24.0,
                       ),
-                      ScoutButton(
+                      ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/stats'),
                         label: 'Estadísticas',
-                        labelSize: 26.0,
-                        labelColor: Colors.white,
+                        labelSize: 23.0,
                         icon: Icons.insights,
-                        fillColor: Color.fromRGBO(89, 15, 246, 1),
-                        accentColor: Color.fromRGBO(0, 48, 217, 1),
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
                       ),
                       SizedBox(
                         height: 24.0,
                       ),
-                      ScoutButton(
+                      ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/logs'),
                         label: 'Registros',
-                        labelSize: 26.0,
-                        labelColor: Colors.white,
+                        labelSize: 23.0,
                         icon: Icons.account_tree_outlined,
-                        fillColor: Color.fromRGBO(53, 146, 255, 1),
-                        accentColor: Color.fromRGBO(22, 199, 255, 1),
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
                       ),
@@ -160,11 +157,18 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Text _buildSubHeader(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-          color: Colors.white, fontFamily: 'ConcertOne', fontSize: 22.0),
+  Widget _buildSubHeader(String title, {String? tooltip}) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+                color: Colors.white, fontFamily: 'ConcertOne', fontSize: 22.0),
+          ),
+        ),
+        if (tooltip != null) IconTooltip(tooltip)
+      ],
     );
   }
 
@@ -177,8 +181,8 @@ class _MainPageState extends State<MainPage> {
         fillColor: appTheme.errorColor,
         accentColor: Colors.pink,
         labelColor: Colors.white,
-        spreadRadius: 2.0,
-        shadowAlpha: 0.3,
+        spreadRadius: 1.0,
+        shadowAlpha: 0.2,
         onPressed: () async {
           bool result = await SnackBarProvider.showConfirmAlert(
               context, 'Estás listo?',
@@ -243,9 +247,9 @@ class _MainPageState extends State<MainPage> {
                             ScoutButton(
                                 label: 'Editar ávatar',
                                 fillColor: Colors.white,
-                                blurRadius: 5.0,
+                                blurRadius: 8.0,
                                 labelSize: 17.0,
-                                shadowAlpha: 0.3,
+                                shadowAlpha: 0.22,
                                 accentColor: Color.lerp(Colors.white,
                                     Color.fromRGBO(93, 36, 255, 1), 0.2)!,
                                 labelColor: Color.fromRGBO(93, 36, 255, 1),

@@ -1,13 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:scout_spirit/src/modals/objective-select.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
-import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:scout_spirit/src/widgets/task_container.dart';
 import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
@@ -94,7 +92,7 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
                 Expanded(
                   child: ScoutOutlinedButton(
                     onPressed: () => _onCreate(context),
-                    label: 'Seleccionar un objetivo',
+                    label: 'Comenzar un objetivo',
                     icon: Icons.edit,
                   ),
                 )
@@ -105,7 +103,7 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
             width: 16.0,
           ),
           Expanded(
-            flex: 6,
+            flex: 4,
             child: FittedBox(
               fit: BoxFit.contain,
               child: Icon(
@@ -120,15 +118,7 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
   }
 
   Future<void> _onCreate(BuildContext context) async {
-    await showDialog(
-        context: context,
-        builder: (context) => ObjectiveSelectModal(
-            closeOnSelect: true,
-            onSelect: (area) => _onAreaSelect(context, area)));
-  }
-
-  Future<void> _onAreaSelect(BuildContext context, DevelopmentArea area) async {
-    await Navigator.of(context).pushNamed('/tasks/start', arguments: area);
+    await Navigator.of(context).pushNamed('/tasks/start');
   }
 
   void _onTaskTap(BuildContext context, User user) {

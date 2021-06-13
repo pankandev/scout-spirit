@@ -21,10 +21,10 @@ class TaskStartForm {
   final BehaviorSubject<List<SubTask>> _tasks =
       BehaviorSubject<List<SubTask>>();
 
-  List<SubTask> get tasks => _tasks.value ?? [];
+  List<SubTask> get tasks => _tasks.value;
 
   set tasks(List<SubTask> value) {
-    _tasks.sink.add(value);
+    _tasks.add(value);
   }
 
   TaskStartForm() {
@@ -52,26 +52,17 @@ class TaskStartForm {
   Stream<Objective?> get originalObjectiveStream => _original.stream;
 
   set personalObjective(Objective? value) {
-    _personal.sink.add(value);
+    _personal.add(value);
   }
 
   Objective? get personalObjective => _personal.value;
 
-  Stream<Objective> get personalObjectiveStream =>
-      _personal.stream.transform(_validateObjective);
+  Stream<Objective> get personalObjectiveStream => _personal.stream
+      .where((event) => event != null)
+      .map((event) => event as Objective);
 
   Stream<List<SubTask>> get tasksStream =>
       _tasks.stream.transform(_validateTasks);
-
-  final StreamTransformer<Objective, Objective> _validateObjective =
-      StreamTransformer<Objective, Objective>.fromHandlers(
-          handleData: (data, sink) {
-    if (data.rawObjective.isNotEmpty) {
-      sink.add(data);
-    } else {
-      sink.addError('Objetivo está vacío');
-    }
-  });
 
   final StreamTransformer<List<SubTask>, List<SubTask>> _validateTasks =
       StreamTransformer<List<SubTask>, List<SubTask>>.fromHandlers(

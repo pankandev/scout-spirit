@@ -31,7 +31,7 @@ class AlertBody extends StatelessWidget {
         direction: Axis.vertical,
         children: [
           Icon(icon, size: 64.0, color: color),
-          Text(
+          if (title.isNotEmpty) Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24.0, fontFamily: 'ConcertOne'),
@@ -67,8 +67,9 @@ class AlertBody extends StatelessWidget {
                   width: 16.0,
                 ),
               RawMaterialButton(
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
+                    borderRadius: BorderRadius.circular(16.0)),
                 fillColor: color,
                 onPressed: this.onOk,
                 child: Text(

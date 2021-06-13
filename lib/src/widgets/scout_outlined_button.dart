@@ -7,15 +7,18 @@ class ScoutOutlinedButton extends StatelessWidget {
   final EdgeInsets padding;
   final IconData? icon;
   final double borderWidth;
+  final double labelSize;
 
   const ScoutOutlinedButton(
       {Key? key,
       required this.onPressed,
       required this.label,
       this.icon,
+      this.labelSize = 16.0,
       this.padding =
           const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10.0),
-      this.color = Colors.white, this.borderWidth = 3.0})
+      this.color = Colors.white,
+      this.borderWidth = 3.0})
       : super(key: key);
 
   @override
@@ -35,7 +38,10 @@ class ScoutOutlinedButton extends StatelessWidget {
           Expanded(
               child: Text(
             label,
-            style: TextStyle(color: color, fontFamily: 'ConcertOne'),
+            style: TextStyle(
+                color: color,
+                fontFamily: 'ConcertOne',
+                fontSize: this.labelSize),
           )),
           SizedBox(
             width: 12.0,

@@ -36,37 +36,37 @@ class BeneficiariesService extends RestApiService {
     // ignore: unnecessary_null_comparison
     if (user == null)
       throw UnauthenticatedError(message: 'Trying to get current beneficiary');
+    if (!kReleaseMode) {
+      return Beneficiary(
+          lastClaimedToken: -1,
+          unitUser: '',
+          boughtItems: BoughtItems(),
+          birthdate: '01-01-2000',
+          nickname: 'Test User',
+          target: null,
+          profilePicture: null,
+          nTasks: TasksCount(
+              corporality: 3,
+              spirituality: 5,
+              character: 4,
+              creativity: 2,
+              affectivity: 8,
+              sociability: 2),
+          score: TasksCount(
+              corporality: 3,
+              spirituality: 5,
+              character: 4,
+              creativity: 2,
+              affectivity: 8,
+              sociability: 2),
+          userId: '',
+          fullName: 'Test User',
+          groupCode: 'group',
+          districtCode: 'district');
+    }
     try {
       return await getById(user.userId);
     } on SocketException catch (e) {
-      if (!kReleaseMode) {
-        return Beneficiary(
-            lastClaimedToken: -1,
-            unitUser: '',
-            boughtItems: BoughtItems(),
-            birthdate: '01-01-2000',
-            nickname: 'Test User',
-            target: null,
-            profilePicture: null,
-            nTasks: TasksCount(
-                corporality: 3,
-                spirituality: 5,
-                character: 4,
-                creativity: 2,
-                affectivity: 8,
-                sociability: 2),
-            score: TasksCount(
-                corporality: 3,
-                spirituality: 5,
-                character: 4,
-                creativity: 2,
-                affectivity: 8,
-                sociability: 2),
-            userId: '',
-            fullName: 'Test User',
-            groupCode: 'group',
-            districtCode: 'district');
-      }
       throw e;
     }
   }

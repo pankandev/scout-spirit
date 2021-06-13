@@ -17,8 +17,8 @@ class LoginFormBloc {
 
   Stream<bool> get formValidStream => Rx.combineLatest2(emailStream, passwordStream, (email, password) => true);
 
-  String get email => _emailController.value!;
-  String get password => _passwordController.value!;
+  String get email => _emailController.value;
+  String get password => _passwordController.value;
   LoginCredentials get credentials => LoginCredentials(
     email: email,
     password: password

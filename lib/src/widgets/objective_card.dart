@@ -15,40 +15,49 @@ class ObjectiveCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle muteTextStyle = TextStyle(fontSize: 12.0, color: Colors.black45);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-        child: Row(
+    return Container(
+      decoration: BoxDecoration(boxShadow: <BoxShadow>[
+        BoxShadow(
+            color: Colors.white70, blurRadius: 8.0, spreadRadius: -1)
+      ], borderRadius: BorderRadius.circular(12.0)),
+      child: RawMaterialButton(
+        onPressed: this.onSelect,
+        fillColor: Color.lerp(Colors.white, areaData.color, 0.1),
+        splashColor: areaData.color.withOpacity(0.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        child: Stack(
           children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (onSelect != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    objective.authorizedObjective,
-                    style: TextStyle(color: Colors.black54),
-                    textAlign: TextAlign.justify,
+                  Icon(
+                    Icons.chevron_right,
+                    color: areaData.color.withOpacity(0.3),
+                    size: 64.0,
                   ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Row(
-                    children: [
-                      Text('Línea: ${objective.line}.${objective.subline}',
-                          style: muteTextStyle),
-                    ],
+                ],
+              ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 48.0),
+                    child: Text(
+                      objective.authorizedObjective,
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontFamily: 'Ubuntu',
+                          fontSize: 12.0),
+                      textAlign: TextAlign.justify,
+                    ),
                   )
                 ],
               ),
             ),
-            if (onSelect != null) IconButton(
-              icon: Icon(Icons.arrow_forward),
-              color: Colors.black45,
-              onPressed: this.onSelect,
-            )
           ],
         ),
       ),

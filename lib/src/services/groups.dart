@@ -44,11 +44,7 @@ class GroupsService extends RestApiService {
 
   Future<void> updateDistrictStream(String districtCode) async {
     _createSubjectIfNotExists(districtCode);
-    DistrictModel? district = _districtsCache[districtCode]!.value;
-    if (district == null) {
-      district =
-          DistrictModel.fromDistrict(await getDistrictById(districtCode));
-    }
+    DistrictModel district = _districtsCache[districtCode]!.value;
 
     List<Group> groups = await getAllFromDistrict(districtCode);
     district = district.copyWith(groups: groups);

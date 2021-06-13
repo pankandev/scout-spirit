@@ -4,11 +4,16 @@ import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:scout_spirit/src/utils/development_stage.dart';
 
 class Line {
+  final int index;
   final String name;
   final String? image;
   final Map<DevelopmentStage, List<Objective>> objectives;
 
-  Line({required this.name, required this.objectives, this.image});
+  Line(
+      {required this.index,
+      required this.name,
+      required this.objectives,
+      this.image});
 
   @override
   String toString() {
