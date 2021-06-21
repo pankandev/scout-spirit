@@ -1,5 +1,5 @@
 import 'package:scout_spirit/src/error/app_error.dart';
 
 class UnauthenticatedError extends AppError {
-  UnauthenticatedError({required String message}): super(message: message);
+  UnauthenticatedError({String message = 'Trying to access resource while unauthenticated'}): super(message: message);
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
+import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/log.dart';
@@ -184,7 +185,10 @@ class LogsService extends RestApiService {
     if (data != null) {
       body['data'] = data;
     }
-    String userId = AuthenticationService().snapAuthenticatedUser!.id;
+    String? userId = AuthenticationService().snapAuthenticatedUser?.id;
+    if (userId != null) {
+      throw new UnauthenticatedError();
+    }
     Map<String, dynamic> response;
     try {
       print(body);

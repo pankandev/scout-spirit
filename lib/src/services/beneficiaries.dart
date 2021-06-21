@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:scout_spirit/src/models/district.dart';
 import 'package:scout_spirit/src/models/group.dart';
 import 'package:uuid/uuid.dart' as uuid;
@@ -59,9 +58,6 @@ class BeneficiariesService extends RestApiService {
     // ignore: unnecessary_null_comparison
     if (user == null)
       throw UnauthenticatedError(message: 'Trying to get current beneficiary while logged out');
-    if (!kReleaseMode) {
-      return testUser;
-    }
     return await getById(user.userId);
   }
 
