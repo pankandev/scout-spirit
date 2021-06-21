@@ -94,9 +94,10 @@ class ScoutButton extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                      fontSize: labelSize,
+                      fontSize: labelSize * 0.88,
+                      fontWeight: FontWeight.w600,
                       color: labelColor,
-                      fontFamily: 'ConcertOne'),
+                      fontFamily: 'Ubuntu'),
                 ),
               ),
             if (icon != null && label.isNotEmpty)

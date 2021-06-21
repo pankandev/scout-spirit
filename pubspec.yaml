@@ -14,15 +14,16 @@ dependencies:
 
   cupertino_icons: ^1.0.0
 
-  amplify_flutter: ^0.1.5
-  amplify_auth_cognito: ^0.1.5
-  amplify_analytics_pinpoint: ^0.1.5
-  amplify_storage_s3: ^0.1.5
+  sentry_flutter: ^5.1.0
+  amplify_flutter: ^0.2.0-nullsafety.0
+  amplify_auth_cognito: ^0.2.0-nullsafety.0
+  amplify_analytics_pinpoint: ^0.2.0-nullsafety.0
+  amplify_storage_s3: ^0.2.0-nullsafety.0
   listenable_stream: ^1.1.0
   rxdart: ^0.27.1
   dotted_border: ^2.0.0
   provider: ^5.0.0
-  flutter_unity_widget: ^4.0.1
+  flutter_unity_widget: ^4.2.0
   intl: ^0.17.0
   http: ^0.13.1
   jose: ^0.3.0
@@ -52,9 +53,7 @@ flutter:
     - assets/imgs/
     - assets/imgs/avatar/eyes/
     - assets/imgs/avatar/mouths/
-    - assets/imgs/avatar/neckerchiefs/
-    - assets/imgs/avatar/pants/
-    - assets/imgs/avatar/shirts/
+    - assets/imgs/avatar/clothes/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

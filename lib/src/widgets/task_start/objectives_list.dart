@@ -180,7 +180,7 @@ class _StartFormObjectivesListState extends State<StartFormObjectivesList> {
               controller: widget.searchController,
               builder: (_) {
                 Iterable<Objective>? objectives = snapshot.data != null
-                    ? snapshot.data!.where((element) => element.rawObjective
+                    ? snapshot.data!.where((element) => element.rawObjective.toLowerCase()
                         .contains(widget.searchController.text))
                     : null;
                 Map<DevelopmentArea, List<Line>>? grouped = objectives != null

@@ -5,6 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/forms/task_start.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
+import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/task_start/objectives_list.dart';
@@ -22,18 +23,18 @@ class _InstructionStep {
 
 List<_InstructionStep> instructions = <_InstructionStep>[
   _InstructionStep(
-      title: 'Enfócate',
+      title: 'Enfócate 🎯',
       instruction:
-          'Elige aquel objetivo en el que quieras enfocarte en trabajar desde ahora hasta que lo completes',
+          'Elige aquel objetivo en el que te gustaría trabajar por un tiempo',
       tip: null),
   _InstructionStep(
-      title: 'Hazlo tuyo',
+      title: 'Hazlo tuyo 🖌',
       instruction:
-          'Genial! Ahora adapta este objetivo a algo más acorde a lo que te gustaría realizar en base a tu personalidad e intereses,  sin perder la esencia del original.\n\n'
+          'Genial! Ahora adapta este objetivo a algo más acorde a lo que te gustaría lograr en base a tu personalidad e intereses y que esté relacionado con tu elección.\n\n'
           'Puedes ser tan abstracto o concreto como desees (dentro del límite de carácteres 😬)',
       tip: 'Sería ideal que converses sobre esto con tu dirigente'),
   _InstructionStep(
-      title: 'Concrétalo',
+      title: 'Concrétalo 🔨',
       instruction:
           'Ahora define qué tareas quieres realizar, que dirías que, una vez completadas, es porque ya completaste este objetivo.',
       tip: 'Sería ideal que converses sobre esto con tu dirigente')
@@ -268,7 +269,10 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
               return _buildInstructionsPage(2);
             case 5:
               return KeyedSubtree(
-                  key: ValueKey<int>(_formId), child: TasksForm(onBack: () => goToPage(4),));
+                  key: ValueKey<int>(_formId),
+                  child: TasksForm(
+                    onBack: () => goToPage(4),
+                  ));
           }
           return Container();
         });
@@ -279,7 +283,9 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
       goToPage(pageController.page!.round() - 1);
       return false;
     }
-    return true;
+    return await SnackBarProvider.showConfirmAlert(
+        context, 'Seguro que quieres descartar cambios?',
+        okLabel: 'Salir');
   }
 
   void _onSubmit() {

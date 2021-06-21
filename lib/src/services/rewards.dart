@@ -76,8 +76,9 @@ class RewardsService extends RestApiService {
     List<Log> rewardLogs;
     rewardLogs =
         await LogsService().getByCategory(joinKey(["REWARD", category]));
-    List<Reward> rewards =
-        rewardLogs.map((e) => Reward.fromMap(e.data!)).toList();
+    List<Reward> rewards = rewardLogs
+        .map<Reward>((e) => Reward.fromMap(e.data!))
+        .toList();
     _getCategorySubject(category).sink.add(rewards);
   }
 
@@ -91,6 +92,7 @@ class RewardsService extends RestApiService {
   Stream<List<T>> getByCategory<T extends Reward>(String category) {
     return _getCategorySubject(category).stream.map((event) => event.cast<T>());
   }
+
   List<T> getSnapByCategory<T extends Reward>(String category) {
     List<Reward>? value = _getCategorySubject(category).value;
     return value.cast<T>();

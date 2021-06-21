@@ -30,9 +30,7 @@ List<T> fromCount<T>(Map<T, int> count) {
 Iterable<T> subtractList<T, TC>(
     Iterable<T> a, Iterable<T> b, TC Function(T)? compareFun) {
   if (compareFun == null) {
-    compareFun = ((el) {
-      return el as TC;
-    });
+    compareFun = ((el) => el as TC);
   }
   List<T> allItems = a.toList();
   allItems.addAll(b);
@@ -44,7 +42,8 @@ Iterable<T> subtractList<T, TC>(
   Map<TC, int> aCount = countMap(aIds);
   Map<TC, int> bCount = countMap(bIds);
   Map<TC, int> availableCount =
-      aggregateMap((w, r) => (r ?? 0) - (w ?? 0), aCount, bCount);
+      aggregateMap((w, r) => (w ?? 0) - (r ?? 0), aCount, bCount);
+  print("$aCount - $bCount = $availableCount");
   List<TC> count = fromCount(availableCount);
   return count.map((e) => ids[e]!).toList();
 }

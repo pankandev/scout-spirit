@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hive/hive.dart';
+import 'package:scout_spirit/src/utils/json.dart';
 
 part 'world.g.dart';
 
@@ -153,7 +154,11 @@ class Vector3 {
   final double z;
 
   factory Vector3.fromMap(Map<String, dynamic> json) =>
-      Vector3(json["x"], json["y"], json["z"]);
+      Vector3(
+          JsonUtils.to<double>(json["x"]!)!,
+          JsonUtils.to<double>(json["y"]!)!,
+          JsonUtils.to<double>(json["z"]!)!
+      );
 
   Map<String, dynamic> toMap() {
     return {
@@ -181,7 +186,11 @@ class Quaternion {
   final double w;
 
   factory Quaternion.fromMap(Map<String, dynamic> json) =>
-      Quaternion(json["x"], json["y"], json["z"], json["w"]);
+      Quaternion(
+          JsonUtils.to<double>(json["x"]!)!,
+          JsonUtils.to<double>(json["y"]!)!,
+          JsonUtils.to<double>(json["z"]!)!,
+          JsonUtils.to<double>(json["w"]!)!);
 
   Map<String, dynamic> toMap() {
     return {"x": x, "y": y, "z": z, "w": w};

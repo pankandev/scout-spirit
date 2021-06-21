@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +24,7 @@ abstract class RestApiService {
     CognitoAuthSession session = await Amplify.Auth.fetchAuthSession(
             options: CognitoSessionOptions(getAWSCredentials: true))
         as CognitoAuthSession;
-    return session.userPoolTokens.idToken;
+    return session.userPoolTokens!.idToken;
   }
 
   Future<Map<String, String>> _getAuthorizedHeader() async {

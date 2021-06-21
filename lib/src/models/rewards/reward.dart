@@ -134,8 +134,11 @@ abstract class AvatarPart extends Reward {
   bool compareWith(AvatarPart? part);
 
   Map<String, dynamic> toMap() {
-    return {"type": typeToName(type), "description": attributesToMap()};
+    String name = typeToName(type);
+    return {"type": name, "description": attributesToMap()};
   }
+
+  String get material => attributesToMap()["material"];
 
   factory AvatarPart.fromMap(Map<String, dynamic> map,
       {int? timestamp, int? id, int? release}) {
@@ -174,7 +177,8 @@ abstract class AvatarPart extends Reward {
   }
 
   static String typeToName(AvatarRewardType type) {
-    return type.toString().split('.')[1].toLowerCase();
+    String name = type.toString().split('.')[1].toLowerCase();
+    return name;
   }
 
   @override
@@ -205,7 +209,11 @@ class AvatarShirt extends AvatarPart {
 
   @override
   Map<String, dynamic> attributesToMap() {
-    return {"material": material, "type": shirtTypeToName(shirtType)};
+    String shirtName = shirtTypeToName(shirtType);
+    if (shirtName == 'tshirt') {
+      shirtName = 't-shirt';
+    }
+    return {"material": material, "type": shirtName};
   }
 
   static String shirtTypeToName(AvatarShirtType type) {

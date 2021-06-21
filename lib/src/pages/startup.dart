@@ -1,11 +1,8 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
+
 import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
 import 'package:scout_spirit/amplifyconfiguration.dart';
 import 'package:scout_spirit/src/error/app_error.dart';

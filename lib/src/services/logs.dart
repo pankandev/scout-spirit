@@ -104,8 +104,62 @@ final Map<String, List<Map<String, dynamic>>> testLogs = {
       "timestamp": 1000,
       "data": {
         "description": {
-          "type": "eye",
-          "description": {"material": "n"}
+          "type": "shirt",
+          "description": {
+            "type": "shirt",
+            "material": "cuadrille-red"
+          }
+        },
+        "category": 'AVATAR',
+        "rarity": "COMMON",
+        "release-id": 1
+      }
+    },
+    {
+      "tag": "REWARD::AVATAR",
+      "log": "Won a reward!",
+      "timestamp": 1000,
+      "data": {
+        "description": {
+          "type": "shirt",
+          "description": {
+            "type": "shirt",
+            "material": "red"
+          }
+        },
+        "category": 'AVATAR',
+        "rarity": "COMMON",
+        "release-id": 1
+      }
+    },
+    {
+      "tag": "REWARD::AVATAR",
+      "log": "Won a reward!",
+      "timestamp": 1000,
+      "data": {
+        "description": {
+          "type": "shirt",
+          "description": {
+            "type": "shirt",
+            "material": "dotted-blue"
+          }
+        },
+        "category": 'AVATAR',
+        "rarity": "COMMON",
+        "release-id": 1
+      }
+    },
+    {
+      "tag": "REWARD::AVATAR",
+      "log": "Won a reward!",
+      "timestamp": 1000,
+      "data": {
+        "description": {
+          "type": "shirt",
+          "description": {
+            "type": "t-shirt",
+            "material": "fleur-violet"
+          }
         },
         "category": 'AVATAR',
         "rarity": "COMMON",

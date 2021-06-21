@@ -1,4 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -6,13 +5,10 @@ import 'package:scout_spirit/src/models/district.dart';
 import 'package:scout_spirit/src/models/group.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_flutter/amplify.dart';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';

@@ -78,11 +78,11 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: Text(
-                      'No has indicado un ojetivo\nen progreso aun 😅',
+                      'No has indicado un objetivo\nen progreso aun 🤔',
                       style: TextStyle(
                           color: Colors.white,
-                          fontFamily: 'ConcertOne',
-                          fontSize: 18.0),
+                          fontFamily: 'Ubuntu',
+                          fontSize: 16.0),
                     ),
                   ),
                 ),

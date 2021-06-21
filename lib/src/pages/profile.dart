@@ -401,7 +401,7 @@ class _AvatarPartSelectorState<T extends AvatarPart>
       },
       builder: (BuildContext context, AvatarPart? part) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: AvatarPartCard(part: part),
+        child: RewardCard(reward: part),
       ),
     );
   }

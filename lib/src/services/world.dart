@@ -98,7 +98,7 @@ class WorldService {
     });
   }
 
-  Future<List<DecorationReward>> getAvailableItems() async {
+  Future<List<DecorationReward>> getAvailableItems({bool subtract = false}) async {
     await RewardsService().updateCategory('decoration');
     String userId = AuthenticationService().authenticatedUserId;
     List<DecorationReward> items =
@@ -106,10 +106,16 @@ class WorldService {
     LazyBox<List<String>> box =
         await Hive.openLazyBox<List<String>>('claimedItems');
     List<String> claimedItems = await box.get(userId) ?? [];
-    return subtractList<DecorationReward, String>(
+    List<DecorationReward> newItems = subtractList<DecorationReward, String>(
         items,
         claimedItems.map((e) => DecorationReward.dummyFromCode(e)),
         (item) => item.code).toList();
+    if (subtract) {
+      claimedItems.addAll(newItems.map((e) => e.code));
+      box.put(userId, claimedItems);
+      print("currently claimed: $claimedItems");
+    }
+    return newItems;
   }
 
   Future<World> updateZone(String id, Zone zone) async {

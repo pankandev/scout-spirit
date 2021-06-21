@@ -175,7 +175,7 @@ class _MainPageState extends State<MainPage> {
   Widget _buildAlert(BuildContext context, Beneficiary beneficiary) {
     return ScoutButton(
         label:
-            'No has indicado tus objetivos pre-existentes. Presiona aquí para indicarlos',
+            'No has indicado tus objetivos logrados. Presiona aquí para indicarlos',
         icon: Icons.warning_amber_rounded,
         iconSize: 48.0,
         fillColor: appTheme.errorColor,

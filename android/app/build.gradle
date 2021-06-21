@@ -34,6 +34,7 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
     }
 
     defaultConfig {
@@ -124,7 +125,43 @@ flutter {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 dependencies {
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
+    implementation project(':unityLibrary')
+
     implementation project(':unityLibrary')
 
     implementation project(':unityLibrary')

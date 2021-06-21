@@ -25,6 +25,7 @@ import 'package:scout_spirit/src/pages/tasks/task-view.dart';
 import 'package:scout_spirit/src/widgets/active_task_view.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -37,7 +38,13 @@ void main() async {
   Hive.registerAdapter(QuaternionAdapter());
   await Hive.openBox<World>('world');
   await RestApiService.updateEmulatorCheck();
-  runApp(ScoutSpiritApp());
+
+  await SentryFlutter.init(
+        (options) {
+      options.dsn = 'https://a2522c41e4e34b73a21d91886dbbd6be@o578448.ingest.sentry.io/5825665';
+    },
+    appRunner: () => runApp(ScoutSpiritApp())
+  );
 }
 
 class ScoutSpiritApp extends StatelessWidget {

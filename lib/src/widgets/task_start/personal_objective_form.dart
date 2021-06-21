@@ -1,4 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/objective.dart';
@@ -105,7 +104,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
                                       borderRadius: BorderRadius.circular(14.0),
                                       borderSide: BorderSide(
                                           color: Colors.white, width: 2.0)),
-                                  hintText: 'Para lograr este objetivo yo...',
+                                  hintText: 'Para trabajar en este objetivo yo...',
                                   hintStyle: TextStyle(
                                       color: Colors.white70, fontFamily: 'Ubuntu')),
                             ),
