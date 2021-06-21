@@ -23,9 +23,9 @@ class AuthenticationService {
   }
 
   final BehaviorSubject<User?> _authenticatedUserController =
-      BehaviorSubject<User>();
+      BehaviorSubject<User?>();
   final BehaviorSubject<CognitoAuthSession?> _sessionController =
-      BehaviorSubject<CognitoAuthSession>();
+      BehaviorSubject<CognitoAuthSession?>();
   final BehaviorSubject<Avatar> _avatarController = BehaviorSubject<Avatar>();
 
   Stream<User?> get userStream => _authenticatedUserController.stream;
