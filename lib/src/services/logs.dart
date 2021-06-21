@@ -190,9 +190,8 @@ class LogsService extends RestApiService {
       print(body);
       response =
           await this.post('/api/users/$userId/logs/PROGRESS/', body: body);
-    } on HttpError catch (e, s) {
-      print(s);
-      throw e;
+    } on HttpError {
+      rethrow;
     }
     String? encodedToken = response['token'];
     if (encodedToken != null) {
@@ -222,12 +221,11 @@ class LogsService extends RestApiService {
     Map<String, dynamic> response;
     try {
       response = await this.get('/api/users/$userId/logs/$category/');
-    } on SocketException catch (e, s) {
+    } on SocketException {
       if (!kReleaseMode) {
         response = {"items": testLogs[category.toUpperCase()] ?? []};
       } else {
-        print(s);
-        throw e;
+        rethrow;
       }
     }
     List<Map<String, dynamic>> items = List.from(response["items"]);
@@ -239,12 +237,11 @@ class LogsService extends RestApiService {
     Map<String, dynamic> response;
     try {
       response = await this.get('/api/users/$userId/logs/');
-    } on SocketException catch (e, s) {
+    } on SocketException {
       if (!kReleaseMode) {
         response = {"items": testLogs.values.expand((element) => element)};
       } else {
-        print(s);
-        throw e;
+        rethrow;
       }
     }
     List<Map<String, dynamic>> items = List.from(response["items"]);

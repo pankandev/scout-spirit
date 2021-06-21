@@ -126,12 +126,11 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                                   try {
                                     await LogsService().postProgressLog(
                                         context, task.token!, controller.text);
-                                  } catch (e, s) {
+                                  } catch (_) {
                                     setState(() {
                                       loading = false;
                                     });
-                                    print(s);
-                                    throw e;
+                                    rethrow;
                                   }
                                   Navigator.of(context).pop(true);
                                 }

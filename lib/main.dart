@@ -28,6 +28,12 @@ import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+SentryEvent beforeSend(SentryEvent event, {dynamic hint}) {
+  // Don't send personal data
+  event = event.copyWith(user: null);
+  return event;
+}
+
 void main() async {
   await Hive.initFlutter();
   await Hive.openBox<String>('rewards');
@@ -43,6 +49,7 @@ void main() async {
   await SentryFlutter.init(
     (options) {
       options.environment = kReleaseMode ? 'production' : 'testing';
+      options.beforeSend = beforeSend;
       options.dsn =
           'https://a2522c41e4e34b73a21d91886dbbd6be@o578448.ingest.sentry.io/5825665';
     },

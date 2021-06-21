@@ -16,6 +16,33 @@ import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
 
+Beneficiary testUser = Beneficiary(
+    lastClaimedToken: -1,
+    unitUser: '',
+    boughtItems: BoughtItems(),
+    birthdate: '01-01-2000',
+    nickname: 'Test User',
+    target: null,
+    profilePicture: null,
+    nTasks: TasksCount(
+        corporality: 3,
+        spirituality: 5,
+        character: 4,
+        creativity: 2,
+        affectivity: 8,
+        sociability: 2),
+    score: TasksCount(
+        corporality: 3,
+        spirituality: 5,
+        character: 4,
+        creativity: 2,
+        affectivity: 8,
+        sociability: 2),
+    userId: '',
+    fullName: 'Test User',
+    groupCode: 'group',
+    districtCode: 'district');
+
 class BeneficiariesService extends RestApiService {
   final String _apiPath = 'api/beneficiaries';
 
@@ -31,40 +58,11 @@ class BeneficiariesService extends RestApiService {
     AuthUser? user = await Amplify.Auth.getCurrentUser();
     // ignore: unnecessary_null_comparison
     if (user == null)
-      throw UnauthenticatedError(message: 'Trying to get current beneficiary');
+      throw UnauthenticatedError(message: 'Trying to get current beneficiary while logged out');
     if (!kReleaseMode) {
-      return Beneficiary(
-          lastClaimedToken: -1,
-          unitUser: '',
-          boughtItems: BoughtItems(),
-          birthdate: '01-01-2000',
-          nickname: 'Test User',
-          target: null,
-          profilePicture: null,
-          nTasks: TasksCount(
-              corporality: 3,
-              spirituality: 5,
-              character: 4,
-              creativity: 2,
-              affectivity: 8,
-              sociability: 2),
-          score: TasksCount(
-              corporality: 3,
-              spirituality: 5,
-              character: 4,
-              creativity: 2,
-              affectivity: 8,
-              sociability: 2),
-          userId: '',
-          fullName: 'Test User',
-          groupCode: 'group',
-          districtCode: 'district');
+      return testUser;
     }
-    try {
-      return await getById(user.userId);
-    } on SocketException catch (e) {
-      throw e;
-    }
+    return await getById(user.userId);
   }
 
   Future<Beneficiary?> getById(String id) async {
@@ -74,7 +72,7 @@ class BeneficiariesService extends RestApiService {
       if (e.statusCode == 404) {
         return null;
       } else {
-        throw e;
+        rethrow;
       }
     }
   }

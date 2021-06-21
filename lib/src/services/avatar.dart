@@ -43,11 +43,11 @@ class AvatarService extends RestApiService {
     try {
       Map<String, dynamic> avatar = await get('api/beneficiaries/$userId/avatar/');
       return Avatar.fromMap(avatar);
-    } on SocketException catch (e) {
+    } on SocketException catch (_) {
       if (!kReleaseMode) {
         return Avatar();
       }
-      throw e;
+      rethrow;
     }
   }
 

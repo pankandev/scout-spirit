@@ -30,7 +30,7 @@ class RewardsService extends RestApiService {
       if (e.statusCode == 400) {
         box.delete(token.storageId);
       }
-      throw e;
+      rethrow;
     }
     List<Reward> rewards =
         (response["rewards"] as List).map((e) => Reward.fromMap(e)).toList();

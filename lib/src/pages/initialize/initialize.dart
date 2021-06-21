@@ -100,7 +100,7 @@ class _InitializePageState extends State<InitializePage> {
       setState(() {
         loading = false;
       });
-      throw e;
+      rethrow;
     }
     Navigator.of(context).pop();
   }

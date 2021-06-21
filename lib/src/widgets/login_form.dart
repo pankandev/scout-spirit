@@ -88,7 +88,7 @@ class _LoginFormState extends State<LoginForm> {
                   labelText: 'Contraseña',
                   suffixIcon: Icon(Icons.https),
                   errorText:
-                      wasPasswordTouched ? snapshot.error as String : null),
+                      wasPasswordTouched ? snapshot.error?.toString() : null),
               onChanged: (value) {
                 if (!wasPasswordTouched)
                   setState(() => wasPasswordTouched = true);
@@ -112,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
                 color: wasEmailTouched && snapshot.error != null
                     ? appTheme.errorColor
                     : null),
-            errorText: wasEmailTouched ? snapshot.error as String : null),
+            errorText: wasEmailTouched ? snapshot.error?.toString() : null),
         onChanged: (value) {
           if (!wasEmailTouched) setState(() => wasEmailTouched = true);
           _bloc.changeEmail(value);
@@ -144,7 +144,7 @@ class _LoginFormState extends State<LoginForm> {
       setState(() {
         this.loading = false;
       });
-    } else if (service.snapAuthenticatedUser!.beneficiary == null) {
+    } else if (service.snapAuthenticatedUser?.beneficiary == null) {
       await Navigator.of(context).pushReplacementNamed('/join');
     } else {
       await Navigator.of(context).pushReplacementNamed('/home');

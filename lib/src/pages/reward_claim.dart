@@ -121,13 +121,13 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
         Navigator.of(context).pop();
         return;
       } else {
-        throw e;
+        rethrow;
       }
     } catch (e) {
       setState(() {
         loading = false;
       });
-      throw e;
+      rethrow;
     }
     NavigatorState nav = Navigator.of(context);
     await nav.pushNamed('/rewards/claim', arguments: rewards);

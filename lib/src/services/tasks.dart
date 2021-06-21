@@ -116,7 +116,7 @@ class TasksService extends RestApiService {
         task = null;
         logs = [];
       } else {
-        throw e;
+        rethrow;
       }
     }
     FullTask? fullTask =
@@ -189,10 +189,10 @@ class TasksService extends RestApiService {
       List items = response["items"];
       List<Task> tasks = items.map((item) => Task.fromLiteMap(item)).toList();
       return tasks;
-    } on HttpError catch (e) {
-      throw e;
+    } on HttpError {
+      rethrow;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -211,7 +211,7 @@ class TasksService extends RestApiService {
       if (e.statusCode == 404) {
         task = null;
       } else {
-        throw e;
+        rethrow;
       }
     }
     return task;
@@ -223,14 +223,13 @@ class TasksService extends RestApiService {
       Map<String, dynamic> response = await get('api/users/$userId/tasks/');
       List items = response["items"];
       _userTasksSubject.add(items.map((item) => Task.fromMap(item)).toList());
-    } on HttpError catch (e, s) {
-      print(s);
-      throw e;
-    } on SocketException catch (e) {
+    } on HttpError {
+      rethrow;
+    } on SocketException {
       if (!kReleaseMode) {
         _userTasksSubject.add(testTasks);
       } else {
-        throw e;
+        rethrow;
       }
     }
   }

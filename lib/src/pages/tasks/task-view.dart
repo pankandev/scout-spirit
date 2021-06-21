@@ -291,7 +291,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
       setState(() {
         loading = false;
       });
-      throw e;
+      rethrow;
     }
     setState(() {
       dirty = false;
@@ -329,7 +329,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
         dirty = true;
         loading = false;
       });
-      throw e;
+      rethrow;
     }
     await RewardChecker().checkForRewards(context);
     Navigator.pop(context);

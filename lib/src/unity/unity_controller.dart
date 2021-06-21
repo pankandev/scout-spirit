@@ -83,11 +83,10 @@ class GameController {
         error = e;
         print(
             "[UNITY_CONTROLLER] Received error to request $messageIndex with error ${e.message}");
-      } catch (e, s) {
+      } catch (_) {
         error = UnityFlutterError(
             code: "UNKNOWN", message: "An unknown error ocurred");
-        print(s);
-        throw e;
+        rethrow;
       }
     } else {
       print(

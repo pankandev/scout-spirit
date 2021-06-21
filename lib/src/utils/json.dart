@@ -16,7 +16,7 @@ class JsonUtils {
       transformed = value as T;
       return transformed;
     } catch (e) {
-      if (throwIfError) throw e;
+      if (throwIfError) rethrow;
       transformed = defaultIfError;
     }
     if (transformed == null) {
