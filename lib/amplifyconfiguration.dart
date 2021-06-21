@@ -30,17 +30,6 @@ final amplifyConfigMap = {
       }
     },
   },
-  "analytics": {
-    "plugins": {
-      "awsPinpointAnalyticsPlugin": {
-        "pinpointAnalytics": {
-          "appId": "068ec224eb0c49968b6518d91bfccac3",
-          "region": "us-west-2"
-        },
-        "pinpointTargeting": {"region": "us-west-2"}
-      }
-    }
-  },
   "storage": {
     "plugins": {
       "awsS3StoragePlugin": {

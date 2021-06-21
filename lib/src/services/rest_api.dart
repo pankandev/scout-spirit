@@ -45,7 +45,11 @@ abstract class RestApiService {
       Future<http.Response> responseFuture) async {
     http.Response response = await responseFuture;
     if (response.statusCode >= 400) {
-      throw new HttpError(statusCode: response.statusCode, response: response);
+      throw new HttpError(
+          statusCode: response.statusCode,
+          isAuthorized: response.request?.headers['Authorization'] != null,
+          response: response,
+          endpoint: response.request?.url.toString() ?? 'unknown');
     }
     return json.decode(response.body);
   }

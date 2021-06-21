@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
@@ -40,10 +41,12 @@ void main() async {
   await RestApiService.updateEmulatorCheck();
 
   await SentryFlutter.init(
-        (options) {
-      options.dsn = 'https://a2522c41e4e34b73a21d91886dbbd6be@o578448.ingest.sentry.io/5825665';
+    (options) {
+      options.environment = kReleaseMode ? 'production' : 'testing';
+      options.dsn =
+          'https://a2522c41e4e34b73a21d91886dbbd6be@o578448.ingest.sentry.io/5825665';
     },
-    appRunner: () => runApp(ScoutSpiritApp())
+    appRunner: () => runApp(ScoutSpiritApp()),
   );
 }
 
@@ -79,9 +82,7 @@ class ScoutSpiritApp extends StatelessWidget {
         '/tasks/view': (context) {
           Task task = ModalRoute.of(context)!.settings.arguments! as Task;
           return TaskViewPage(
-            objectiveKey: task.originalObjective,
-            readonly: true
-          );
+              objectiveKey: task.originalObjective, readonly: true);
         },
         '/tasks/active': (context) => ActiveTaskView(),
         '/logs': (context) => LogsPage(),

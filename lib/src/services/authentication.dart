@@ -32,7 +32,9 @@ class AuthenticationService {
 
   Stream<Avatar> get avatarStream => _avatarController.stream;
 
-  User? get snapAuthenticatedUser => _authenticatedUserController.value;
+  User? get snapAuthenticatedUser => _authenticatedUserController.hasValue
+      ? _authenticatedUserController.value
+      : null;
 
   String get authenticatedUserId => _authenticatedUserController.value!.id;
 

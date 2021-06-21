@@ -7,12 +7,19 @@ class AppError extends Error {
 }
 
 class HttpError extends AppError {
+  bool isAuthorized;
+  String endpoint;
   int statusCode;
 
-  HttpError({required this.statusCode, required Response response}) : super(message: response.body);
+  HttpError(
+      {required this.endpoint,
+      required this.statusCode,
+      required this.isAuthorized,
+      required Response response})
+      : super(message: response.body);
 
   @override
   String toString() {
-    return "HttpError(statusCode: $statusCode, message: '$message')";
+    return "HttpError(endpoint: $endpoint, statusCode: $statusCode, message: '$message', isAuthorized: $isAuthorized)";
   }
 }
