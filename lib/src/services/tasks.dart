@@ -52,7 +52,7 @@ final List<Task> testTasks = [
 // DevelopmentStage stage, DevelopmentArea area, int line, int subline
 class TasksService extends RestApiService {
   final BehaviorSubject<FullTask?> activeTaskSubject =
-      BehaviorSubject<FullTask>();
+      BehaviorSubject<FullTask?>();
 
   Stream<FullTask?> get activeTaskStream => activeTaskSubject.stream;
 
