@@ -42,29 +42,8 @@ class GroupsService extends RestApiService {
     return items.map<Group>((item) => Group.fromMap(item)).toList();
   }
 
-  Future<void> updateDistrictStream(String districtCode) async {
-    _createSubjectIfNotExists(districtCode);
-    DistrictModel district = _districtsCache[districtCode]!.value;
-
-    List<Group> groups = await getAllFromDistrict(districtCode);
-    district = district.copyWith(groups: groups);
-
-    _districtsCache[districtCode]!.add(district);
-  }
-
   void dispose() {
     _districtsCache.forEach((key, value) => value.close());
-  }
-
-  Stream<DistrictModel> getDistrictStream(String code) {
-    _createSubjectIfNotExists(code);
-    return _districtsCache[code]!.stream;
-  }
-
-  void _createSubjectIfNotExists(String districtCode) {
-    if (_districtsCache[districtCode] == null) {
-      _districtsCache[districtCode] = new BehaviorSubject<DistrictModel>();
-    }
   }
 }
 

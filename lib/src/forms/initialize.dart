@@ -8,13 +8,14 @@ class InitializeFormBloc {
       BehaviorSubject<Map<DevelopmentArea, List<Objective>>>();
 
   Stream<Map<DevelopmentArea, List<Objective>>> get selectedObjectivesStream =>
-      _selectedObjectives.stream;
+      _selectedObjectives;
 
   InitializeFormBloc() {
     _selectedObjectives.sink.add({});
   }
 
   Map<DevelopmentArea, List<Objective>> get value => _selectedObjectives.value;
+
   set value(Map<DevelopmentArea, List<Objective>> newValue) {
     _selectedObjectives.sink.add(newValue);
   }

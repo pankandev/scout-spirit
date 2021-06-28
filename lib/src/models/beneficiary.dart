@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:jose/jose.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
+import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/objectives.dart';
 import 'package:scout_spirit/src/utils/development_area.dart';
 import 'package:scout_spirit/src/utils/development_stage.dart';
@@ -115,7 +116,7 @@ class Beneficiary {
   Beneficiary(
       {this.completed,
       required this.lastClaimedToken,
-      required this.unitUser,
+      required this.unit,
       required this.boughtItems,
       required this.birthdate,
       required this.nickname,
@@ -130,7 +131,7 @@ class Beneficiary {
       this.setBaseTasks});
 
   dynamic completed;
-  String unitUser;
+  Unit unit;
   String? profilePicture;
   BoughtItems boughtItems;
   bool? setBaseTasks;
@@ -148,7 +149,7 @@ class Beneficiary {
   factory Beneficiary.fromMap(Map<String, dynamic> json) {
     return Beneficiary(
         completed: json["completed"],
-        unitUser: json["unit-user"],
+        unit: unitFromName(json["unit"]),
         profilePicture: json["profile_picture"],
         boughtItems: BoughtItems.fromJson(json["bought_items"]),
         birthdate: json["birthdate"],
@@ -156,7 +157,7 @@ class Beneficiary {
         target: json["target"] != null ? Task.fromMap(json["target"]) : null,
         nTasks: TasksCount.fromJson(json["n_tasks"]),
         score: TasksCount.fromJson(json["score"]),
-        userId: json["user"],
+        userId: json["id"],
         fullName: json["full-name"],
         groupCode: json["group"],
         districtCode: json["district"],
@@ -170,14 +171,14 @@ class Beneficiary {
 
   Map<String, dynamic> toJson() => {
         "completed": completed,
-        "unit-user": unitUser,
+        "unit": unit,
         "bought_items": boughtItems.toJson(),
         "birthdate": birthdate,
         "nickname": nickname,
         "target": target,
         "n_tasks": nTasks.toJson(),
         "score": score.toJson(),
-        "user": userId,
+        "id": userId,
         "profile_picture": profilePicture,
         "full-name": fullName,
         "group": "$districtCode::$groupCode",

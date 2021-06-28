@@ -5,6 +5,16 @@ import 'package:intl/intl.dart';
 
 enum Unit { Guides, Scouts }
 
+Unit unitFromName(String name) {
+  switch (name.toLowerCase()) {
+    case 'scouts':
+      return Unit.Scouts;
+    case 'guides':
+      return Unit.Guides;
+  }
+  throw ArgumentError('Unknown unit name: $name');
+}
+
 class User {
   final String id;
   final String email;
@@ -16,16 +26,6 @@ class User {
   final DateTime birthDate;
   final Unit unit;
   final Beneficiary? beneficiary;
-
-  static Unit unitFromName(String name) {
-    switch (name.toLowerCase()) {
-      case 'scouts':
-        return Unit.Scouts;
-      case 'guides':
-        return Unit.Guides;
-    }
-    throw ArgumentError('Unknown unit name: $name');
-  }
 
   int get age {
     DateTime now = DateTime.now();

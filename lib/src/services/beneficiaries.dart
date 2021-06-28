@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:scout_spirit/src/models/district.dart';
-import 'package:scout_spirit/src/models/group.dart';
+import 'package:scout_spirit/src/models/user.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -17,7 +16,7 @@ import 'package:scout_spirit/src/services/rest_api.dart';
 
 Beneficiary testUser = Beneficiary(
     lastClaimedToken: -1,
-    unitUser: '',
+    unit: Unit.Scouts,
     boughtItems: BoughtItems(),
     birthdate: '01-01-2000',
     nickname: 'Test User',
@@ -81,11 +80,9 @@ class BeneficiariesService extends RestApiService {
     return items.map<Beneficiary>((item) => Beneficiary.fromMap(item)).toList();
   }
 
-  Future<void> joinGroup(District district, Group group, String code) async {
-    String districtCode = district.code;
-    String groupCode = group.code;
+  Future<void> joinGroup(String districtCode, String groupCode, String joinCode) async {
     await this.post("api/districts/$districtCode/groups/$groupCode/beneficiaries/join",
-        body: {"code": code});
+        body: {"code": joinCode});
   }
 
   Future<String> uploadPublicFile(String identityId, File file) async {

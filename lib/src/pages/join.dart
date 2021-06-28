@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/district.dart';
 import 'package:scout_spirit/src/models/group.dart';
@@ -16,10 +19,14 @@ class JoinPage extends StatefulWidget {
 }
 
 class _JoinPageState extends State<JoinPage> {
+  late final BehaviorSubject<String?> selectedDistrictCodeSubject;
+  late final BehaviorSubject<String?> selectedGroupCodeSubject;
+
   late final Future<List<District>> districts;
 
-  Stream<DistrictModel>? selectedDistrict;
-  Group? selectedGroup;
+  late final Stream<Group?> selectedGroup$;
+  late final Stream<District?> selectedDistrict$;
+  late final Stream<List<Group>?> availableGroups$;
 
   final PageController _pageController = PageController(initialPage: 0);
 
@@ -27,6 +34,36 @@ class _JoinPageState extends State<JoinPage> {
   void initState() {
     super.initState();
     districts = GroupsService().getAllDistricts();
+
+    selectedDistrictCodeSubject = BehaviorSubject<String>();
+    selectedGroupCodeSubject = BehaviorSubject<String>();
+
+    selectedDistrict$ = selectedDistrictCodeSubject.stream.asyncMap(
+        (districtCode) => districtCode != null
+            ? GroupsService().getDistrictById(districtCode)
+            : Future.value(null));
+    selectedGroup$ =
+        CombineLatestStream.combine2<String?, String?, Map<String, String?>>(
+            selectedDistrictCodeSubject.stream,
+            selectedGroupCodeSubject.stream,
+            (a, b) => {"district": a, "group": b}).asyncMap((codes) {
+      String? districtCode = codes["district"];
+      String? groupCode = codes["group"];
+      return groupCode != null && districtCode != null
+          ? GroupsService().getGroupById(districtCode, groupCode)
+          : null;
+    });
+    availableGroups$ = selectedDistrictCodeSubject.stream.asyncMap(
+        (districtCode) => districtCode != null
+            ? GroupsService().getAllFromDistrict(districtCode)
+            : null);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    selectedDistrictCodeSubject.close();
+    selectedGroupCodeSubject.close();
   }
 
   @override
@@ -146,10 +183,11 @@ class _JoinPageState extends State<JoinPage> {
         padding: const EdgeInsets.symmetric(vertical: 32.0),
         child: Column(
           children: [
-            StreamBuilder<District>(
-                stream: selectedDistrict,
+            StreamBuilder<Group?>(
+                stream: selectedGroup$,
                 builder: (context, snapshot) {
-                  return snapshot.data != null && selectedGroup != null
+                  Group? data = snapshot.hasData ? snapshot.data : null;
+                  return data != null
                       ? Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -158,7 +196,7 @@ class _JoinPageState extends State<JoinPage> {
                                 BoxShadow(color: Colors.white, blurRadius: 12.0)
                               ]),
                           child: JoinGroupForm(
-                              district: snapshot.data!, group: selectedGroup!))
+                              district: data.district, group: data.code))
                       : Center(
                           child: CircularProgressIndicator(),
                         );
@@ -294,25 +332,20 @@ class _JoinPageState extends State<JoinPage> {
   Future<void> _onGroupSelect(Group? group) async {
     if (group != null) {
       await goToPage(2);
-      setState(() {
-        selectedGroup = group;
-      });
+      selectedGroupCodeSubject.add(group.code);
     } else {
       await goToPage(1);
-      selectedGroup = null;
+      selectedGroupCodeSubject.add(null);
     }
   }
 
   Future<void> _onSelect(District? district) async {
     if (district != null) {
       await goToPage(1);
-      setState(() {
-        selectedDistrict = GroupsService().getDistrictStream(district.code);
-      });
-      await GroupsService().updateDistrictStream(district.code);
+      selectedDistrictCodeSubject.add(district.code);
     } else {
       await goToPage(0);
-      selectedDistrict = null;
+      selectedDistrictCodeSubject.add(null);
     }
   }
 
@@ -332,96 +365,98 @@ class _JoinPageState extends State<JoinPage> {
   }
 
   Widget _buildGroupsList() {
-    return StreamBuilder<DistrictModel>(
-        stream: selectedDistrict,
-        builder: (context, snapshot) {
-          DistrictModel? data = snapshot.data;
-          return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('¡Busca tu grupo en el distrito! 😀',
-                          textAlign: TextAlign.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        StreamBuilder<District?>(
+            stream: selectedDistrict$,
+            builder: (context, snapshot) {
+              District? data = snapshot.hasData ? snapshot.data : null;
+              return Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('¡Busca tu grupo en el distrito! 😀',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Ubuntu')),
+                    if (data != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text(
+                          '${data.name}',
                           style: TextStyle(
-                              color: Colors.white, fontFamily: 'Ubuntu')),
-                      if (data != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: Text(
-                            '${data.name}',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Ubuntu',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 21.0),
-                          ),
-                        )
-                    ],
-                  ),
+                              color: Colors.white,
+                              fontFamily: 'Ubuntu',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 21.0),
+                        ),
+                      )
+                  ],
                 ),
-                Expanded(
-                    child: Padding(
-                        padding: EdgeInsets.only(top: 16.0),
-                        child: data != null
-                            ? ListView.builder(
-                                physics: BouncingScrollPhysics(),
-                                itemCount: data.groups.length + 1,
-                                itemBuilder: (context, index) => index <
-                                        data.groups.length
-                                    ? Padding(
+              );
+            }),
+        StreamBuilder<List<Group>?>(
+            stream: availableGroups$,
+            builder: (context, snapshot) {
+              List<Group>? data = snapshot.hasData ? snapshot.data : null;
+              return Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 16.0),
+                      child: data != null
+                          ? ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              itemCount: data.length + 1,
+                              itemBuilder: (context, index) => index <
+                                      data.length
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                      child: _buildGroupListTile(data[0],
+                                          onTap: () => _onGroupSelect(data[0])),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Container(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 5.0),
-                                        child: _buildGroupListTile(
-                                            data.groups[0],
-                                            onTap: () =>
-                                                _onGroupSelect(data.groups[0])),
-                                      )
-                                    : Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 24.0, vertical: 13.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(24.0),
-                                            color:
-                                                Colors.amber.withOpacity(0.4),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  'No hay más grupos registrados en este distrito todavía',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontFamily: 'Ubuntu'),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: Icon(
-                                                    Icons.warning_amber_rounded,
+                                            horizontal: 24.0, vertical: 13.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(24.0),
+                                          color: Colors.amber.withOpacity(0.4),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(
+                                                'No hay más grupos registrados en este distrito todavía',
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
                                                     color: Colors.white,
-                                                  ))
-                                            ],
-                                          ),
+                                                    fontFamily: 'Ubuntu'),
+                                              ),
+                                            ),
+                                            Expanded(
+                                                flex: 1,
+                                                child: Icon(
+                                                  Icons.warning_amber_rounded,
+                                                  color: Colors.white,
+                                                ))
+                                          ],
                                         ),
                                       ),
-                              )
-                            : Center(
-                                child: CircularProgressIndicator(
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white)))))
-              ]);
-        });
+                                    ),
+                            )
+                          : Center(
+                              child: CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Colors.white)))));
+            }),
+      ],
+    );
   }
 
   Widget _buildGroupListTile(Group group, {void Function()? onTap}) {
@@ -472,8 +507,8 @@ class _JoinPageState extends State<JoinPage> {
 }
 
 class JoinGroupForm extends StatefulWidget {
-  final District district;
-  final Group group;
+  final String district;
+  final String group;
 
   JoinGroupForm({Key? key, required this.district, required this.group})
       : super(key: key);
@@ -540,10 +575,8 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
                 onTap: () {
                   showDialog(
                       context: context,
-                      builder: (BuildContext context) => JoinCodePage(
-                          controller: widget.codeController,
-                          district: widget.district,
-                          group: widget.group));
+                      builder: (BuildContext context) =>
+                          JoinCodePage(controller: widget.codeController));
                 },
                 style: codeStyle,
                 textAlign: TextAlign.center,
@@ -595,14 +628,14 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
   }
 
   Future<void> _joinGroup(
-      BuildContext context, District district, Group group) async {
+      BuildContext context, String districtCode, String groupCode) async {
     if (formKey.currentState!.validate()) {
       setState(() {
         loading = true;
       });
       try {
         await BeneficiariesService()
-            .joinGroup(district, group, widget.codeController.text);
+            .joinGroup(districtCode, groupCode, widget.codeController.text);
         await Navigator.of(context).pushReplacementNamed('/');
       } on HttpError catch (e) {
         if (e.statusCode == 403 || e.statusCode == 404) {
@@ -612,13 +645,18 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
           SnackBarProvider.showMessage(context, 'Ya te has unido a un grupo',
               color: appTheme.primaryColor);
           await Navigator.of(context).pushReplacementNamed('/');
-        } else {
-          SnackBarProvider.showMessage(context, 'Error desconocido',
-              color: appTheme.errorColor);
         }
-      } on AppError {
-        SnackBarProvider.showMessage(context, 'Código Incorrecto',
+        setState(() {
+          loading = false;
+        });
+        rethrow;
+      } catch (e) {
+        SnackBarProvider.showMessage(context, 'Error desconocido',
             color: appTheme.errorColor);
+        setState(() {
+          loading = false;
+        });
+        rethrow;
       } finally {
         setState(() {
           loading = false;
@@ -630,15 +668,8 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
 
 class JoinCodePage extends StatefulWidget {
   final TextEditingController controller;
-  final District district;
-  final Group group;
 
-  JoinCodePage(
-      {Key? key,
-      required this.controller,
-      required this.district,
-      required this.group})
-      : super(key: key);
+  JoinCodePage({Key? key, required this.controller}) : super(key: key);
 
   @override
   _JoinCodePageState createState() => _JoinCodePageState();

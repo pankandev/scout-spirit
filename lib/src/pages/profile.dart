@@ -212,9 +212,9 @@ class _ProfilePageState extends State<ProfilePage> {
     AvatarPartEnum.NECKERCHIEF: ValueNotifier<AvatarNeckerchief?>(null),
   };
 
-  ValueNotifier<T> getPartController<T extends AvatarPart?>(
+  ValueNotifier<T?> getPartController<T extends AvatarPart>(
       AvatarPartEnum part) {
-    return partControllers[part]! as ValueNotifier<T>;
+    return partControllers[part]! as ValueNotifier<T?>;
   }
 
   void _switchEditMode(AvatarPartEnum? avatarPartEnum) {
@@ -292,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
 class AvatarPartSelector<T extends AvatarPart> extends StatefulWidget {
   final AvatarPartEnum type;
-  final ValueNotifier<T> controller;
+  final ValueNotifier<T?> controller;
   final void Function()? onChange;
 
   AvatarPartSelector(

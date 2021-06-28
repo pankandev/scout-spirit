@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
@@ -30,7 +29,6 @@ abstract class RestApiService {
   Future<Map<String, String>> _getAuthorizedHeader() async {
     String? token = await _getToken();
     if (token == null) return {};
-    log(token);
     return {"Authorization": "Bearer $token"};
   }
 
