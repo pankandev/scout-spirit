@@ -56,7 +56,7 @@ class TaskToken {
 }
 
 class Task {
-  double score;
+  int score;
   DateTime? created;
   bool? completed;
   Objective originalObjective;
