@@ -83,7 +83,7 @@ class Task {
   });
 
   Task.fromMap(Map<String, dynamic> map)
-      : score = map['score'],
+      : score = map['score'] ?? 0,
         tasks = List.from(map['tasks'].map((task) => SubTask(
             description: task['description'], completed: task['completed']))),
         personalObjective = Objective.fromCode(map['objective'])
