@@ -306,7 +306,7 @@ class AvatarPartSelector<T extends AvatarPart> extends StatefulWidget {
 }
 
 class _AvatarPartSelectorState<T extends AvatarPart>
-    extends State<AvatarPartSelector> {
+    extends State<AvatarPartSelector<T>> {
   final AdvancedPageController _partController = new AdvancedPageController();
 
   static int lastViewIndex = 0;
@@ -383,7 +383,7 @@ class _AvatarPartSelectorState<T extends AvatarPart>
       key: Key(viewIndex.toString()),
       options: options,
       physics: BouncingScrollPhysics(),
-      controller: widget.controller as ValueNotifier<T>,
+      controller: widget.controller,
       counterBuilder: (int index, int total) => Padding(
         padding: const EdgeInsets.only(top: 16.0, right: 32.0),
         child: Text(

@@ -50,6 +50,7 @@ void main() async {
     (options) {
       options.environment = kReleaseMode ? 'production' : 'testing';
       options.beforeSend = beforeSend;
+      options.sampleRate = 1;// kReleaseMode ? 1 : 0.5;
       options.dsn =
           'https://a2522c41e4e34b73a21d91886dbbd6be@o578448.ingest.sentry.io/5825665';
     },

@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:scout_spirit/src/error/unity_flutter_error.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 const String RECEIVER_GAME_OBJECT = "Scout Spirit Flutter Messager";
 const String RESPONSE_RECEIVER_METHOD = "ReceiveResponse";
@@ -65,7 +68,10 @@ class GameController {
     final String method = content["method"];
     final int messageIndex = content["index"];
     if (method == "print") {
-      print("[UNITY:LOG] ${content['arguments']}");
+      if (!kReleaseMode) {
+        print("[UNITY:LOG] ${content['arguments']}");
+        Sentry.captureMessage("[UNITY:LOG] ${content['arguments']}");
+      }
       await _sendResponse(messageIndex, response: null);
       return;
     }
@@ -75,24 +81,27 @@ class GameController {
     UnityFlutterError? error;
     if (_handlers.containsKey(method)) {
       try {
-        print("[UNITY_CONTROLLER] Called method $method ($messageIndex)");
+        LoggerService()
+            .log("UNITY_CONTROLLER", "Called method $method ($messageIndex)");
         response = await _handlers[method]!(arguments);
-        print(
-            "[UNITY_CONTROLLER] Responded to request $messageIndex with response $response");
+        LoggerService().log("UNITY_CONTROLLER",
+            "Responded to request $messageIndex with response $response");
       } on UnityFlutterError catch (e) {
         error = e;
-        print(
-            "[UNITY_CONTROLLER] Received error to request $messageIndex with error ${e.message}");
+        LoggerService().warn("UNITY_CONTROLLER",
+            "Received error to request $messageIndex with error ${e.message}");
+        await _sendResponse(messageIndex, response: response, error: error);
+        rethrow;
       } catch (_) {
         error = UnityFlutterError(
             code: "UNKNOWN", message: "An unknown error ocurred");
+        await _sendResponse(messageIndex, response: response, error: error);
         rethrow;
       }
     } else {
-      print(
-          "[WARN] Method '$method' called from Unity, but no handler exists for this method");
+      LoggerService().warn("UNITY_CONTROLLER",
+          "Method '$method' called from Unity, but no handler exists for this method");
     }
-    await _sendResponse(messageIndex, response: response, error: error);
   }
 
   Future<void> _sendResponse(int index,
