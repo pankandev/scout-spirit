@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
-import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/log.dart';
@@ -106,10 +105,7 @@ final Map<String, List<Map<String, dynamic>>> testLogs = {
       "data": {
         "description": {
           "type": "shirt",
-          "description": {
-            "type": "shirt",
-            "material": "cuadrille-red"
-          }
+          "description": {"type": "shirt", "material": "cuadrille-red"}
         },
         "category": 'AVATAR',
         "rarity": "COMMON",
@@ -123,10 +119,7 @@ final Map<String, List<Map<String, dynamic>>> testLogs = {
       "data": {
         "description": {
           "type": "shirt",
-          "description": {
-            "type": "shirt",
-            "material": "red"
-          }
+          "description": {"type": "shirt", "material": "red"}
         },
         "category": 'AVATAR',
         "rarity": "COMMON",
@@ -140,10 +133,7 @@ final Map<String, List<Map<String, dynamic>>> testLogs = {
       "data": {
         "description": {
           "type": "shirt",
-          "description": {
-            "type": "shirt",
-            "material": "dotted-blue"
-          }
+          "description": {"type": "shirt", "material": "dotted-blue"}
         },
         "category": 'AVATAR',
         "rarity": "COMMON",
@@ -157,10 +147,7 @@ final Map<String, List<Map<String, dynamic>>> testLogs = {
       "data": {
         "description": {
           "type": "shirt",
-          "description": {
-            "type": "t-shirt",
-            "material": "fleur-violet"
-          }
+          "description": {"type": "t-shirt", "material": "fleur-violet"}
         },
         "category": 'AVATAR',
         "rarity": "COMMON",
@@ -179,19 +166,16 @@ class LogsService extends RestApiService {
 
   LogsService._internal();
 
-  Future<void> postProgressLog(BuildContext context, TaskToken token, String log,
+  Future<void> postProgressLog(
+      BuildContext context, TaskToken token, String log,
       {dynamic? data}) async {
     Map<String, dynamic> body = {'log': log, 'token': token.token};
     if (data != null) {
       body['data'] = data;
     }
-    String? userId = AuthenticationService().snapAuthenticatedUser?.id;
-    if (userId != null) {
-      throw new UnauthenticatedError();
-    }
+    String userId = AuthenticationService().authenticatedUserId;
     Map<String, dynamic> response;
     try {
-      print(body);
       response =
           await this.post('/api/users/$userId/logs/PROGRESS/', body: body);
     } on HttpError {
@@ -226,11 +210,7 @@ class LogsService extends RestApiService {
     try {
       response = await this.get('/api/users/$userId/logs/$category/');
     } on SocketException {
-      if (!kReleaseMode) {
-        response = {"items": testLogs[category.toUpperCase()] ?? []};
-      } else {
-        rethrow;
-      }
+      rethrow;
     }
     List<Map<String, dynamic>> items = List.from(response["items"]);
     return items.map((e) => Log.fromMap(e)).toList();
@@ -242,11 +222,7 @@ class LogsService extends RestApiService {
     try {
       response = await this.get('/api/users/$userId/logs/');
     } on SocketException {
-      if (!kReleaseMode) {
-        response = {"items": testLogs.values.expand((element) => element)};
-      } else {
-        rethrow;
-      }
+      rethrow;
     }
     List<Map<String, dynamic>> items = List.from(response["items"]);
     return items.map((e) => Log.fromMap(e)).toList();

@@ -35,7 +35,7 @@ class LoadingScreenPage extends StatelessWidget {
               if (label != null)
                 Text(
                   label!,
-                  style: TextStyle(color: Colors.white, fontSize: 26.0, fontFamily: 'ConcertOne'),
+                  style: TextStyle(color: Colors.white, fontSize: 21.0, fontFamily: 'ConcertOne'),
                   textAlign: TextAlign.center,
                 )
             ],

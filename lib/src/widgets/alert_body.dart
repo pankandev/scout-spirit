@@ -34,7 +34,7 @@ class AlertBody extends StatelessWidget {
           if (title.isNotEmpty) Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24.0, fontFamily: 'ConcertOne'),
+            style: TextStyle(fontSize: 24.0, fontFamily: 'Ubuntu', fontWeight: FontWeight.w700),
           ),
           SizedBox(
             height: 16.0,
@@ -45,7 +45,7 @@ class AlertBody extends StatelessWidget {
                   const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
               child: Text(
                 body,
-                style: TextStyle(fontSize: 16.0, fontFamily: 'Ubuntu'),
+                style: TextStyle(fontSize: 16.0, height: 1.3, fontFamily: 'Ubuntu'),
                 textAlign: TextAlign.center,
               ),
             ),

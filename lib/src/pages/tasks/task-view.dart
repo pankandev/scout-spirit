@@ -5,6 +5,8 @@ import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
 import 'package:scout_spirit/src/models/log.dart';
 import 'package:scout_spirit/src/models/user.dart';
+import 'package:scout_spirit/src/providers/loading_screen.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/providers/provider_consumer.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
@@ -323,12 +325,16 @@ class _TaskViewPageState extends State<TaskViewPage> {
       loading = true;
     });
     try {
+      LoadingScreenProvider().show(context, label: "Completando objetivo...");
       await TasksService().completeActiveTask();
-    } catch (e) {
+      LoadingScreenProvider().hide();
+    } catch (e, s) {
       setState(() {
         dirty = true;
         loading = false;
       });
+      LoadingScreenProvider().hide();
+      await LoggerService().error(e, s);
       rethrow;
     }
     await RewardChecker().checkForRewards(context);

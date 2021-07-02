@@ -38,7 +38,7 @@ class _MainPageState extends State<MainPage> {
       ],
       child: WillPopScope(
         onWillPop: () async => SnackBarProvider.showConfirmAlert(
-            context, 'Seguro que quieres salir?',
+            context, '¿Seguro que quieres salir?',
             okLabel: 'Salir 🚪'),
         child: Scaffold(
           body: Stack(children: [
@@ -84,7 +84,9 @@ class _MainPageState extends State<MainPage> {
                       StreamBuilder<User?>(
                           stream: AuthenticationService().userStream,
                           builder: (context, snapshot) {
-                            return snapshot.data?.beneficiary != null
+                            bool? initialized =
+                                snapshot.data?.beneficiary?.setBaseTasks;
+                            return initialized != null && !initialized
                                 ? _buildAlert(
                                     context, snapshot.data!.beneficiary!)
                                 : Container();
@@ -116,7 +118,7 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () =>
                             Navigator.pushNamed(context, '/binnacle'),
                         label: 'Bitácora',
-                        labelSize: 23.0,
+                        labelSize: 21.0,
                         icon: Icons.book_outlined,
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
@@ -128,7 +130,7 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/stats'),
                         label: 'Estadísticas',
-                        labelSize: 23.0,
+                        labelSize: 21.0,
                         icon: Icons.insights,
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
@@ -140,7 +142,7 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/logs'),
                         label: 'Registros',
-                        labelSize: 23.0,
+                        labelSize: 21.0,
                         icon: Icons.account_tree_outlined,
                         padding: EdgeInsets.symmetric(
                             horizontal: 18.0, vertical: 21.0),
@@ -164,7 +166,9 @@ class _MainPageState extends State<MainPage> {
           child: Text(
             title,
             style: TextStyle(
-                color: Colors.white, fontFamily: 'ConcertOne', fontSize: 22.0),
+                color: Colors.white,
+                fontFamily: 'ConcertOne',
+                fontSize: 22.0),
           ),
         ),
         if (tooltip != null) IconTooltip(tooltip)
@@ -228,8 +232,8 @@ class _MainPageState extends State<MainPage> {
                               '¡Buenos días!',
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
-                                  fontFamily: 'ConcertOne'),
+                                  fontSize: 14,
+                                  fontFamily: 'UbuntuCondensed'),
                             ),
                             SizedBox(
                               height: 2.0,
@@ -279,7 +283,7 @@ class _MainPageState extends State<MainPage> {
     return Container(
       decoration: BoxDecoration(boxShadow: <BoxShadow>[
         BoxShadow(color: Color.fromRGBO(52, 97, 255, 1), blurRadius: 12.0)
-      ], shape: BoxShape.circle, color: Colors.red),
+      ], shape: BoxShape.circle, color: Colors.white),
       child: ClipOval(
         child: FutureBuilder<Beneficiary?>(
             future: BeneficiariesService().getMyself(),
@@ -377,7 +381,7 @@ class _MainPageState extends State<MainPage> {
             highlightColor: Colors.transparent,
             onPressed: () async {
               bool result = await SnackBarProvider.showConfirmAlert(
-                  context, 'Seguro que quieres cerrar sesión?',
+                  context, '¿Seguro que quieres cerrar sesión?',
                   color: Colors.blueAccent,
                   okLabel: 'Sí',
                   cancelLabel: 'Cancelar');

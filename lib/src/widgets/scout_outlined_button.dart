@@ -39,8 +39,9 @@ class ScoutOutlinedButton extends StatelessWidget {
               child: Text(
             label,
             style: TextStyle(
+                fontWeight: FontWeight.w700,
                 color: color,
-                fontFamily: 'ConcertOne',
+                fontFamily: 'Ubuntu',
                 fontSize: this.labelSize),
           )),
           SizedBox(

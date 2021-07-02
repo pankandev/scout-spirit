@@ -4,6 +4,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
@@ -36,7 +37,21 @@ class AuthenticationService {
       ? _authenticatedUserController.value
       : null;
 
-  String get authenticatedUserId => _authenticatedUserController.value!.id;
+  User get authenticatedUser {
+    User? user = _authenticatedUserController.value;
+    if (user == null) {
+      throw new UnauthenticatedError();
+    }
+    return user;
+  }
+
+  String get authenticatedUserId {
+    String? userId = _authenticatedUserController.value?.id;
+    if (userId == null) {
+      throw new UnauthenticatedError();
+    }
+    return userId;
+  }
 
   Future<String> getIdentityId() async {
     CognitoAuthSession authSession = await Amplify.Auth.fetchAuthSession(

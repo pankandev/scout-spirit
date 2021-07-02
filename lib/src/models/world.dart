@@ -27,13 +27,15 @@ class World {
   String currentNodeId;
 
   factory World.fromMap(Map<String, dynamic> json) => World(
-        zones: json.map((key, value) => MapEntry(key, Zone.fromMap(value))),
+        zones: json.map<String, Zone>(
+            (key, value) => MapEntry<String, Zone>(key, Zone.fromMap(value))),
         currentZoneId: json["currentZoneId"],
         currentNodeId: json["currentNodeId"],
       );
 
   Map<String, dynamic> toMap() => {
-        "zones": zones.map((key, value) => MapEntry(key, value.toMap())),
+        "zones": zones.map<String, Map<String, dynamic>>((key, value) =>
+            MapEntry<String, Map<String, dynamic>>(key, value.toMap())),
         "currentZoneId": currentZoneId,
         "currentNodeId": currentNodeId,
       };
@@ -60,23 +62,27 @@ class Zone {
   @HiveField(3)
   Map<String, Node?> nodes;
 
-  factory Zone.fromMap(Map<String, dynamic> json) => Zone(
-        zoneId: json["zoneId"],
-        objects: List<ZoneObject>.from(
-            json["objects"].map((x) => ZoneObject.fromMap(x))),
-        lastJoinTime: json["lastJoinTime"],
-        nodes: (json["nodes"] as Map)
-            .map((key, value) =>
-                MapEntry(key, value == null ? null : Node.fromMap(value)))
-            .cast<String, Node?>(),
-      );
+  factory Zone.fromMap(Map<String, dynamic> json) {
+    Map nodes = json["nodes"];
+    List objects = json["objects"];
+    String zoneId = json["zoneId"];
+    return Zone(
+      zoneId: zoneId,
+      objects: objects.map((x) => ZoneObject.fromMap(x)).toList(),
+      lastJoinTime: json["lastJoinTime"],
+      nodes: nodes.cast<String, dynamic>().map<String, Node?>((key, value) =>
+          MapEntry<String, Node?>(
+              key, value == null ? null : Node.fromMap(value))),
+    );
+  }
 
   Map<String, dynamic> toMap() => {
         "zoneId": zoneId,
-        "objects":
-            List<Map<String, dynamic>>.from(objects.map((x) => x.toMap())),
+        "objects": objects.map((x) => x.toMap()).toList(),
         "lastJoinTime": lastJoinTime,
-        "nodes": nodes.map((key, value) => MapEntry(key, value?.toMap())),
+        "nodes": nodes.cast<String, Node?>().map<String, Map<String, String>?>(
+            (String key, Node? value) =>
+                MapEntry<String, Map<String, String>?>(key, value?.toMap())),
       };
 }
 
@@ -98,7 +104,7 @@ class Node {
         node: json["node"],
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, String> toMap() => {
         "zone": zone,
         "node": node,
       };
@@ -153,12 +159,10 @@ class Vector3 {
   @HiveField(2)
   final double z;
 
-  factory Vector3.fromMap(Map<String, dynamic> json) =>
-      Vector3(
-          JsonUtils.to<double>(json["x"]!)!,
-          JsonUtils.to<double>(json["y"]!)!,
-          JsonUtils.to<double>(json["z"]!)!
-      );
+  factory Vector3.fromMap(Map<String, dynamic> json) => Vector3(
+      JsonUtils.to<double>(json["x"]!)!,
+      JsonUtils.to<double>(json["y"]!)!,
+      JsonUtils.to<double>(json["z"]!)!);
 
   Map<String, dynamic> toMap() {
     return {
@@ -185,12 +189,11 @@ class Quaternion {
   @HiveField(3)
   final double w;
 
-  factory Quaternion.fromMap(Map<String, dynamic> json) =>
-      Quaternion(
-          JsonUtils.to<double>(json["x"]!)!,
-          JsonUtils.to<double>(json["y"]!)!,
-          JsonUtils.to<double>(json["z"]!)!,
-          JsonUtils.to<double>(json["w"]!)!);
+  factory Quaternion.fromMap(Map<String, dynamic> json) => Quaternion(
+      JsonUtils.to<double>(json["x"]!)!,
+      JsonUtils.to<double>(json["y"]!)!,
+      JsonUtils.to<double>(json["z"]!)!,
+      JsonUtils.to<double>(json["w"]!)!);
 
   Map<String, dynamic> toMap() {
     return {"x": x, "y": y, "z": z, "w": w};

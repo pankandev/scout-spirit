@@ -9,6 +9,7 @@ import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/providers/loading_screen.dart';
+import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/avatar.dart';
@@ -129,7 +130,10 @@ class _ProfilePageState extends State<ProfilePage> {
         IconButton(icon: Icon(Icons.save), onPressed: touched ? _save : null),
         IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: () => GameController().takeScreenshot("image_${profileIndex++}.png")),
+            onPressed: () async {
+              await GameController().takeScreenshot("image_${profileIndex++}.png");
+              SnackBarProvider.showMessage(context, '📷', color: Colors.white, textColor: Colors.black);
+            }),
       ]),
       floatingActionButton: SpeedDial(
         children: categories.keys.map((e) {

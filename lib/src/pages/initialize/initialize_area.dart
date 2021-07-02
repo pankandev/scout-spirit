@@ -27,14 +27,14 @@ class _InitializeAreaPageState extends State<InitializeAreaPage> {
   @override
   void initState() {
     super.initState();
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    User user = AuthenticationService().authenticatedUser;
     tasks = TasksService().getUserTasksByArea(user, user.stage, widget.area);
   }
 
   @override
   Widget build(BuildContext context) {
     List<Line> lines = ObjectivesService().getAllLinesByArea(widget.area);
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    User user = AuthenticationService().authenticatedUser;
     AreaDisplayData displayData =
         ObjectivesDisplay.getUserAreaIconData(user, widget.area);
     DevelopmentStage stage = user.stage;

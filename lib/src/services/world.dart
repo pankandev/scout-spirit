@@ -44,16 +44,11 @@ class WorldService {
   }
 
   World get initialWorld => World(zones: {
-        "start": Zone(zoneId: "Base", lastJoinTime: null, objects: [
-          ZoneObject(
-              objectId: 'id',
-              position: Vector3(5, 17, 10),
-              rotation: Quaternion(0, 0, 0, 0),
-              scale: Vector3(1, 1, 1))
-        ], nodes: {
-          "South": null,
-          "North": null
-        })
+        "start": Zone(
+            zoneId: "Base",
+            lastJoinTime: null,
+            objects: [],
+            nodes: {"South": null, "North": null})
       }, currentZoneId: "start", currentNodeId: "South");
 
   Future<World> getWorld(String id) async {
@@ -71,8 +66,8 @@ class WorldService {
   }
 
   Future<Zone> getDefaultZone(String zoneId) async {
-    Map<String, dynamic> zone = json
-        .decode(await rootBundle.loadString('assets/jsons/resources/zones/$zoneId.json'));
+    Map<String, dynamic> zone = json.decode(await rootBundle
+        .loadString('assets/jsons/resources/zones/$zoneId.json'));
     return Zone.fromMap(zone);
   }
 
@@ -98,7 +93,8 @@ class WorldService {
     });
   }
 
-  Future<List<DecorationReward>> getAvailableItems({bool subtract = false}) async {
+  Future<List<DecorationReward>> getAvailableItems(
+      {bool subtract = false}) async {
     await RewardsService().updateCategory('decoration');
     String userId = AuthenticationService().authenticatedUserId;
     List<DecorationReward> items =

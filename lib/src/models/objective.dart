@@ -65,12 +65,11 @@ class Objective extends ObjectiveKey {
   }
 
   String get authorizedObjective {
-    User user = AuthenticationService().snapAuthenticatedUser!;
-    return getUserObjective(user);
+    User user = AuthenticationService().authenticatedUser;
+    return getUserObjective(user.unit);
   }
 
-  String getUserObjective(User user) {
-    Unit unit = user.unit;
+  String getUserObjective(Unit unit) {
     return rawObjective
         .replaceAll("{OsAs}", unit == Unit.Guides ? 'as' : 'os')
         .replaceAll("{OA}", unit == Unit.Guides ? 'a' : 'o')

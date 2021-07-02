@@ -5,6 +5,7 @@ import 'package:scout_spirit/src/models/log.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/user.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/logs.dart';
 import 'package:scout_spirit/src/services/rest_api.dart';
@@ -26,10 +27,11 @@ class RewardsService extends RestApiService {
     Map<String, dynamic> response;
     try {
       response = await post('api/rewards/claim', body: body);
-    } on HttpError catch (e) {
+    } on HttpError catch (e, s) {
       if (e.statusCode == 400) {
         box.delete(token.storageId);
       }
+      await LoggerService().error(e, s);
       rethrow;
     }
     List<Reward> rewards =
@@ -47,7 +49,7 @@ class RewardsService extends RestApiService {
   }
 
   Future<List<RewardToken>> getUnclaimedRewards() async {
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    User user = AuthenticationService().authenticatedUser;
     List<RewardToken> tokens = box.values
         .map((token) => RewardToken(token))
         .where((token) =>

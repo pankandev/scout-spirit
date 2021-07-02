@@ -76,7 +76,7 @@ class TasksService extends RestApiService {
   Future<void> startObjective(
       Objective personalObjective, List<SubTask> tasks) async {
     if (tasks.length == 0) throw new AppError(message: 'Tasks list is empty');
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    User user = AuthenticationService().authenticatedUser;
     Map<String, dynamic> payload = {
       "sub-tasks": tasks.map((e) => e.description).toList(),
       "description": personalObjective.rawObjective
@@ -89,7 +89,7 @@ class TasksService extends RestApiService {
 
   Future<Task?> updateActiveTask(List<SubTask> subTasks) async {
     Task target = TasksService().snapActiveTask!;
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    User user = AuthenticationService().authenticatedUser;
     Map<String, dynamic> payload = {
       "sub-tasks": subTasks.map((e) => e.toMap()).toList(),
       "description": target.personalObjective.rawObjective
@@ -99,7 +99,7 @@ class TasksService extends RestApiService {
   }
 
   Future<FullTask?> fetchActiveTask({bool onlyLogs = false}) async {
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    String userId = AuthenticationService().authenticatedUserId;
     Task? task;
     List<Log> logs;
     try {
@@ -107,7 +107,7 @@ class TasksService extends RestApiService {
         task = snapActiveTask!;
       } else {
         Map<String, dynamic> response =
-            await get('api/users/${user.id}/tasks/active');
+            await get('api/users/$userId/tasks/active');
         task = Task.fromMap(response);
       }
       logs = await LogsService().getProgressLogs(task);
@@ -226,11 +226,7 @@ class TasksService extends RestApiService {
     } on HttpError {
       rethrow;
     } on SocketException {
-      if (!kReleaseMode) {
-        _userTasksSubject.add(testTasks);
-      } else {
-        rethrow;
-      }
+      rethrow;
     }
   }
 
@@ -240,9 +236,9 @@ class TasksService extends RestApiService {
   }
 
   Future<CompleteTaskResponse> completeActiveTask() async {
-    User user = AuthenticationService().snapAuthenticatedUser!;
+    String userId = AuthenticationService().authenticatedUserId;
     Map<String, dynamic> data =
-        await post('api/users/${user.id}/tasks/active/complete');
+        await post('api/users/$userId/tasks/active/complete');
     await fetchActiveTask();
     CompleteTaskResponse response = CompleteTaskResponse.fromMap(data);
     await RewardsService().saveReward(response.reward);

@@ -497,7 +497,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<bool> _cancel() async {
     if (_currentStep == 0) {
       bool response = await SnackBarProvider.showConfirmAlert(
-          context, 'Seguro que quieres cancelar el registro?');
+          context, '¿Seguro que quieres cancelar el registro?');
       if (response) {
         Navigator.pop(context);
       }

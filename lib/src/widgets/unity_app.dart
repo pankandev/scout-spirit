@@ -9,7 +9,10 @@ class UnityApp extends StatefulWidget {
   final bool fullscreen;
 
   const UnityApp(
-      {Key? key, required this.controller, required this.initialSceneName, this.fullscreen = true})
+      {Key? key,
+      required this.controller,
+      required this.initialSceneName,
+      this.fullscreen = true})
       : super(key: key);
 
   @override
@@ -41,6 +44,7 @@ class _UnityAppState extends State<UnityApp> {
                     onUnityCreated: _onUnityCreated,
                     onUnityMessage: onUnityMessage,
                     onUnitySceneLoaded: onUnitySceneLoaded,
+                    enablePlaceholder: false,
                   )
                 : Container()),
       ),

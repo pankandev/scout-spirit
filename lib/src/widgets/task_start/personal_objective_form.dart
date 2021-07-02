@@ -20,7 +20,7 @@ class _PersonalObjectiveFormState extends State<PersonalObjectiveForm> {
   final fieldController = TextEditingController();
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser!.unit,
+      AuthenticationService().authenticatedUser.unit,
       Provider.of<TaskStartForm>(context).originalObjective!.area);
 
   @override

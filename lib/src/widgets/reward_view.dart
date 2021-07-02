@@ -52,6 +52,21 @@ class RewardItem extends StatelessWidget {
   const RewardItem({Key? key, required this.reward, this.onConfirm})
       : super(key: key);
 
+  String get rewardEmoji {
+    switch (reward.category) {
+      case RewardType.ZONE:
+        return "🌳";
+      case RewardType.AVATAR:
+        return "👔";
+      case RewardType.POINTS:
+        return "💯";
+      case RewardType.NEEDS:
+        return "🥕";
+      case RewardType.DECORATION:
+        return "✨";
+    }
+  }
+
   String getRewardName() {
     switch (reward.category) {
       case RewardType.ZONE:
@@ -73,7 +88,7 @@ class RewardItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.ac_unit, size: MediaQuery.of(context).size.height * 0.4),
+          Text(rewardEmoji, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.4)),
           Text(
             getRewardName(),
             style: TextStyle(fontSize: 24.0),

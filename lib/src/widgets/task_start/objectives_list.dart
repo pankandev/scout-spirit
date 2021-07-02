@@ -114,9 +114,9 @@ class _StartFormObjectivesListState extends State<StartFormObjectivesList> {
   }
 
   DevelopmentStage get stage =>
-      AuthenticationService().snapAuthenticatedUser!.stage;
+      AuthenticationService().authenticatedUser.stage;
 
-  Unit get unit => AuthenticationService().snapAuthenticatedUser!.unit;
+  Unit get unit => AuthenticationService().authenticatedUser.unit;
 
   Widget _buildAreaFilterButton(DevelopmentArea? area,
       {bool isActive = false}) {
@@ -204,7 +204,7 @@ class _StartFormObjectivesListState extends State<StartFormObjectivesList> {
                             AreaDisplayData areaDisplay =
                                 ObjectivesDisplay.getAreaIconData(
                                     AuthenticationService()
-                                        .snapAuthenticatedUser!
+                                        .authenticatedUser
                                         .unit,
                                     area);
                             List<Line> lines = grouped[area]!;
@@ -234,7 +234,7 @@ class _StartFormObjectivesListState extends State<StartFormObjectivesList> {
                                         itemBuilder: (context, index) {
                                           DevelopmentStage stage =
                                               AuthenticationService()
-                                                  .snapAuthenticatedUser!
+                                                  .authenticatedUser
                                                   .stage;
                                           Line line = lines[index];
                                           return Column(

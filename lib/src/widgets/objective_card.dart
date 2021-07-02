@@ -11,7 +11,7 @@ class ObjectiveCard extends StatelessWidget {
   ObjectiveCard({required this.objective, this.onSelect});
 
   AreaDisplayData get areaData => ObjectivesDisplay.getAreaIconData(
-      AuthenticationService().snapAuthenticatedUser!.unit, objective.area);
+      AuthenticationService().authenticatedUser.unit, objective.area);
 
   @override
   Widget build(BuildContext context) {

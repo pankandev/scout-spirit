@@ -22,6 +22,12 @@ class TaskContainer extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
+  String get objective {
+    String personal = task.personalObjective.rawObjective;
+    String original = task.originalObjective.getUserObjective(unit);
+    return personal.isNotEmpty ? personal : original;
+  }
+
   @override
   Widget build(BuildContext context) {
     AreaDisplayData display =
@@ -77,7 +83,7 @@ class TaskContainer extends StatelessWidget {
                               height: 8.0,
                             ),
                             Text(
-                              task.personalObjective.rawObjective,
+                              objective,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -93,6 +99,7 @@ class TaskContainer extends StatelessWidget {
                             icon: Icons.visibility,
                             label: label!,
                             borderWidth: 2.0,
+                            labelSize: 12.0,
                             padding: EdgeInsets.symmetric(
                                 vertical: 5.0, horizontal: 12.0),
                             color: display.color.withOpacity(0.8),

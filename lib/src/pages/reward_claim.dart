@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 
@@ -99,7 +100,7 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
                     shape: CircleBorder(),
                     child: FittedBox(
                       fit: BoxFit.contain,
-                      child: Text('#$index'),
+                      child: Text('🎁 #$index'),
                     ),
                     onPressed:
                         loading ? null : () => claimReward(boxIndex: index)),
@@ -116,17 +117,22 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
     try {
       rewards =
           await RewardsService().claimReward(widget.reward, boxIndex: boxIndex);
-    } on HttpError catch (e) {
+    } on HttpError catch (e, s) {
       if (e.statusCode == 400) {
         Navigator.of(context).pop();
         return;
       } else {
+        setState(() {
+          loading = true;
+        });
+        await LoggerService().error(e, s);
         rethrow;
       }
-    } catch (e) {
+    } catch (e, s) {
       setState(() {
         loading = false;
       });
+      await LoggerService().error(e, s);
       rethrow;
     }
     NavigatorState nav = Navigator.of(context);

@@ -6,6 +6,7 @@ import 'package:device_info/device_info.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/error/unauthenticated_error.dart';
 import 'package:http/http.dart' as http;
+import 'package:scout_spirit/src/providers/logger.dart';
 
 const WEB_URL = "https://d43k9sss5csvt.cloudfront.net/";
 const LOCALHOST_URL = "http://localhost:3000/";
@@ -41,14 +42,23 @@ abstract class RestApiService {
   }
 
   Future<Map<String, dynamic>> _handleJsonOperation(
-      Future<http.Response> responseFuture) async {
+      Future<http.Response> responseFuture,
+      {List<int> expectedStatus = const [404]}) async {
     http.Response response = await responseFuture;
     if (response.statusCode >= 400) {
-      throw new HttpError(
+      HttpError error = new HttpError(
           statusCode: response.statusCode,
           isAuthorized: response.request?.headers['Authorization'] != null,
           response: response,
           endpoint: response.request?.url.toString() ?? 'unknown');
+      try {
+        throw error;
+      } catch (e, s) {
+        if (!expectedStatus.contains(response.statusCode)) {
+          await LoggerService().error(e, s);
+        }
+        rethrow;
+      }
     }
     return json.decode(response.body);
   }
@@ -70,10 +80,12 @@ abstract class RestApiService {
   }
 
   Future<Map<String, dynamic?>> get(String path,
-      {Map<String, String>? queryParams}) async {
+      {Map<String, String>? queryParams,
+      List<int> expectedStatus = const [404]}) async {
     Map<String, String> headers = await _getAuthorizedHeader();
     Uri apiUri = getApiUri(path).replace(queryParameters: queryParams);
-    return await _handleJsonOperation(http.get(apiUri, headers: headers));
+    return await _handleJsonOperation(http.get(apiUri, headers: headers),
+        expectedStatus: expectedStatus);
   }
 
   Future<Map<String, dynamic>> put(String path, Map body) async {

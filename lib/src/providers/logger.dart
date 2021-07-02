@@ -10,18 +10,22 @@ class LoggerService {
     return _instance;
   }
 
-  void log(String tag, String message) {
-    if (!kReleaseMode) {
+  Future<void> log(String tag, String message, {List<dynamic>? params}) async {
+    if (kDebugMode) {
       String full = "[$tag] $message";
       print(full);
-      Sentry.captureMessage(full);
+      await Sentry.captureMessage(full, params: params?.map((e) => e.toString()).toList());
     }
   }
 
-  void warn(String tag, String message) {
-    if (!kReleaseMode) {
+  Future<void> warn(String tag, String message) async {
+    if (kDebugMode) {
       print("[$tag:WARN] " + message);
     }
-    Sentry.captureMessage(message);
+    await Sentry.captureMessage(message);
+  }
+
+  Future<void> error(Object error, StackTrace stackTrace) async {
+    await Sentry.captureException(error, stackTrace: stackTrace);
   }
 }

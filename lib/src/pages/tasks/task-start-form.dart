@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:listenable_stream/listenable_stream.dart';
@@ -195,7 +196,10 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
           instructions[step].instruction,
           textAlign: TextAlign.justify,
           style: TextStyle(
-              color: Colors.white, fontSize: 14.0, fontFamily: 'Ubuntu'),
+              height: 1.3,
+              color: Colors.white,
+              fontSize: 14.0,
+              fontFamily: 'Ubuntu'),
         ),
         SizedBox(
           height: 16.0,
@@ -205,6 +209,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
             'Tip: ${instructions[step].tip}',
             textAlign: TextAlign.justify,
             style: TextStyle(
+                height: 1.3,
                 color: Colors.white,
                 fontSize: 14.0,
                 fontFamily: 'Ubuntu',
@@ -228,7 +233,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                 children: [
                   Text('Entendido!',
                       style:
-                          TextStyle(color: Colors.white, fontFamily: 'Ubuntu')),
+                          TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontFamily: 'Ubuntu')),
                   SizedBox(
                     width: 24.0,
                   ),
@@ -284,7 +289,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
       return false;
     }
     return await SnackBarProvider.showConfirmAlert(
-        context, 'Seguro que quieres descartar cambios?',
+        context, '¿Seguro que quieres descartar cambios?',
         okLabel: 'Salir');
   }
 

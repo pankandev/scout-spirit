@@ -358,7 +358,7 @@ class _JoinPageState extends State<JoinPage> {
     int page = _pageController.page?.round() ?? 0;
     if (page <= 0) {
       return await SnackBarProvider.showConfirmAlert(
-          context, 'Seguro que quieres salir?');
+          context, '¿Seguro que quieres salir?');
     }
     await goToPage(page - 1);
     return false;

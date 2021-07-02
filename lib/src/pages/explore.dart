@@ -76,7 +76,7 @@ class _ExplorePageState extends State<ExplorePage> {
       onWillPop: () async {
         controller.pause();
         bool result = await SnackBarProvider.showConfirmAlert(
-          context, 'Seguro que quieres salir?',
+          context, '¿Seguro que quieres salir?',
           okLabel: 'Salir 🚪');
         await Future.delayed(Duration(seconds: 1));
         controller.resume();

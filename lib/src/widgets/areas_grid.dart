@@ -23,7 +23,7 @@ class AreasGrid extends StatelessWidget {
       crossAxisCount: 2,
       children: DevelopmentArea.values.map((area) {
         AreaDisplayData display = ObjectivesDisplay.getUserAreaIconData(
-            AuthenticationService().snapAuthenticatedUser!, area);
+            AuthenticationService().authenticatedUser, area);
         bool isDisabled = onAreaPressed == null ||
             (disabledBuilder != null && disabledBuilder!(area));
         bool isGrey = greyBuilder != null && greyBuilder!(area);

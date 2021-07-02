@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/providers/confirm_provider.dart';
+import 'package:scout_spirit/src/providers/loading_screen.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/providers/provider_consumer.dart';
+import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/services/logs.dart';
@@ -98,7 +101,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null) {
+                          if (value == null || value.isEmpty) {
                             return "Este campo es obligatorio";
                           }
                           if (value.length < minCharacters) {
@@ -118,36 +121,53 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                         onPressed: loading
                             ? null
                             : () async {
-                                if (_formKey.currentState!.validate()) {
+                                Task? task = TasksService().snapActiveTask;
+                                if (task != null &&
+                                    (_formKey.currentState?.validate() ??
+                                        false)) {
                                   setState(() {
                                     loading = true;
                                   });
-                                  Task task = TasksService().snapActiveTask!;
                                   try {
+                                    LoadingScreenProvider().show(context,
+                                        label: "Subiendo registro...");
                                     await LogsService().postProgressLog(
                                         context, task.token!, controller.text);
-                                  } catch (_) {
+                                  } catch (e, s) {
                                     setState(() {
                                       loading = false;
                                     });
-                                    rethrow;
+                                    SnackBarProvider.showMessage(context,
+                                        'No se pudo subir el registro',
+                                        color: Colors.red);
+                                    await LoggerService().error(e, s);
+                                  } finally {
+                                    LoadingScreenProvider().hide();
                                   }
                                   Navigator.of(context).pop(true);
+                                } else {
+                                  SnackBarProvider.showMessage(context,
+                                      'No se pudo validar el contenido',
+                                      color: Colors.red);
                                 }
                               },
                       ),
-                      SizedBox(height: 16.0,),
+                      SizedBox(
+                        height: 16.0,
+                      ),
                       ScoutButton(
                         fillColor: appTheme.errorColor,
                         accentColor: appTheme.errorColor,
                         label: 'Cerrar',
                         icon: Icons.clear,
                         labelColor: Colors.white,
-                        onPressed: loading ? null : () async {
-                          if (await _onWillPop()) {
-                            Navigator.pop(context);
-                          }
-                        },
+                        onPressed: loading
+                            ? null
+                            : () async {
+                                if (await _onWillPop()) {
+                                  Navigator.pop(context);
+                                }
+                              },
                       )
                     ],
                   ),
@@ -168,6 +188,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
       return true;
     }
     return await ConfirmProvider.askConfirm(context,
-        question: 'Quieres descartar este registro?', confirmLabel: 'Descartar');
+        question: 'Quieres descartar este registro?',
+        confirmLabel: 'Descartar');
   }
 }

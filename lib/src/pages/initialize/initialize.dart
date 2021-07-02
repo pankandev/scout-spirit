@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/initialize.dart';
 import 'package:scout_spirit/src/models/objective.dart';
+import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/providers/reward_provider.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
@@ -96,11 +97,12 @@ class _InitializePageState extends State<InitializePage> {
     try {
       await TasksService().initializeObjectives(form.value);
       await RewardChecker().checkForRewards(context);
-    } catch (e) {
+    } catch (e, s) {
       setState(() {
         loading = false;
       });
-      rethrow;
+      await LoggerService().error(e, s);
+      return;
     }
     Navigator.of(context).pop();
   }
