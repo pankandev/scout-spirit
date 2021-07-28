@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
+import 'package:scout_spirit/src/widgets/background.dart';
+import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
 class RewardsPage extends StatelessWidget {
   final List<Reward> rewards;
@@ -67,6 +70,21 @@ class RewardItem extends StatelessWidget {
     }
   }
 
+  String get rewardDescription {
+    switch (reward.category) {
+      case RewardType.ZONE:
+        return "Tal parece que se ha abierto un nuevo camino en tu mundo 😯";
+      case RewardType.AVATAR:
+        return "Una nueva prenda con la que puedes personalizar tu ávatar 😎";
+      case RewardType.POINTS:
+        return "Unos cuantos puntos extra nunca vienen mal ✨";
+      case RewardType.NEEDS:
+        return "";
+      case RewardType.DECORATION:
+        return "Tal parece que llegó un paquete a tu mundo 📬";
+    }
+  }
+
   String getRewardName() {
     switch (reward.category) {
       case RewardType.ZONE:
@@ -85,35 +103,43 @@ class RewardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          Text(rewardEmoji, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.4)),
-          Text(
-            getRewardName(),
-            style: TextStyle(fontSize: 24.0),
-          ),
-          SizedBox(
-            height: 32.0,
-          ),
-          if (onConfirm != null)
-            TextButton(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.done, size: 42.0, color: Colors.green),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text('Confirmar',
-                            style:
-                                TextStyle(fontSize: 21.0, color: Colors.green))
-                      ]),
+          Background(),
+          Padding(
+            padding: Paddings.containerXFluid,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  rewardEmoji,
+                  style: TextStyle(fontSize: FontSizes.giant),
+                  textAlign: TextAlign.center,
                 ),
-                onPressed: onConfirm)
+                Text(getRewardName(),
+                    style: TextStyles.title.copyWith(
+                        fontSize: FontSizes.max,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w200),
+                    textAlign: TextAlign.center),
+                VSpacings.giant,
+                Text(rewardDescription,
+                    style: TextStyles.bodyLight
+                        .copyWith(fontSize: FontSizes.large, height: 1.4),
+                    textAlign: TextAlign.center),
+                VSpacings.giant,
+                if (onConfirm != null)
+                  ScoutOutlinedButton(
+                    onPressed: onConfirm,
+                    label: 'Confirmar',
+                    labelSize: 76.0,
+                    icon: Icons.check,
+                    padding: Paddings.buttonLoose,
+                  )
+              ],
+            ),
+          ),
         ],
       ),
     );

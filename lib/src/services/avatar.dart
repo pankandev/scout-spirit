@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
+import 'package:scout_spirit/src/models/inventory.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/models/world.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
@@ -11,7 +13,7 @@ import 'package:scout_spirit/src/unity/unity_controller.dart';
 import 'package:scout_spirit/src/utils/json.dart';
 import 'package:scout_spirit/src/widgets/unity_app.dart';
 import 'package:scout_spirit/src/pages/new_zone.dart';
-import 'package:uuid/uuid.dart' as uuid;
+
 
 class ExplorePage extends StatefulWidget {
   @override
@@ -28,7 +30,11 @@ class _ExplorePageState extends State<ExplorePage> {
     controller.on('getAvatar', getAvatar);
     controller.on('SaveZone', saveZone);
     controller.on('AddNewZone', addNewZone);
+    controller.on('GetInventory', getInventory);
     controller.on('RequestItem', requestItem);
+    if (kDebugMode) {
+      controller.on('ShowToast', showToast);
+    }
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
@@ -63,9 +69,16 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Future<Map<String, dynamic>> saveZone(Map<String, dynamic> arguments) async {
     String id = arguments['id'];
-    Zone zone = Zone.fromMap(arguments['zone']);
 
+    // save inventory
+    Inventory inventory = Inventory.fromMap(arguments['inventory']);
+    await WorldService().updateInventory(inventory);
+
+    // save zone
+    Zone zone = Zone.fromMap(arguments['zone']);
+    zone.lastJoinTime = DateTime.now().millisecondsSinceEpoch;
     World world = await WorldService().updateZone(id, zone);
+
     return world.toMap();
   }
 
@@ -76,8 +89,8 @@ class _ExplorePageState extends State<ExplorePage> {
       onWillPop: () async {
         controller.pause();
         bool result = await SnackBarProvider.showConfirmAlert(
-          context, '¿Seguro que quieres salir?',
-          okLabel: 'Salir 🚪');
+            context, '¿Seguro que quieres salir?',
+            okLabel: 'Salir 🚪', waitFor: controller.save().then((_) => true));
         await Future.delayed(Duration(seconds: 1));
         controller.resume();
         return result;
@@ -91,9 +104,17 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 
+  Future<Map<String, dynamic>?> showToast(
+      Map<String, dynamic> arguments) async {
+    String tag = arguments['TAG'];
+    String message = arguments['ARGUMENTS'];
+    SnackBarProvider.showMessage(context, "[$tag] $message");
+  }
+
   Future<Map<String, dynamic>?> requestItem(
       Map<String, dynamic>? arguments) async {
-    List<DecorationReward> items = await WorldService().getAvailableItems(subtract: JsonUtils.to<bool>((arguments ?? {})['subtract']) ?? true);
+    List<DecorationReward> items = await WorldService().getAvailableItems(
+        subtract: JsonUtils.to<bool>((arguments ?? {})['subtract']) ?? true);
     List<String> itemsIds = items.map((e) => e.code).toList();
     return {'items': itemsIds};
   }
@@ -102,14 +123,23 @@ class _ExplorePageState extends State<ExplorePage> {
       Map<String, dynamic> arguments) async {
     await Future.delayed(Duration(seconds: 1));
     await GameController().pause();
-    Zone? newZone = await showDialog<Zone>(
-        context: context, builder: (_) => NewZoneDialog());
+    Object? newZone =
+        await showDialog(context: context, builder: (_) => NewZoneDialog());
     await GameController().resume();
-    if (newZone == null || !(newZone is Zone)) {
+    if (newZone == null || !(newZone is ZoneConnection)) {
       return null;
     }
-    String id = uuid.Uuid().v4();
-    World newWorld = await WorldService().addZone(id, newZone);
+    String originNodeId = arguments['originNode'];
+    World newWorld = await WorldService().addZone(
+        AuthenticationService().authenticatedUserId,
+        originNodeId,
+        newZone.nodeId,
+        newZone.zone);
     return newWorld.toMap();
+  }
+
+  Future<Map<String, dynamic>> getInventory(dynamic _) async {
+    Inventory inventory = await WorldService().getInventory();
+    return inventory.toMap();
   }
 }

@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:relative_scale/relative_scale.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/user.dart';
@@ -48,6 +47,8 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
                   child: TaskContainer(
                     task: task,
                     unit: user!.unit,
+                    label: 'Actualizar',
+                    icon: Icons.edit,
                     onTap: () => _onTaskTap(context, user),
                   ),
                 ))
@@ -56,64 +57,68 @@ class _ActiveTaskContainerState extends State<ActiveTaskContainer> {
   }
 
   Widget _buildEmptyContainer(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0),
-          color: Colors.white.withOpacity(0.28),
-          border: Border.all(color: Colors.white.withOpacity(0.62))),
-      padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 16.0),
-      child: Flex(
-        direction: Axis.horizontal,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            flex: 9,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Text(
-                      'No has indicado un objetivo\nen progreso aun 🤔',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Ubuntu',
-                          fontSize: 16.0),
+    return RelativeBuilder(
+      builder: (context, _, __, sx, sy) {
+        return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(sx(12.0)),
+              color: Colors.white.withOpacity(0.28),
+              border: Border.all(color: Colors.white.withOpacity(0.62))),
+          padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 16.0),
+          child: Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                flex: 9,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'No has indicado un objetivo\nen progreso aun 🤔',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Ubuntu',
+                              fontSize: 16.0),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 12.0,
+                    ),
+                    Expanded(
+                      child: ScoutOutlinedButton(
+                        onPressed: () => _onCreate(context),
+                        label: 'Comenzar un objetivo',
+                        icon: Icons.edit,
+                      ),
+                    )
+                  ],
                 ),
-                SizedBox(
-                  height: 12.0,
-                ),
-                Expanded(
-                  child: ScoutOutlinedButton(
-                    onPressed: () => _onCreate(context),
-                    label: 'Comenzar un objetivo',
-                    icon: Icons.edit,
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 16.0,
-          ),
-          Expanded(
-            flex: 4,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Icon(
-                Icons.sentiment_dissatisfied_rounded,
-                color: Colors.white.withOpacity(0.62),
               ),
-            ),
+              SizedBox(
+                width: 16.0,
+              ),
+              Expanded(
+                flex: 4,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Icon(
+                    Icons.sentiment_dissatisfied_rounded,
+                    color: Colors.white.withOpacity(0.62),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      }
     );
   }
 

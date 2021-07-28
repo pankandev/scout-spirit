@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:scout_spirit/src/models/task.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/widgets/header_back.dart';
+import 'package:scout_spirit/src/widgets/task_item.dart';
 import 'package:scout_spirit/src/widgets/task_start/task_edit_dialogue.dart';
 import 'package:scout_spirit/src/forms/task_start.dart';
 
@@ -39,13 +41,11 @@ class _TasksFormState extends State<TasksForm> {
                     label: 'Concrétalo',
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 14.0),
+                    padding: Paddings.label,
                     child: Text(
                       'Tareas',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Ubuntu',
-                          fontSize: 24.0),
+                      style:
+                          TextStyles.titleLight.copyWith(fontFamily: 'Ubuntu'),
                     ),
                   )
                 ] +
@@ -53,7 +53,7 @@ class _TasksFormState extends State<TasksForm> {
                     .asMap()
                     .keys
                     .map<Widget>((index) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
+                          padding: Paddings.listItem,
                           child: _buildTaskCard(index),
                         ))
                     .toList() +
@@ -66,10 +66,10 @@ class _TasksFormState extends State<TasksForm> {
     return RawMaterialButton(
         onPressed: () => _addTask(),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(64.0),
-            side: BorderSide(color: Colors.white, width: 3.0)),
+            borderRadius: BorderRadii.max,
+            side: BorderSide(color: Colors.white, width: Dimensions.xsmall)),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          padding: Paddings.buttonLoose,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -77,7 +77,7 @@ class _TasksFormState extends State<TasksForm> {
                 child: Icon(
                   Icons.add,
                   color: Colors.white,
-                  size: 32.0,
+                  size: IconSizes.large,
                 ),
               ),
             ],
@@ -89,80 +89,7 @@ class _TasksFormState extends State<TasksForm> {
     SubTask? task = index < tasks.length ? tasks[index] : null;
     return task == null
         ? _buildEmptyTaskBody()
-        : Container(
-            decoration: BoxDecoration(boxShadow: <BoxShadow>[
-              BoxShadow(color: Colors.white24, blurRadius: 6.0)
-            ], borderRadius: BorderRadius.circular(32.0), color: Colors.white),
-            padding: EdgeInsets.only(right: 24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    padding: EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(218, 218, 218, 1)),
-                    child: Icon(
-                      Icons.check,
-                      color: Color.fromRGBO(72, 72, 72, 1),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 8.0,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text(
-                        task.description.isNotEmpty
-                            ? task.description
-                            : 'Tarea vacía...',
-                        style: task.description.isNotEmpty
-                            ? TextStyle(fontFamily: 'Ubuntu', height: 1.15)
-                            : TextStyle(
-                                fontFamily: 'Ubuntu', color: Colors.grey)),
-                  ),
-                ),
-                Flexible(
-                  child: Flex(
-                    direction: Axis.horizontal,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: RawMaterialButton(
-                          shape: CircleBorder(),
-                          splashColor: Colors.blue.withOpacity(0.4),
-                          padding: new EdgeInsets.all(0.0),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.blue,
-                            size: 18.0,
-                          ),
-                          onPressed: () => _onEdit(index),
-                        ),
-                      ),
-                      Flexible(
-                        child: RawMaterialButton(
-                          shape: CircleBorder(),
-                          padding: new EdgeInsets.all(0.0),
-                          splashColor: Colors.redAccent.withOpacity(0.4),
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                            size: 18.0,
-                          ),
-                          onPressed: () => _deleteTask(index),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ));
+        : TaskItem(task: task, onEdit: () => _onEdit(index), onDelete: () => _deleteTask(index),);
   }
 
   void _addTask() {

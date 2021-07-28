@@ -38,25 +38,27 @@ class _JoinPageState extends State<JoinPage> {
     selectedDistrictCodeSubject = BehaviorSubject<String>();
     selectedGroupCodeSubject = BehaviorSubject<String>();
 
-    selectedDistrict$ = selectedDistrictCodeSubject.stream.asyncMap(
-        (districtCode) => districtCode != null
+    selectedDistrict$ = selectedDistrictCodeSubject.asyncMap((districtCode) =>
+        districtCode != null
             ? GroupsService().getDistrictById(districtCode)
+            : Future.value(null));
+    availableGroups$ = selectedDistrictCodeSubject.asyncMap((districtCode) =>
+        districtCode != null
+            ? GroupsService().getAllFromDistrict(districtCode)
             : Future.value(null));
     selectedGroup$ =
         CombineLatestStream.combine2<String?, String?, Map<String, String?>>(
-            selectedDistrictCodeSubject.stream,
-            selectedGroupCodeSubject.stream,
-            (a, b) => {"district": a, "group": b}).asyncMap((codes) {
+                selectedDistrictCodeSubject,
+                selectedGroupCodeSubject,
+                (a, b) => {"district": a, "group": b})
+            .asBroadcastStream()
+            .asyncMap((codes) {
       String? districtCode = codes["district"];
       String? groupCode = codes["group"];
       return groupCode != null && districtCode != null
           ? GroupsService().getGroupById(districtCode, groupCode)
           : null;
     });
-    availableGroups$ = selectedDistrictCodeSubject.stream.asyncMap(
-        (districtCode) => districtCode != null
-            ? GroupsService().getAllFromDistrict(districtCode)
-            : null);
   }
 
   @override
@@ -235,9 +237,9 @@ class _JoinPageState extends State<JoinPage> {
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 5.0),
-                                    child: _buildDistrictListTile(data[0],
+                                    child: _buildDistrictListTile(data[index],
                                         onTap: onSelect != null
-                                            ? () => onSelect(data[0])
+                                            ? () => onSelect(data[index])
                                             : null),
                                   )
                                 : Padding(
@@ -361,6 +363,12 @@ class _JoinPageState extends State<JoinPage> {
           context, '¿Seguro que quieres salir?');
     }
     await goToPage(page - 1);
+    if (page - 1 < 1) {
+      selectedDistrictCodeSubject.add(null);
+    }
+    if (page - 1 < 2) {
+      selectedGroupCodeSubject.add(null);
+    }
     return false;
   }
 
@@ -414,8 +422,9 @@ class _JoinPageState extends State<JoinPage> {
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 5.0),
-                                      child: _buildGroupListTile(data[0],
-                                          onTap: () => _onGroupSelect(data[0])),
+                                      child: _buildGroupListTile(data[index],
+                                          onTap: () =>
+                                              _onGroupSelect(data[index])),
                                     )
                                   : Padding(
                                       padding: const EdgeInsets.only(top: 8.0),

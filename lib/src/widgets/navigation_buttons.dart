@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
@@ -7,7 +8,12 @@ class NavigationButtons extends StatelessWidget {
   final List<String> labels;
   final Function(int page)? onPageChange;
 
-  const NavigationButtons({Key? key, this.page = 0, required this.labels, required this.onPageChange}) : super(key: key);
+  const NavigationButtons(
+      {Key? key,
+      this.page = 0,
+      required this.labels,
+      required this.onPageChange})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,7 @@ class NavigationButtons extends StatelessWidget {
           return index == page
               ? Expanded(
                   child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: Paddings.listItemHorizontal,
                   child: _buildFilledButton(label),
                 ))
               : Expanded(
@@ -45,6 +51,7 @@ class NavigationButtons extends StatelessWidget {
   Widget _buildEmptyButton(int index, String label) {
     Function(int page)? onChange = onPageChange;
     return ScoutOutlinedButton(
-        label: label, onPressed: onChange != null ? () => onChange(index) : null);
+        label: label,
+        onPressed: onChange != null ? () => onChange(index) : null);
   }
 }

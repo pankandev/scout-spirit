@@ -60,7 +60,7 @@ class ZoneAdapter extends TypeAdapter<Zone> {
       zoneId: fields[0] as String,
       objects: (fields[1] as List).cast<ZoneObject>(),
       lastJoinTime: fields[2] as int?,
-      nodes: (fields[3] as Map).cast<String, Node>(),
+      nodes: (fields[3] as Map).cast<String, Node?>(),
     );
   }
 

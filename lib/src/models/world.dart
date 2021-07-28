@@ -41,6 +41,50 @@ class World {
       };
 }
 
+class NodeMeta {
+  final String name;
+  final String emoji;
+
+  NodeMeta.fromMap(Map<String, dynamic> map)
+      : name = map['name'],
+        emoji = map['emoji'];
+
+  @override
+  String toString() {
+    return "NodeMeta(name: $name, emoji: $emoji)";
+  }
+}
+
+class ZoneMeta {
+  final Zone zone;
+
+  final String name;
+  final String emoji;
+
+  final Map<String, NodeMeta> nodes;
+
+  ZoneMeta.fromMap(Zone zone, Map<String, dynamic> map)
+      : zone = zone,
+        name = map['name'],
+        emoji = map['emoji'],
+        nodes = (map['nodes'] as Map)
+            .cast<String, dynamic>()
+            .map<String, NodeMeta>((key, value) => new MapEntry(
+                key, NodeMeta.fromMap((value as Map).cast<String, dynamic>())));
+
+  @override
+  String toString() {
+    return "ZoneMeta(name: $name, emoji: $emoji, nodes: $nodes, zone: $zone)";
+  }
+}
+
+class ZoneConnection {
+  final String nodeId;
+  final Zone zone;
+
+  const ZoneConnection({required this.nodeId, required this.zone});
+}
+
 @HiveType(typeId: 2)
 class Zone {
   Zone({
@@ -84,6 +128,11 @@ class Zone {
             (String key, Node? value) =>
                 MapEntry<String, Map<String, String>?>(key, value?.toMap())),
       };
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
 }
 
 @HiveType(typeId: 3)
@@ -131,7 +180,7 @@ class ZoneObject {
   final Vector3 scale;
 
   factory ZoneObject.fromMap(Map<String, dynamic> json) => ZoneObject(
-      objectId: json["objectId"],
+      objectId: json["id"],
       position: Vector3.fromMap(json["position"]),
       rotation: Quaternion.fromMap(json["rotation"]),
       scale: Vector3.fromMap(json["scale"]));

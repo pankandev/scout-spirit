@@ -11,13 +11,14 @@ import 'package:scout_spirit/src/providers/provider_consumer.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
-import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/utils/datetime.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/header_back.dart';
 import 'package:scout_spirit/src/widgets/task_container.dart';
 import 'package:scout_spirit/src/providers/reward_provider.dart';
 import 'package:scout_spirit/src/pages/progress_log.dart';
+import 'package:scout_spirit/src/widgets/task_item.dart';
 
 class TaskViewPage extends StatefulWidget {
   final bool readonly;
@@ -78,7 +79,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
           return user == null
               ? Center(
                   child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: Paddings.top,
                   child: CircularProgressIndicator(),
                 ))
               : StreamBuilder<FullTask?>(
@@ -90,7 +91,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
                         floatingActionButton: !readonly
                             ? FloatingActionButton(
                                 onPressed: () => _openLogEditor(),
-                                child: Icon(Icons.edit),
+                                child: Icon(Icons.edit, color: Colors.white,),
                                 backgroundColor: Colors.pinkAccent,
                               )
                             : null,
@@ -173,20 +174,19 @@ class _TaskViewPageState extends State<TaskViewPage> {
               child: TaskContainer(
                   task: task, unit: unit, iconSize: (size.width / 1.918) * 1.5),
             ),
-            SizedBox(
-              height: 16.0,
-            ),
+            VSpacings.medium,
             Text(
               'Tareas',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24.0,
+                  fontSize: FontSizes.medium,
                   fontFamily: 'ConcertOne'),
             ),
-            SizedBox(
-              height: 16.0,
+            VSpacings.medium,
+            Padding(
+              padding: Paddings.bottom,
+              child: _buildSubTasks(),
             ),
-            _buildSubTasks(),
             Text(
               'Registros',
               style: TextStyle(
@@ -194,9 +194,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
                   fontSize: 24.0,
                   fontFamily: 'ConcertOne'),
             ),
-            SizedBox(
-              height: 16.0,
-            ),
+            VSpacings.medium,
             _buildOldLogs(task.logs),
           ],
         ),
@@ -215,56 +213,29 @@ class _TaskViewPageState extends State<TaskViewPage> {
             constraints: BoxConstraints(minHeight: 164.0),
             child: ProviderConsumer<Task?>(
               controller: taskController,
-              builder: (_) {
-                print(taskController.value?.tasks
-                    .map((e) => e.completed)
-                    .toList());
-                return taskController.value == null
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: taskController.value!.tasks.length == 0
-                            ? [_buildPlaceholder('Sin tareas definidas')]
-                            : task.tasks.asMap().keys.map((index) {
-                                final SubTask subtask =
-                                    taskController.value!.tasks[index];
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      height: 8.0,
-                                    ),
-                                    CheckboxListTile(
-                                        title: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 18.0),
-                                          child: Text(
-                                            subtask.description,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'ConcertOne'),
-                                          ),
-                                        ),
-                                        selectedTileColor: Colors.white,
-                                        tileColor: Colors.white12,
-                                        activeColor: Colors.white,
-                                        checkColor: appTheme.primaryColor,
-                                        value: subtask.completed,
-                                        onChanged: !readonly
-                                            ? (bool? value) =>
-                                                _onSubTaskTap(index, value!)
-                                            : null),
-                                    Divider(
-                                      color: Colors.white,
-                                      height: 1,
-                                    )
-                                  ],
-                                );
-                              }).toList(),
-                      );
-              },
+              builder: (_) => taskController.value == null
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: taskController.value!.tasks.length == 0
+                          ? [_buildPlaceholder('Sin tareas definidas')]
+                          : task.tasks.asMap().keys.map((index) {
+                              final SubTask subtask =
+                                  taskController.value!.tasks[index];
+                              return Padding(
+                                padding: Paddings.listItem,
+                                child: TaskItem(
+                                    task: subtask,
+                                    value: subtask.completed,
+                                    onToggle: !readonly
+                                        ? () => _onSubTaskTap(
+                                            index, !subtask.completed)
+                                        : null),
+                              );
+                            }).toList(),
+                    ),
             ),
           );
   }

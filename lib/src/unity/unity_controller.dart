@@ -1,13 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/avatar.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:scout_spirit/src/error/unity_flutter_error.dart';
 import 'package:scout_spirit/src/providers/logger.dart';
 
 const String RECEIVER_GAME_OBJECT = "Scout Spirit Flutter Messager";
-const String RESPONSE_RECEIVER_METHOD = "ReceiveResponse";
-const String SCENE_LOADING_METHOD = "GoToScene";
+const String METHOD_RESPONSE_RECEIVER = "ReceiveResponse";
+const String METHOD_SCENE_LOADING = "GoToScene";
+const String METHOD_SAVE = "Save";
+const String METHOD_SCREENSHOT = "TakeScreenshot";
+
 
 typedef UnityMessageHandler = Future<Map<String, dynamic>?> Function(
     Map<String, dynamic> arguments);
@@ -28,15 +33,30 @@ class GameController {
 
   bool get initialized => _controller != null;
 
-  void init(UnityWidgetController controller) {
+  Future<void> init(UnityWidgetController controller, String atScene) async {
     _controller = controller;
+    bool isPaused = await controller.isPaused() ?? true;
+    if (isPaused) {
+      await Future.delayed(Duration(milliseconds: 500));
+      await controller.resume();
+    }
+    await goToScene(atScene);
   }
 
-  void onNewScene(SceneLoaded? scene) {
+  Future<void> onNewScene(SceneLoaded? scene) async {
     _currentScene = scene;
+    await LoggerService()
+        .log('UNITY_CONTROLLER', 'Loaded scene: ${scene?.name}');
   }
 
   Map<String, UnityMessageHandler> _handlers = {};
+
+  final StreamController<String> calledMethodsController = StreamController<String>.broadcast();
+  Stream<String> get calledMethods$ => calledMethodsController.stream;
+
+  void dispose() {
+    calledMethodsController.close();
+  }
 
   void on(String method, UnityMessageHandler handler) {
     _handlers[method] = handler;
@@ -58,7 +78,7 @@ class GameController {
       return;
     }
     await _controller!
-        .postMessage(RECEIVER_GAME_OBJECT, SCENE_LOADING_METHOD, sceneName);
+        .postMessage(RECEIVER_GAME_OBJECT, METHOD_SCENE_LOADING, sceneName);
   }
 
   Future<void> handleUnityMessage(String message) async {
@@ -78,21 +98,26 @@ class GameController {
     UnityMessageHandler? handler = _handlers[method];
     if (handler != null) {
       try {
+        // execute handler
         response = await handler(arguments);
         await LoggerService().log("UNITY_CONTROLLER", "Response $messageIndex",
             params: [method, response]);
+        await _sendResponse(messageIndex, response: response, error: error);
       } on UnityFlutterError catch (e, s) {
+        // return on error
         error = e;
+        await _sendResponse(messageIndex, response: response, error: error);
         await LoggerService()
             .warn("UNITY_CONTROLLER", "Error $messageIndex: ${e.message}");
-        await _sendResponse(messageIndex, response: response, error: error);
         await LoggerService().error(e, s);
       } catch (e, s) {
+        // handle error
+        await _sendResponse(messageIndex, response: response, error: error);
         error = UnityFlutterError(
             code: "UNKNOWN", message: "An unknown error ocurred");
-        await _sendResponse(messageIndex, response: response, error: error);
         await LoggerService().error(e, s);
       }
+      calledMethodsController.add(method);
     } else {
       await LoggerService().warn("UNITY_CONTROLLER",
           "Method '$method' called from Unity, but no handler exists for this method");
@@ -101,9 +126,15 @@ class GameController {
 
   Future<void> _sendResponse(int index,
       {Map<String, dynamic>? response, UnityFlutterError? error}) async {
-    await _controller!.postMessage(
+    UnityWidgetController? controller = _controller;
+    if (controller == null) {
+      LoggerService().warn('UNITY_CONTROLLER',
+          'Trying to send response, but controller is not initialized');
+      return;
+    }
+    await controller.postMessage(
         RECEIVER_GAME_OBJECT,
-        RESPONSE_RECEIVER_METHOD,
+        METHOD_RESPONSE_RECEIVER,
         json.encode({
           "index": index,
           "response": response,
@@ -114,8 +145,8 @@ class GameController {
   }
 
   Future<void> takeScreenshot(String filename) async {
-    await _controller!
-        .postMessage(RECEIVER_GAME_OBJECT, "TakeScreenshot", filename);
+    await controller.postMessage(
+        RECEIVER_GAME_OBJECT, METHOD_SCREENSHOT, filename);
   }
 
   Future<void> changeAvatarClothes(
@@ -125,12 +156,15 @@ class GameController {
   }
 
   Future<void> stop() async {
-    await goToScene("Hub");
-    _controller = null;
+    UnityWidgetController? controller = _controller;
+    if (controller != null) {
+      await goToScene("Hub");
+      await controller.pause();
+    }
   }
 
   Future<bool> _isPaused() async {
-    return await _controller!.isPaused() ?? false;
+    return await controller.isPaused() ?? false;
   }
 
   Future<void> pause() async {
@@ -141,10 +175,29 @@ class GameController {
     }
   }
 
+  UnityWidgetController get controller {
+    UnityWidgetController? c = _controller;
+    if (c == null) {
+      throw new AppError(
+          message:
+              'Trying to send response, but controller is not initialized');
+    }
+    return c;
+  }
+
   Future<void> resume() async {
     UnityWidgetController? controller = _controller;
     if (controller != null) {
       await controller.resume();
     }
+  }
+
+  Future<void> waitForNextCall(String method) {
+    return calledMethods$.firstWhere((element) => element == method);
+  }
+
+  Future<void> save() async {
+    await controller.postMessage(RECEIVER_GAME_OBJECT, METHOD_SAVE, "");
+    await waitForNextCall("SaveZone");
   }
 }

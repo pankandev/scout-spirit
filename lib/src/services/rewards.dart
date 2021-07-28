@@ -85,14 +85,16 @@ class RewardsService extends RestApiService {
   }
 
   BehaviorSubject<List<Reward>> _getCategorySubject(String category) {
-    if (!rewardsByCategory.containsKey(category.toLowerCase())) {
-      rewardsByCategory[category] = new BehaviorSubject<List<Reward>>();
+    String categoryLower = category.toLowerCase();
+    BehaviorSubject<List<Reward>>? subject = rewardsByCategory[categoryLower];
+    if (subject == null) {
+      subject = rewardsByCategory[categoryLower] = new BehaviorSubject<List<Reward>>();
     }
-    return rewardsByCategory[category]!;
+    return subject;
   }
 
   Stream<List<T>> getByCategory<T extends Reward>(String category) {
-    return _getCategorySubject(category).stream.map((event) => event.cast<T>());
+    return _getCategorySubject(category).map((event) => event.cast<T>());
   }
 
   List<T> getSnapByCategory<T extends Reward>(String category) {

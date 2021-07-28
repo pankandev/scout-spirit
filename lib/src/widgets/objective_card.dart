@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:scout_spirit/src/models/objective.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 
@@ -16,44 +18,36 @@ class ObjectiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(boxShadow: <BoxShadow>[
-        BoxShadow(
-            color: Colors.white70, blurRadius: 8.0, spreadRadius: -1)
-      ], borderRadius: BorderRadius.circular(12.0)),
+      decoration: BoxDecoration(
+          boxShadow: <BoxShadow>[Shadows.glow],
+          borderRadius: BorderRadii.medium),
       child: RawMaterialButton(
         onPressed: this.onSelect,
+        padding: Paddings.cardFluid,
         fillColor: Color.lerp(Colors.white, areaData.color, 0.1),
         splashColor: areaData.color.withOpacity(0.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        shape: Shapes.rounded,
         child: Stack(
           children: [
             if (onSelect != null)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.chevron_right,
-                    color: areaData.color.withOpacity(0.3),
-                    size: 64.0,
-                  ),
-                ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: Icon(
+                  Icons.chevron_right,
+                  color: areaData.color.withOpacity(0.3),
+                  size: IconSizes.xlarge,
+                ),
               ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+              padding: EdgeInsets.only(right: Dimensions.xxlarge + 36.0.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 48.0),
-                    child: Text(
-                      objective.authorizedObjective,
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: 'Ubuntu',
-                          fontSize: 12.0),
-                      textAlign: TextAlign.justify,
-                    ),
+                  Text(
+                    objective.authorizedObjective,
+                    style: TextStyles.buttonDark.copyWith(
+                        color: Colors.black54, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.justify,
                   )
                 ],
               ),

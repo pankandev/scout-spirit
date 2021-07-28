@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/log.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 
 class LogCard extends StatelessWidget {
@@ -10,28 +11,26 @@ class LogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 2.8,
+      aspectRatio: 3.2,
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: <BoxShadow>[
-              BoxShadow(color: Colors.white54, blurRadius: 12.0)
-            ]),
+            borderRadius: BorderRadii.large,
+            boxShadow: <BoxShadow>[Shadows.glow]),
         child: Stack(children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+            padding: Paddings.container,
             child: Flex(
               direction: Axis.horizontal,
               children: [
                 Expanded(
                     flex: 1,
                     child: Icon(log.display.icon,
-                        size: 48.0, color: appTheme.primaryColor)),
+                        size: IconSizes.large, color: appTheme.primaryColor)),
                 Expanded(
                   flex: 3,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                    padding: Paddings.bottom,
                     child: Flex(
                       direction: Axis.vertical,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -43,20 +42,16 @@ class LogCard extends StatelessWidget {
                           children: [
                             Text(
                               log.timestampLabel,
-                              style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Color.fromRGBO(139, 139, 139, 1),
-                                  fontFamily: 'Ubuntu',
-                                  fontWeight: FontWeight.w700),
+                              style: TextStyles.muted
+                                  .copyWith(fontSize: FontSizes.small),
                             ),
-                            SizedBox(
-                              height: 2.0,
-                            ),
+                            VSpacings.medium,
                             Text(
                               log.displayLog,
                               style: TextStyle(
-                                  fontSize: 21.0,
-                                  fontFamily: 'ConcertOne',
+                                  fontSize: FontSizes.medium,
+                                  fontFamily: 'Ubuntu',
+                                  fontWeight: FontWeight.w700,
                                   color: appTheme.primaryColor),
                             ),
                           ],

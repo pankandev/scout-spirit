@@ -2,12 +2,14 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/widgets/area_icon.dart';
 import 'package:scout_spirit/src/widgets/scout_outlined_button.dart';
 
 class TaskContainer extends StatelessWidget {
   final String? label;
+  final IconData icon;
   final Unit unit;
   final Task task;
   final void Function()? onTap;
@@ -17,6 +19,7 @@ class TaskContainer extends StatelessWidget {
     Key? key,
     required this.unit,
     required this.task,
+    this.icon = Icons.visibility,
     this.label,
     this.iconSize = 180.0,
     this.onTap,
@@ -79,16 +82,14 @@ class TaskContainer extends StatelessWidget {
                                   color: display.color.withOpacity(0.8),
                                   fontFamily: 'ConcertOne'),
                             ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
+                            VSpacings.medium,
                             Text(
                               objective,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontFamily: 'UbuntuCondensed',
+                                  fontSize: FontSizes.medium,
+                                  fontFamily: 'Ubuntu',
                                   color: Color.fromRGBO(139, 139, 139, 1)),
                             ),
                           ],
@@ -96,12 +97,9 @@ class TaskContainer extends StatelessWidget {
                         if (label != null)
                           ScoutOutlinedButton(
                             onPressed: onTap,
-                            icon: Icons.visibility,
-                            label: label!,
+                            icon: icon,
+                            label: label ?? '',
                             borderWidth: 2.0,
-                            labelSize: 12.0,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5.0, horizontal: 12.0),
                             color: display.color.withOpacity(0.8),
                           )
                       ],

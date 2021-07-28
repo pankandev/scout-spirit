@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
@@ -168,7 +167,7 @@ class LogsService extends RestApiService {
 
   Future<void> postProgressLog(
       BuildContext context, TaskToken token, String log,
-      {dynamic? data}) async {
+      {dynamic data}) async {
     Map<String, dynamic> body = {'log': log, 'token': token.token};
     if (data != null) {
       body['data'] = data;
@@ -225,6 +224,9 @@ class LogsService extends RestApiService {
       rethrow;
     }
     List<Map<String, dynamic>> items = List.from(response["items"]);
-    return items.map((e) => Log.fromMap(e)).toList();
+    List<Log> logs = items.map((e) => Log.fromMap(e)).toList();
+    logs.sort((a, b) =>
+        b.time.millisecondsSinceEpoch - a.time.millisecondsSinceEpoch);
+    return logs;
   }
 }

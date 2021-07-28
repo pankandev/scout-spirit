@@ -39,7 +39,7 @@ class Log {
 
   String get displayLog => display.getLog(this);
 
-  Log.fromMap(Map<String, dynamic?> map)
+  Log.fromMap(Map<String, dynamic> map)
       : tag = map["tag"]!,
         time = new DateTime.fromMillisecondsSinceEpoch(map["timestamp"] as int,
                 isUtc: true)

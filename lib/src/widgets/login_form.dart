@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/forms/login.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 
@@ -26,29 +27,29 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget _buildLoginForm(BuildContext context, {bool disabled = false}) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        padding: Paddings.containerXFluid,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SizedBox(height: 10.0),
-          Text('Acceso', style: appTheme.textTheme.headline1),
-          SizedBox(
-            height: 36.0,
-          ),
+          Image.asset('assets/imgs/logo.png'),
+          VSpacings.xlarge,
+          Text('Acceso',
+              style: TextStyle(
+                  fontFamily: 'Ubuntu',
+                  fontWeight: FontWeight.w600,
+                  fontSize: FontSizes.xlarge,
+                  color: Colors.white)),
+          VSpacings.xxlarge,
           _buildEmailField(disabled: disabled),
-          SizedBox(
-            height: 32.0,
-          ),
+          VSpacings.xlarge,
           _buildPasswordField(disabled: disabled),
-          SizedBox(
-            height: 50.0,
-          ),
+          VSpacings.xxlarge,
           _buildLoginButton(context, disabled: disabled),
-          SizedBox(
-            height: 18.0,
-          ),
+          VSpacings.small,
           ScoutButton(
-            label: 'Aún no tienes cuenta?\nPresiona aquí',
-            onPressed: loading ? null : () => Navigator.of(context).pushNamed('/signup'),
-            fillColor: appTheme.primaryColor,
+            label: 'Crear cuenta',
+            onPressed: loading
+                ? null
+                : () => Navigator.of(context).pushNamed('/signup'),
+            fillColor: loading ? Colors.grey[500]! : blueColor,
             accentColor: appTheme.accentColor,
             labelColor: Colors.white,
           ),
@@ -61,7 +62,7 @@ class _LoginFormState extends State<LoginForm> {
         builder: (context, snapshot) {
           return ScoutButton(
             label: 'Entrar',
-            padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 12.0),
+            padding: Paddings.button,
             onPressed: disabled || snapshot.error != null
                 ? null
                 : () => _login(context),
@@ -82,11 +83,30 @@ class _LoginFormState extends State<LoginForm> {
               enabled: !disabled,
               obscureText: true,
               autocorrect: false,
+              style: TextStyles.inputLight,
+              cursorColor: Colors.white,
               decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                  border: OutlineInputBorder(),
+                  contentPadding: Paddings.inputLoose,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadii.max,
+                      borderSide: BorderSide.none),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadii.max,
+                      borderSide: BorderSide.none),
+                  fillColor: Colors.black45,
+                  filled: true,
                   labelText: 'Contraseña',
-                  suffixIcon: Icon(Icons.https),
+                  labelStyle: TextStyle(
+                      color: Colors.white70,
+                      fontFamily: 'Ubuntu',
+                      fontSize: FontSizes.medium,
+                      fontWeight: FontWeight.w600),
+                  suffixIcon: Icon(
+                    Icons.https,
+                    color: Colors.white,
+                    size: IconSizes.medium,
+                  ),
+                  errorStyle: TextStyles.error,
                   errorText:
                       wasPasswordTouched ? snapshot.error?.toString() : null),
               onChanged: (value) {
@@ -104,14 +124,28 @@ class _LoginFormState extends State<LoginForm> {
         enabled: !disabled,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
+        style: TextStyles.inputLight,
+        cursorColor: Colors.white,
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-            border: OutlineInputBorder(),
+            contentPadding: Paddings.inputLoose,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadii.max, borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadii.max, borderSide: BorderSide.none),
+            fillColor: Colors.black45,
+            filled: true,
+            labelStyle: TextStyle(
+                color: Colors.white70,
+                fontFamily: 'Ubuntu',
+                fontSize: FontSizes.medium,
+                fontWeight: FontWeight.w600),
             labelText: 'Correo',
-            suffixIcon: Icon(Icons.alternate_email,
-                color: wasEmailTouched && snapshot.error != null
-                    ? appTheme.errorColor
-                    : null),
+            suffixIcon: Icon(
+              Icons.alternate_email,
+              color: Colors.white,
+              size: IconSizes.medium,
+            ),
+            errorStyle: TextStyles.error,
             errorText: wasEmailTouched ? snapshot.error?.toString() : null),
         onChanged: (value) {
           if (!wasEmailTouched) setState(() => wasEmailTouched = true);

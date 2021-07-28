@@ -6,7 +6,9 @@ import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/forms/task_start.dart';
 import 'package:scout_spirit/src/models/objective.dart';
 import 'package:scout_spirit/src/models/task.dart';
+import 'package:scout_spirit/src/providers/loading_screen.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
 import 'package:scout_spirit/src/widgets/task_start/objectives_list.dart';
@@ -76,7 +78,6 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
             .startWith(false),
         form.tasksStream.map((event) => _validateTasks(event)).startWith(false),
         page$, (focusValidation, tasksValidation, page) {
-      print(page);
       switch (page) {
         case 3:
           return focusValidation;
@@ -137,8 +138,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                                   ? Colors.grey[800]!.withOpacity(0.4)
                                   : Colors.grey[800],
                               splashColor: Colors.white,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 16.0),
+                              padding: Paddings.button,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24.0),
                                   side: BorderSide.none),
@@ -150,10 +150,7 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
                                 children: [
                                   Text(
                                     'Continuar',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 19.0,
-                                        fontFamily: 'Ubuntu'),
+                                    style: TextStyles.buttonDark,
                                   ),
                                   Icon(
                                     Icons.chevron_right,
@@ -171,72 +168,51 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
 
   Widget _buildInstructionsPage(int step) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      padding: Paddings.containerXFluid,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           "Paso ${step + 1}",
-          style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'UbuntuCondensed',
-              fontSize: 16.0),
+          style: TextStyles.subtitleLight
+              .copyWith(fontFamily: 'Ubuntu', fontSize: FontSizes.medium),
         ),
         Hero(
           tag: "step $step title",
           child: Text(
             instructions[step].title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.white, fontSize: 32.0, fontFamily: 'ConcertOne'),
+            style: TextStyles.titleLight.copyWith(
+                fontSize: FontSizes.xxlarge, fontWeight: FontWeight.w400),
           ),
         ),
-        SizedBox(
-          height: 24.0,
-        ),
+        VSpacings.large,
         Text(
           instructions[step].instruction,
           textAlign: TextAlign.justify,
-          style: TextStyle(
-              height: 1.3,
-              color: Colors.white,
-              fontSize: 14.0,
-              fontFamily: 'Ubuntu'),
+          style: TextStyles.bodyLight,
         ),
-        SizedBox(
-          height: 16.0,
-        ),
+        VSpacings.xlarge,
         if (instructions[step].tip != null)
           Text(
             'Tip: ${instructions[step].tip}',
             textAlign: TextAlign.justify,
-            style: TextStyle(
-                height: 1.3,
-                color: Colors.white,
-                fontSize: 14.0,
-                fontFamily: 'Ubuntu',
-                fontWeight: FontWeight.w600),
+            style: TextStyles.muted
+                .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
           ),
-        SizedBox(
-          height: 48.0,
-        ),
+        VSpacings.xxlarge,
         RawMaterialButton(
             onPressed: () => goToPage(step * 2 + 1),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24.0),
+                borderRadius: BorderRadii.max,
                 side: BorderSide(color: Colors.white, width: 2.0)),
             splashColor: Colors.white12,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 21.0, vertical: 12.0),
+              padding: Paddings.button,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Entendido!',
-                      style:
-                          TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontFamily: 'Ubuntu')),
-                  SizedBox(
-                    width: 24.0,
-                  ),
+                  Text('Entendido!', style: TextStyles.buttonDark),
+                  HSpacings.medium,
                   Text('👌'),
                 ],
               ),
@@ -321,18 +297,32 @@ class _TaskStartFormPageState extends State<TaskStartFormPage> {
   }
 
   Future<void> _submit() async {
+    bool result = await SnackBarProvider.showConfirmAlert(
+        context, '¿Estás list@ para iniciar este objetivo?',
+        color: appTheme.primaryColor,
+        icon: Icons.check_circle_outline,
+        okLabel: 'Comencemos 😎',
+        body:
+            'No podrás cambiar de objetivo hasta completarlo.\n\nUna vez iniciado, sería bueno que comentes sobre este objetivo con tu dirigente o guiadora');
+    if (!result) {
+      return;
+    }
+
     setState(() {
       loading = true;
     });
     bool errored = false;
     try {
+      LoadingScreenProvider().show(context);
       await TasksService().startObjective(form.personalObjective!, form.tasks);
+      LoadingScreenProvider().hide();
     } catch (e, s) {
       errored = true;
       setState(() {
         loading = false;
       });
       print(s);
+      LoadingScreenProvider().hide();
       rethrow;
     }
     if (!errored) {

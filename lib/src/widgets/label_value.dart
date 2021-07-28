@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/widgets/icon_tooltip.dart';
 
 class LabelValue<T> extends StatelessWidget {
@@ -16,6 +17,16 @@ class LabelValue<T> extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
+            child: Text(
+              value.toString(),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: FontSizes.xxlarge,
+                  shadows: <Shadow>[Shadow(color: Colors.white, blurRadius: 13.0)],
+                  fontFamily: 'ConcertOne'),
+            )),
+        VSpacings.large,
+        Flexible(
             child: Row(
           children: [
             Expanded(
@@ -24,24 +35,17 @@ class LabelValue<T> extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color.fromRGBO(210, 210, 210, 1),
+                    fontSize: FontSizes.medium,
+                    height: 1.05,
                     fontFamily: 'ConcertOne'),
               ),
             ),
           ],
         )),
-        SizedBox(
-          height: 8.0,
-        ),
-        Flexible(
-            child: Text(
-          value.toString(),
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 32.0,
-              shadows: <Shadow>[Shadow(color: Colors.white, blurRadius: 13.0)],
-              fontFamily: 'ConcertOne'),
+        if (tooltip != null) Flexible(child: Padding(
+          padding: Paddings.top,
+          child: IconTooltip(tooltip!),
         )),
-        if (tooltip != null) Flexible(child: IconTooltip(tooltip!)),
       ],
     );
   }

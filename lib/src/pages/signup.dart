@@ -56,7 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       elevation: !loading ? 2 : 0,
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0)),
+                          borderRadius: BorderRadius.circular(64.0)),
                       child: Container(
                         child: Row(
                           mainAxisAlignment: loading
@@ -284,11 +284,12 @@ class _SignUpPageState extends State<SignUpPage> {
   InputDecoration getInputDecoration(String label, IconData icon,
       {bool isRequired = false}) {
     return InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         labelText: label + (isRequired ? '*' : ''),
+        labelStyle: TextStyle(fontFamily: 'Ubuntu'),
         errorMaxLines: 3,
         suffixIcon: Icon(icon),
-        border: OutlineInputBorder());
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(64.0)));
   }
 
   final TextEditingController birthDateTextController = TextEditingController();
@@ -302,6 +303,7 @@ class _SignUpPageState extends State<SignUpPage> {
             enabled: !disabled,
             keyboardType: TextInputType.emailAddress,
             autocorrect: false,
+            style: TextStyle(fontFamily: 'Ubuntu'),
             decoration: getInputDecoration(
                 'Fecha de nacimiento', Icons.date_range,
                 isRequired: true),
@@ -346,6 +348,7 @@ class _SignUpPageState extends State<SignUpPage> {
               border: InputBorder.none),
           child: LayoutBuilder(builder: (context, constraints) {
             return ToggleButtons(
+              borderRadius: BorderRadius.circular(128.0),
               fillColor: appTheme.primaryColor,
               splashColor: appTheme.primaryColor.withOpacity(0.9),
               color: Colors.black,
@@ -380,7 +383,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 6.0,
                       ),
                       Text('Tropa',
-                          style: appTheme.textTheme.caption?.copyWith(
+                          style: TextStyle(fontFamily: 'Ubuntu').copyWith(
                               color: controller.value == Unit.Scouts
                                   ? selectedColor
                                   : unselectedColor)),
@@ -401,7 +404,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 6.0,
                       ),
                       Text('Compañía',
-                          style: appTheme.textTheme.caption?.copyWith(
+                          style: TextStyle(fontFamily: 'Ubuntu').copyWith(
                               color: controller.value == Unit.Guides
                                   ? selectedColor
                                   : unselectedColor)),

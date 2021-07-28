@@ -1,4 +1,4 @@
-package com.pathsankan.scout_spirit
+package com.pankandev.scoutspirit
 
 import io.flutter.embedding.android.FlutterActivity
 

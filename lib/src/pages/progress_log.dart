@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
-import 'package:scout_spirit/src/providers/confirm_provider.dart';
 import 'package:scout_spirit/src/providers/loading_screen.dart';
 import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/providers/provider_consumer.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/services/logs.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
@@ -55,24 +55,18 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                         children: [
                           Text(
                             'Registrar avance',
-                            style: TextStyle(
-                                fontSize: 21.0,
-                                fontFamily: 'Ubuntu',
-                                fontWeight: FontWeight.w600),
+                            style: TextStyles.title
+                                .copyWith(fontFamily: fonts.body),
                           ),
                           Icon(Icons.edit)
                         ],
                       ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
+                      VSpacings.medium,
                       Text(
                         'Escribe aquí algo que hayas hecho para avanzar en este objetivo',
                         style: TextStyle(fontFamily: 'Ubuntu'),
                       ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
+                      VSpacings.xlarge,
                       TextFormField(
                         controller: controller,
                         maxLines: 5,
@@ -80,7 +74,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                         style: TextStyle(fontFamily: 'Ubuntu'),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0)),
+                              borderRadius: BorderRadii.medium),
                           labelText: 'Registro de avance',
                           alignLabelWithHint: true,
                           errorMaxLines: 2,
@@ -91,7 +85,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                                 '${controller.value.text.length} / $minCharacters',
                                 style: TextStyle(
                                     fontFamily: 'UbuntuCondensed',
-                                    fontSize: 16.0,
+                                    fontSize: FontSizes.medium,
                                     color: controller.value.text.length <
                                             minCharacters
                                         ? appTheme.errorColor
@@ -109,9 +103,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                           }
                         },
                       ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
+                      VSpacings.medium,
                       ScoutButton(
                         fillColor: appTheme.primaryColor,
                         accentColor: appTheme.accentColor,
@@ -137,8 +129,8 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                                     setState(() {
                                       loading = false;
                                     });
-                                    SnackBarProvider.showMessage(context,
-                                        'No se pudo subir el registro',
+                                    SnackBarProvider.showMessage(
+                                        context, 'No se pudo subir el registro',
                                         color: Colors.red);
                                     await LoggerService().error(e, s);
                                   } finally {
@@ -152,9 +144,7 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                                 }
                               },
                       ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
+                      VSpacings.small,
                       ScoutButton(
                         fillColor: appTheme.errorColor,
                         accentColor: appTheme.errorColor,
@@ -187,8 +177,8 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
     if (controller.text.isEmpty) {
       return true;
     }
-    return await ConfirmProvider.askConfirm(context,
-        question: 'Quieres descartar este registro?',
-        confirmLabel: 'Descartar');
+    return await SnackBarProvider.showConfirmAlert(
+        context, 'Quieres descartar este registro?',
+        okLabel: 'Descartar');
   }
 }

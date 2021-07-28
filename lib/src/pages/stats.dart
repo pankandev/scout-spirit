@@ -97,9 +97,10 @@ class StatsPage extends StatelessWidget {
         children: [
           Text(beneficiary?.fullName ?? user.name,
               style: TextStyle(
+                  height: 0.9,
                   color: Colors.white, fontSize: 28, fontFamily: 'ConcertOne')),
           SizedBox(
-            height: 8.0,
+            height: 16.0,
           ),
           Text('${beneficiary?.totalScore ?? 0} puntos',
               style: TextStyle(

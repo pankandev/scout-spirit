@@ -79,7 +79,7 @@ abstract class RestApiService {
     return _isEmulator ? EMULATOR_URL : LOCALHOST_URL;
   }
 
-  Future<Map<String, dynamic?>> get(String path,
+  Future<Map<String, dynamic>> get(String path,
       {Map<String, String>? queryParams,
       List<int> expectedStatus = const [404]}) async {
     Map<String, String> headers = await _getAuthorizedHeader();

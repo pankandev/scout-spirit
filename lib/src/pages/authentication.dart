@@ -29,25 +29,7 @@ class AuthenticationPage extends StatelessWidget {
   }
 
   Widget _buildLoginContainer(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  offset: Offset(4, 4),
-                  color: Colors.black26,
-                  blurRadius: 16.0,
-                  spreadRadius: 1.0)
-            ]),
-        padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LoginForm()
-          ],
-        ));
+    return LoginForm();
   }
 
   Future<void> goToPage(int page) async {

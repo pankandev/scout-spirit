@@ -8,6 +8,7 @@ import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/beneficiaries.dart';
 import 'package:scout_spirit/src/services/districts.dart';
 import 'package:scout_spirit/src/services/groups.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/widgets/scout_button.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
@@ -70,17 +71,11 @@ class _MainPageState extends State<MainPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(
-                        height: 4.0,
-                      ),
+                      VSpacings.xsmall,
                       _buildHeader(context),
-                      SizedBox(
-                        height: 10.0,
-                      ),
+                      VSpacings.small,
                       _buildUserContainer(context),
-                      SizedBox(
-                        height: 16.0,
-                      ),
+                      VSpacings.medium,
                       StreamBuilder<User?>(
                           stream: AuthenticationService().userStream,
                           builder: (context, snapshot) {
@@ -91,9 +86,7 @@ class _MainPageState extends State<MainPage> {
                                     context, snapshot.data!.beneficiary!)
                                 : Container();
                           }),
-                      SizedBox(
-                        height: 23.0,
-                      ),
+                      VSpacings.medium,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -101,27 +94,19 @@ class _MainPageState extends State<MainPage> {
                           _buildSubHeader('Objetivo en progreso',
                               tooltip:
                                   'Tu objetivo en progreso corresponde a aquel objetivo en el que estás trabajando actualmente'),
-                          SizedBox(
-                            height: 24.0,
-                          ),
+                          VSpacings.medium,
                           ActiveTaskContainer()
                         ],
                       ),
-                      SizedBox(
-                        height: 24.0,
-                      ),
+                      VSpacings.xlarge,
                       _buildSubHeader('Qué te gustaría ver?'),
-                      SizedBox(
-                        height: 24.0,
-                      ),
+                      VSpacings.xxlarge,
                       ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, '/binnacle'),
                         label: 'Bitácora',
-                        labelSize: 21.0,
                         icon: Icons.book_outlined,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 18.0, vertical: 21.0),
+                        padding: Paddings.buttonLoose,
                       ),
                       SizedBox(
                         height: 24.0,
@@ -130,10 +115,8 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/stats'),
                         label: 'Estadísticas',
-                        labelSize: 21.0,
                         icon: Icons.insights,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 18.0, vertical: 21.0),
+                        padding: Paddings.buttonLoose,
                       ),
                       SizedBox(
                         height: 24.0,
@@ -142,10 +125,8 @@ class _MainPageState extends State<MainPage> {
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/logs'),
                         label: 'Registros',
-                        labelSize: 21.0,
                         icon: Icons.account_tree_outlined,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 18.0, vertical: 21.0),
+                        padding: Paddings.buttonLoose,
                       ),
                       _buildCredits()
                     ],
@@ -165,10 +146,7 @@ class _MainPageState extends State<MainPage> {
         Expanded(
           child: Text(
             title,
-            style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'ConcertOne',
-                fontSize: 22.0),
+            style: TextStyles.subtitleLight,
           ),
         ),
         if (tooltip != null) IconTooltip(tooltip)
@@ -181,7 +159,7 @@ class _MainPageState extends State<MainPage> {
         label:
             'No has indicado tus objetivos logrados. Presiona aquí para indicarlos',
         icon: Icons.warning_amber_rounded,
-        iconSize: 48.0,
+        iconSize: 32.0,
         fillColor: appTheme.errorColor,
         accentColor: Colors.pink,
         labelColor: Colors.white,
@@ -208,8 +186,8 @@ class _MainPageState extends State<MainPage> {
           return Container(
             decoration:
                 BoxDecoration(borderRadius: BorderRadius.circular(12.0)),
-            padding: EdgeInsets.only(bottom: 8.0, right: 18.0, left: 6.0),
-            child: snapshot.hasData
+            padding: Paddings.container,
+            child: beneficiary != null
                 ? Flex(
                     direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -229,45 +207,30 @@ class _MainPageState extends State<MainPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '¡Buenos días!',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontFamily: 'UbuntuCondensed'),
-                            ),
-                            SizedBox(
-                              height: 2.0,
+                              DateTime.now().hour < 12 ? '¡Buenos días!' : '¡Buenas tardes!',
+                              style: TextStyles.subtitleLight.copyWith(height: 1.1),
                             ),
                             Text(
-                              beneficiary!.nickname,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontFamily: 'ConcertOne'),
+                              beneficiary.nickname,
+                              style: TextStyles.giantTitle,
                             ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
+                            VSpacings.xlarge,
                             ScoutButton(
                                 label: 'Editar ávatar',
                                 fillColor: Colors.white,
                                 blurRadius: 8.0,
-                                labelSize: 17.0,
                                 shadowAlpha: 0.22,
                                 accentColor: Color.lerp(Colors.white,
                                     Color.fromRGBO(93, 36, 255, 1), 0.2)!,
                                 labelColor: Color.fromRGBO(93, 36, 255, 1),
                                 onPressed: () =>
                                     Navigator.pushNamed(context, '/profile')),
-                            SizedBox(
-                              height: 3.0,
-                            ),
+                            VSpacings.small,
                             Text(
                               '${beneficiary.totalScore} puntos',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontFamily: 'ConcertOne'),
+                              style: TextStyles.light.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: FontSizes.large),
                             ),
                           ],
                         ),
@@ -315,21 +278,16 @@ class _MainPageState extends State<MainPage> {
               'Ir al mundo',
               style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'ConcertOne',
-                  fontSize: 19.0,
+                  fontFamily: fonts.title,
+                  fontSize: FontSizes.large,
                   shadows: [Shadow(color: Colors.white, blurRadius: 5.0)]),
             )),
-        SizedBox(
-          height: 12.0,
-        ),
+        VSpacings.xlarge,
         Flexible(
           flex: 7,
           child: Container(
             decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-              BoxShadow(
-                  color: Color.fromRGBO(0, 255, 163, 1).withAlpha(128),
-                  blurRadius: 6.0,
-                  spreadRadius: 6.0),
+              Shadows.glowColor(Color.fromRGBO(0, 255, 163, 1), opacity: 0.7),
             ]),
             child: RawMaterialButton(
                 shape: CircleBorder(),
@@ -338,7 +296,7 @@ class _MainPageState extends State<MainPage> {
                 highlightColor: Colors.white60,
                 elevation: 0.0,
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: Paddings.allLarge,
                   decoration: BoxDecoration(
                       gradient: RadialGradient(
                           center: Alignment(0.8, -0.8),
@@ -356,10 +314,10 @@ class _MainPageState extends State<MainPage> {
                           user == null
                               ? ScoutSpiritIcons.fleur_de_lis
                               : (user.unit == Unit.Scouts
-                                  ? ScoutSpiritIcons.fleur_de_lis
-                                  : ScoutSpiritIcons.trebol),
+                              ? ScoutSpiritIcons.fleur_de_lis
+                              : ScoutSpiritIcons.trebol),
                           color: Colors.white,
-                          size: 48.0,
+                          size: IconSizes.xlarge,
                         );
                       }),
                 ),
@@ -375,9 +333,8 @@ class _MainPageState extends State<MainPage> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         RawMaterialButton(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
+            padding: Paddings.button,
+            shape: Shapes.rounded,
             highlightColor: Colors.transparent,
             onPressed: () async {
               bool result = await SnackBarProvider.showConfirmAlert(
@@ -399,16 +356,15 @@ class _MainPageState extends State<MainPage> {
                   'Cerrar sesión',
                   style: TextStyle(
                       color: Colors.white,
-                      fontFamily: 'ConcertOne',
-                      fontSize: 16.0),
+                      fontFamily: 'Ubuntu',
+                      fontWeight: FontWeight.w600,
+                      fontSize: FontSizes.medium),
                 ),
-                SizedBox(
-                  width: 9.0,
-                ),
+                HSpacings.medium,
                 Icon(
                   Icons.logout,
                   color: Colors.white,
-                  size: 21.0,
+                  size: IconSizes.medium,
                 )
               ],
             ))

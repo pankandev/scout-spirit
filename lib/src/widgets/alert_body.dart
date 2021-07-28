@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 
 class AlertBody extends StatelessWidget {
   final Color color;
@@ -9,6 +10,7 @@ class AlertBody extends StatelessWidget {
   final String okLabel;
   final Function()? onOk;
   final Function()? onCancel;
+  final Future<bool>? waitFor;
 
   const AlertBody(
       {Key? key,
@@ -19,66 +21,71 @@ class AlertBody extends StatelessWidget {
       this.onCancel,
       this.cancelLabel = 'Cancelar',
       this.icon = Icons.warning_amber_rounded,
-      this.color = Colors.redAccent})
+      this.color = Colors.redAccent,
+      this.waitFor})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+      padding: Paddings.containerFluid,
       child: Flex(
         mainAxisSize: MainAxisSize.min,
         direction: Axis.vertical,
         children: [
-          Icon(icon, size: 64.0, color: color),
-          if (title.isNotEmpty) Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24.0, fontFamily: 'Ubuntu', fontWeight: FontWeight.w700),
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
+          Icon(icon, size: IconSizes.xxlarge, color: color),
+          if (title.isNotEmpty)
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyles.title.copyWith(fontFamily: 'Ubuntu'),
+            ),
+          VSpacings.medium,
           if (body.isNotEmpty)
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
+              padding: Paddings.container,
               child: Text(
                 body,
-                style: TextStyle(fontSize: 16.0, height: 1.3, fontFamily: 'Ubuntu'),
+                style: TextStyles.dark.copyWith(fontSize: FontSizes.large),
                 textAlign: TextAlign.center,
               ),
             ),
           Flex(
             direction: Axis.horizontal,
-            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (this.onCancel != null)
                 RawMaterialButton(
                   onPressed: this.onCancel,
-                  child: Text(
-                    this.cancelLabel,
-                    style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'Ubuntu'),
+                  shape: Shapes.maxed,
+                  child: Padding(
+                    padding: Paddings.button,
+                    child: Text(
+                      this.cancelLabel,
+                      style: TextStyles.buttonLight,
+                    ),
                   ),
                 ),
               if (this.onCancel != null)
-                SizedBox(
-                  width: 16.0,
-                ),
-              RawMaterialButton(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                fillColor: color,
-                onPressed: this.onOk,
-                child: Text(
-                  this.okLabel,
-                  style: TextStyle(
-                      fontFamily: 'Ubuntu',
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white),
-                ),
+                VSpacings.medium,
+              Expanded(
+                child: FutureBuilder<bool>(
+                    future: waitFor ?? Future.value(true),
+                    builder: (context, snapshot) {
+                      bool enabled = snapshot.data ?? false;
+                      return RawMaterialButton(
+                        shape: Shapes.maxed,
+                        fillColor: color,
+                        onPressed: enabled ? this.onOk : null,
+                        child: Padding(
+                          padding: Paddings.button,
+                          child: Text(
+                            this.okLabel,
+                            style: TextStyles.buttonDark,
+                          ),
+                        ),
+                      );
+                    }),
               )
             ],
           )

@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 
 class HeaderBack extends StatelessWidget {
   final String? label;
   final Function()? onBack;
   final Widget? trailing;
 
-  const HeaderBack({Key? key, required this.onBack, this.label, this.trailing}) : super(key: key);
+  const HeaderBack({Key? key, required this.onBack, this.label, this.trailing})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52.0,
-      padding: EdgeInsets.only(left: 6.0),
+      padding: Paddings.left,
       child: Align(
         alignment: Alignment.centerLeft,
         child: RawMaterialButton(
           highlightColor: Colors.transparent,
           splashColor: Colors.white12,
           onPressed: onBack,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0)
-          ),
+          shape: Shapes.maxed,
           child: Padding(
-            padding: const EdgeInsets.only(left: 6.0, right: 12.0),
+            padding: Paddings.button,
             child: Flex(
               direction: Axis.horizontal,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,17 +34,19 @@ class HeaderBack extends StatelessWidget {
                     Icon(
                       Icons.chevron_left,
                       color: Colors.white,
-                      size: 32.0,
+                      size: IconSizes.medium,
                     ),
                     if (label != null)
                       Padding(
-                        padding: const EdgeInsets.only(left: 8.0, bottom: 6.0),
+                        padding:
+                        EdgeInsets.only(left: 16.0.sp, bottom: 21.0.sp),
+                        // Padding to fix font alignment
                         child: Text(
                           label!,
                           style: TextStyle(
                               color: Colors.white,
                               fontFamily: 'ConcertOne',
-                              fontSize: 21.0),
+                              fontSize: FontSizes.medium),
                         ),
                       )
                   ],

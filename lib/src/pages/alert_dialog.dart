@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/widgets/alert_body.dart';
 
 class ScoutAlertDialog<T> extends StatelessWidget {
@@ -9,6 +10,7 @@ class ScoutAlertDialog<T> extends StatelessWidget {
   final String? cancelLabel;
   final String? okLabel;
   final T okValue;
+  final Future<bool>? waitFor;
 
   const ScoutAlertDialog(
       {Key? key,
@@ -18,6 +20,7 @@ class ScoutAlertDialog<T> extends StatelessWidget {
       this.body = '',
       this.cancelLabel = 'Cancelar',
       this.okLabel = 'OK',
+      this.waitFor,
       required this.okValue})
       : super(key: key);
 
@@ -26,7 +29,7 @@ class ScoutAlertDialog<T> extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+        shape: Shapes.rounded,
         child: AlertBody(
           color: color,
           icon: icon,
@@ -34,12 +37,13 @@ class ScoutAlertDialog<T> extends StatelessWidget {
           body: body,
           cancelLabel: cancelLabel ?? '',
           okLabel: okLabel ?? '',
-          onOk: okLabel != null ? () {
-            Navigator.pop(context, okValue);
-          } : null,
-          onCancel: cancelLabel != null ? () {
-            Navigator.pop(context, T == bool ? false : null);
-          } : null,
+          onOk: okLabel != null
+              ? () => Navigator.pop(context, okValue)
+              : null,
+          onCancel: cancelLabel != null
+              ? () => Navigator.pop(context, T == bool ? false : null)
+              : null,
+          waitFor: waitFor
         ),
       ),
     );

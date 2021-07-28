@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.1"
+  animated_background:
+    dependency: "direct main"
+    description:
+      name: animated_background
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   archive:
     dependency: transitive
     description:
@@ -112,7 +119,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -342,6 +349,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0+2"
   flutter_speed_dial:
     dependency: "direct main"
     description:
@@ -360,7 +374,7 @@ packages:
       name: flutter_unity_widget
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.0"
+    version: "4.2.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -702,6 +716,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  quick_log:
+    dependency: "direct main"
+    description:
+      name: quick_log
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.2.1"
   quiver:
     dependency: transitive
     description:
@@ -716,6 +737,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.6-nullsafety"
+  relative_scale:
+    dependency: "direct main"
+    description:
+      name: relative_scale
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   rxdart:
     dependency: "direct main"
     description:
@@ -776,7 +804,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   stack_trace:
     dependency: transitive
     description:
@@ -818,7 +846,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.19"
+    version: "0.3.0"
   timing:
     dependency: transitive
     description:

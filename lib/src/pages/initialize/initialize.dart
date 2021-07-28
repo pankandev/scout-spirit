@@ -37,20 +37,20 @@ class _InitializePageState extends State<InitializePage> {
                 return TextButton(
                     onPressed: ready && !loading ? () => _initialize() : null,
                     child: Row(children: [
-                      Icon(Icons.check,
-                          color: ready && !loading
-                              ? Colors.white
-                              : Colors.white.withAlpha(64)),
-                      SizedBox(
-                        width: 8.0,
-                      ),
                       Text(
                         "Guardar objetivos iniciales",
                         style: TextStyle(
                             color: ready && !loading
                                 ? Colors.white
                                 : Colors.white.withAlpha(64)),
-                      )
+                      ),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      Icon(Icons.check,
+                          color: ready && !loading
+                              ? Colors.white
+                              : Colors.white.withAlpha(64)),
                     ]));
               })
         ],
@@ -63,6 +63,7 @@ class _InitializePageState extends State<InitializePage> {
               return !snapshot.hasData
                   ? Center(child: CircularProgressIndicator())
                   : AreasGrid(
+                      greyBuilder: (area) => !form.value.containsKey(area),
                       onAreaPressed: (area) => _initializeArea(context, area));
             }),
       ),
@@ -76,10 +77,9 @@ class _InitializePageState extends State<InitializePage> {
       old = old.map((e) => e).toList();
     }
     form.initializeArea(area);
-    dynamic? response = await Navigator.of(context)
+    var response = await Navigator.of(context)
         .pushNamed('/initialize/area', arguments: {'area': area, 'form': form});
-    bool canceled =
-        response == null || response.runtimeType != bool || !response;
+    bool canceled = response == null || !(response is bool) || !response;
     if (canceled) {
       if (old == null) {
         form.resetArea(area);

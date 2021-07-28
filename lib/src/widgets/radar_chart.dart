@@ -185,7 +185,7 @@ class RadarShape extends ShapeBorder {
     int idx = 0;
     for (double value in values) {
       double fullAngle = 2 * math.pi;
-      double angle = (idx / values.length) * fullAngle + angleOffset;
+      double angle = -((idx / values.length) * fullAngle + angleOffset);
 
       double x = centerX + maxRadius * (math.cos(angle) / 2) * value / maxValue;
       double y = centerY + maxRadius * (math.sin(angle) / 2) * value / maxValue;

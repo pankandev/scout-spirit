@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
@@ -178,6 +177,20 @@ class TasksService extends RestApiService {
     if (task != null) {
       List<Log> logs = await LogsService().getProgressLogs(task);
       return FullTask.fromTask(task: task, logs: logs);
+    }
+  }
+
+  Future<List<Task>> getMyTasks() async {
+    User user = AuthenticationService().authenticatedUser;
+    try {
+      Map<String, dynamic> response = await get('api/users/${user.id}/tasks/');
+      List items = response["items"];
+      List<Task> tasks = items.map((item) => Task.fromLiteMap(item)).toList();
+      return tasks;
+    } on HttpError {
+      rethrow;
+    } catch (e) {
+      rethrow;
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
 import 'package:scout_spirit/src/services/tasks.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/widgets/active_task_container.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
@@ -108,9 +109,10 @@ class _BinnaclePageState extends State<BinnaclePage> {
         children: [
           Text(beneficiary?.fullName ?? user.name,
               style: TextStyle(
+                  height: 0.9,
                   color: Colors.white, fontSize: 28, fontFamily: 'ConcertOne')),
           SizedBox(
-            height: 8.0,
+            height: 16.0,
           ),
           Text('${beneficiary?.totalScore ?? 0} puntos',
               style: TextStyle(
@@ -135,7 +137,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
               style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'ConcertOne',
-                  fontSize: 24.0),
+                  fontSize: FontSizes.medium),
             ),
             SizedBox(
               height: 16.0,
