@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scout_spirit/src/themes/theme.dart';
 
 class FontScheme {
   final String title;
@@ -11,10 +10,10 @@ class FontScheme {
 
   const FontScheme(
       {required this.title,
-      required this.subtitle,
-      required this.body,
-      required this.label,
-      required this.input});
+        required this.subtitle,
+        required this.body,
+        required this.label,
+        required this.input});
 
   FontScheme.all(String font)
       : title = font,
@@ -29,10 +28,10 @@ class FontScheme {
 
   FontScheme copyWith(
       {String? title,
-      String? subtitle,
-      String? body,
-      String? label,
-      String? input}) {
+        String? subtitle,
+        String? body,
+        String? label,
+        String? input}) {
     return FontScheme(
         title: title ?? this.title,
         subtitle: subtitle ?? this.subtitle,
@@ -42,9 +41,8 @@ class FontScheme {
   }
 }
 
-final fonts =
-    FontScheme.ubuntu.copyWith(title: 'ConcertOne', subtitle: 'ConcertOne');
-final colors = ColorScheme.light().copyWith(error: appTheme.errorColor);
+final fonts = FontScheme.ubuntu;
+final colors = ColorScheme.light();
 
 class FontSizes {
   static double get xxsmall => 16.0.sp;
@@ -82,6 +80,10 @@ class IconSizes {
   static double get xxlarge => 256.0.w;
 
   static double get max => 512.0;
+}
+
+class Sizes {
+  static double get giant => 712.0.w;
 }
 
 class Dimensions {

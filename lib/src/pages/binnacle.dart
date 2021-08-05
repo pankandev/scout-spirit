@@ -41,9 +41,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
                       child: Column(children: [
                     HeaderBack(
                       label: 'Bitácora',
-                      onBack: () {
-                        Navigator.pop(context);
-                      },
+                      onBack: () => Navigator.pop(context),
                     ),
                     _buildHeader(user),
                     _buildBody(context, user),
@@ -68,8 +66,8 @@ class _BinnaclePageState extends State<BinnaclePage> {
 
   Widget _buildHeader(User? user) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 32.0),
-        constraints: BoxConstraints(minHeight: 196.0, maxHeight: 240.0),
+        padding: Paddings.containerFluid,
+        constraints: BoxConstraints(maxHeight: Sizes.giant),
         child: user != null
             ? Flex(
                 direction: Axis.horizontal,
@@ -88,10 +86,13 @@ class _BinnaclePageState extends State<BinnaclePage> {
     Unit unit = user.unit;
     return RadarChart(
         bottomWidget: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: Paddings.label,
           child: Text(
             'Mantén presionado uno de los íconos en el gráfico para ver su significado',
-            style: TextStyle(color: Colors.white, fontFamily: 'UbuntuCondensed', fontSize: 15),
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'UbuntuCondensed',
+                fontSize: FontSizes.small),
             textAlign: TextAlign.center,
           ),
         ),
@@ -99,6 +100,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
         items: getCountValues(
             unit, beneficiary != null ? beneficiary.nTasks : TasksCount()));
   }
+
 
   Widget _buildUserData(User user) {
     Beneficiary? beneficiary = user.beneficiary;
@@ -110,19 +112,22 @@ class _BinnaclePageState extends State<BinnaclePage> {
           Text(beneficiary?.fullName ?? user.name,
               style: TextStyle(
                   height: 0.9,
-                  color: Colors.white, fontSize: 28, fontFamily: 'ConcertOne')),
-          SizedBox(
-            height: 16.0,
-          ),
+                  color: Colors.white,
+                  fontSize: FontSizes.xlarge,
+                  fontFamily: 'ConcertOne')),
+          VSpacings.large,
           Text('${beneficiary?.totalScore ?? 0} puntos',
               style: TextStyle(
-                  color: Colors.white, fontSize: 18, fontFamily: 'ConcertOne'))
+                  color: Colors.white,
+                  fontSize: FontSizes.medium,
+                  fontFamily: fonts.label,
+                  fontWeight: FontWeight.w700))
         ]);
   }
 
   Widget _buildBody(BuildContext context, User? user) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 21.0),
+        padding: Paddings.containerXFluid,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,6 +137,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
                 page: 0,
                 onPageChange: (index) =>
                     Navigator.of(context).pushReplacementNamed('/stats')),
+            VSpacings.xlarge,
             Text(
               'Objetivo en progreso',
               style: TextStyle(
@@ -139,13 +145,9 @@ class _BinnaclePageState extends State<BinnaclePage> {
                   fontFamily: 'ConcertOne',
                   fontSize: FontSizes.medium),
             ),
-            SizedBox(
-              height: 16.0,
-            ),
+            VSpacings.xlarge,
             ActiveTaskContainer(),
-            SizedBox(
-              height: 16.0,
-            ),
+            VSpacings.xlarge,
             Text(
               'Objetivos cumplidos',
               style: TextStyle(
@@ -153,9 +155,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
                   fontFamily: 'ConcertOne',
                   fontSize: 24.0),
             ),
-            SizedBox(
-              height: 16.0,
-            ),
+            VSpacings.large,
             user != null
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
@@ -168,8 +168,7 @@ class _BinnaclePageState extends State<BinnaclePage> {
                               children: snapshot.hasData
                                   ? snapshot.data!
                                       .map((e) => Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12.0),
+                                            padding: Paddings.listItem,
                                             child: TaskContainer(
                                                 unit: user.unit,
                                                 task: e,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/models/beneficiary.dart';
 import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/utils/objectives_icons.dart';
 import 'package:scout_spirit/src/utils/num.dart';
 import 'package:scout_spirit/src/widgets/background.dart';
@@ -42,8 +43,8 @@ class StatsPage extends StatelessWidget {
 
   Widget _buildHeader(User? user) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 32.0),
-        constraints: BoxConstraints(minHeight: 196.0, maxHeight: 240.0),
+        padding: Paddings.containerFluid,
+        constraints: BoxConstraints(maxHeight: Sizes.giant),
         child: user != null
             ? Flex(
                 direction: Axis.horizontal,
@@ -62,13 +63,13 @@ class StatsPage extends StatelessWidget {
     Unit unit = user.unit;
     return RadarChart(
         bottomWidget: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: Paddings.label,
           child: Text(
             'Mantén presionado uno de los íconos en el gráfico para ver su significado',
             style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'UbuntuCondensed',
-                fontSize: 15),
+                fontSize: FontSizes.small),
             textAlign: TextAlign.center,
           ),
         ),
@@ -98,13 +99,16 @@ class StatsPage extends StatelessWidget {
           Text(beneficiary?.fullName ?? user.name,
               style: TextStyle(
                   height: 0.9,
-                  color: Colors.white, fontSize: 28, fontFamily: 'ConcertOne')),
-          SizedBox(
-            height: 16.0,
-          ),
+                  color: Colors.white,
+                  fontSize: FontSizes.xlarge,
+                  fontFamily: 'ConcertOne')),
+          VSpacings.large,
           Text('${beneficiary?.totalScore ?? 0} puntos',
               style: TextStyle(
-                  color: Colors.white, fontSize: 18, fontFamily: 'ConcertOne'))
+                  color: Colors.white,
+                  fontSize: FontSizes.medium,
+                  fontFamily: fonts.label,
+                  fontWeight: FontWeight.w700))
         ]);
   }
 
@@ -120,19 +124,15 @@ class StatsPage extends StatelessWidget {
                     page: 1,
                     onPageChange: (index) => Navigator.of(context)
                         .pushReplacementNamed('/binnacle')),
-                SizedBox(
-                  height: 16.0,
-                ),
+                VSpacings.medium,
                 Text(
                   'Estadísticas',
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'ConcertOne',
-                      fontSize: 32.0),
+                      fontSize: FontSizes.large),
                 ),
-                SizedBox(
-                  height: 16.0,
-                ),
+                VSpacings.medium,
                 Flex(
                   direction: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,19 +160,15 @@ class StatsPage extends StatelessWidget {
                         )),
                   ],
                 ),
-                SizedBox(
-                  height: 16.0,
-                ),
+                VSpacings.medium,
                 Text(
                   'Puntajes',
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'ConcertOne',
-                      fontSize: 32.0),
+                      fontSize: FontSizes.large),
                 ),
-                SizedBox(
-                  height: 16.0,
-                ),
+                VSpacings.large,
                 _buildStatsBoxes(beneficiary.score),
                 SizedBox(
                   height: 16.0,
@@ -222,10 +218,7 @@ class StatsPage extends StatelessWidget {
                 direction: Axis.horizontal,
                 children: e
                     .map((e) => Expanded(
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 6.5),
-                            child: e)))
+                        child: Padding(padding: Paddings.allXSmall, child: e)))
                     .toList()))
             .toList());
   }

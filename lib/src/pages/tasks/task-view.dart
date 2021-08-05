@@ -49,7 +49,6 @@ class _TaskViewPageState extends State<TaskViewPage> {
     if (isActiveTask) {
       future = TasksService().fetchActiveTask();
       task = TasksService().activeTaskStream;
-      print('active');
     } else {
       future = TasksService().fetchTask(
           AuthenticationService().authenticatedUserId,
@@ -58,7 +57,6 @@ class _TaskViewPageState extends State<TaskViewPage> {
           key.line,
           key.subline);
       task = future.asStream();
-      print('non-active');
     }
 
     future.then((task) {
@@ -179,10 +177,10 @@ class _TaskViewPageState extends State<TaskViewPage> {
               'Tareas',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: FontSizes.medium,
+                  fontSize: FontSizes.large,
                   fontFamily: 'ConcertOne'),
             ),
-            VSpacings.medium,
+            VSpacings.large,
             Padding(
               padding: Paddings.bottom,
               child: _buildSubTasks(),
@@ -191,10 +189,10 @@ class _TaskViewPageState extends State<TaskViewPage> {
               'Registros',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24.0,
+                  fontSize: FontSizes.large,
                   fontFamily: 'ConcertOne'),
             ),
-            VSpacings.medium,
+            VSpacings.large,
             _buildOldLogs(task.logs),
           ],
         ),
@@ -248,7 +246,7 @@ class _TaskViewPageState extends State<TaskViewPage> {
         style: TextStyle(
             color: Color.lerp(Colors.white, Colors.grey, 0.2),
             fontFamily: 'UbuntuCondensed',
-            fontSize: 18.0),
+            fontSize: FontSizes.medium),
         textAlign: TextAlign.center,
       ),
     );
@@ -346,17 +344,22 @@ class _TaskViewPageState extends State<TaskViewPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: Text(
-                      log.log,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Ubuntu',
-                          fontWeight: FontWeight.w600),
+                    title: Padding(
+                      padding: Paddings.bottom,
+                      child: Text(
+                        log.log,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Ubuntu',
+                            fontSize: FontSizes.medium,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                     subtitle: Text("$day $hour",
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'Ubuntu',
+                            fontSize: FontSizes.small,
                             fontWeight: FontWeight.w300)),
                   ),
                   Divider()

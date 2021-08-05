@@ -7,6 +7,7 @@ import 'package:scout_spirit/src/models/user.dart';
 import 'package:scout_spirit/src/providers/snackbar.dart';
 import 'package:scout_spirit/src/scout_spirit_icons_icons.dart';
 import 'package:scout_spirit/src/services/authentication.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 import 'package:scout_spirit/src/themes/theme.dart';
 import 'package:scout_spirit/src/validators/email.dart';
 import 'package:scout_spirit/src/providers/provider_consumer.dart';
@@ -89,13 +90,13 @@ class _SignUpPageState extends State<SignUpPage> {
           currentStep: _currentStep,
           steps: <Step>[
             Step(
-                title: Text('Credenciales'),
+                title: Text('Credenciales', style: TextStyles.dark,),
                 isActive: true,
                 state:
                     _currentStep > 0 ? StepState.complete : StepState.disabled,
                 content: _buildCredentialsPage(context, disabled: disabled)),
             Step(
-                title: Text('Datos básicos'),
+                title: Text('Datos básicos', style: TextStyles.dark),
                 isActive: _currentStep > 0,
                 state:
                     _currentStep > 1 ? StepState.complete : StepState.disabled,
@@ -119,17 +120,11 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              height: 10.0,
-            ),
+            VSpacings.medium,
             _buildEmailField(disabled: disabled),
-            SizedBox(
-              height: 10.0,
-            ),
+            VSpacings.medium,
             _buildPasswordField(disabled: disabled),
-            SizedBox(
-              height: 10.0,
-            ),
+            VSpacings.medium,
             _buildConfirmPasswordField(disabled: disabled),
           ],
         ));
@@ -142,21 +137,13 @@ class _SignUpPageState extends State<SignUpPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildNicknameField(disabled: disabled),
-          SizedBox(
-            height: 10.0,
-          ),
+          VSpacings.medium,
           _buildNameField(disabled: disabled),
-          SizedBox(
-            height: 10.0,
-          ),
+          VSpacings.medium,
           _buildLastNameField(disabled: disabled),
-          SizedBox(
-            height: 10.0,
-          ),
+          VSpacings.medium,
           _buildDatePicker(disabled: disabled),
-          SizedBox(
-            height: 10.0,
-          ),
+          VSpacings.medium,
           _buildUnitPicker(disabled: disabled)
         ],
       ),
@@ -284,12 +271,12 @@ class _SignUpPageState extends State<SignUpPage> {
   InputDecoration getInputDecoration(String label, IconData icon,
       {bool isRequired = false}) {
     return InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        contentPadding: Paddings.input,
         labelText: label + (isRequired ? '*' : ''),
-        labelStyle: TextStyle(fontFamily: 'Ubuntu'),
+        labelStyle: TextStyles.input.copyWith(color: Colors.black54),
         errorMaxLines: 3,
-        suffixIcon: Icon(icon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(64.0)));
+        suffixIcon: Icon(icon, color: Colors.black87),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.circular(64.0)));
   }
 
   final TextEditingController birthDateTextController = TextEditingController();
@@ -314,7 +301,7 @@ class _SignUpPageState extends State<SignUpPage> {
               DateTime? date = await showDatePicker(
                   context: context,
                   initialDate: now.subtract(Duration(days: 365 * 15)),
-                  firstDate: DateTime(now.year - 20),
+                  firstDate: DateTime(now.year - 80),
                   lastDate: now);
               if (date != null) {
                 birthDateTextController.text = dateToString(date);

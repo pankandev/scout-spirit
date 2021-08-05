@@ -108,9 +108,7 @@ class _MainPageState extends State<MainPage> {
                         icon: Icons.book_outlined,
                         padding: Paddings.buttonLoose,
                       ),
-                      SizedBox(
-                        height: 24.0,
-                      ),
+                      VSpacings.large,
                       ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/stats'),
@@ -118,9 +116,7 @@ class _MainPageState extends State<MainPage> {
                         icon: Icons.insights,
                         padding: Paddings.buttonLoose,
                       ),
-                      SizedBox(
-                        height: 24.0,
-                      ),
+                      VSpacings.large,
                       ScoutOutlinedButton(
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/logs'),
@@ -207,8 +203,11 @@ class _MainPageState extends State<MainPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              DateTime.now().hour < 12 ? '¡Buenos días!' : '¡Buenas tardes!',
-                              style: TextStyles.subtitleLight.copyWith(height: 1.1),
+                              DateTime.now().hour < 12
+                                  ? '¡Buenos días!'
+                                  : '¡Buenas tardes!',
+                              style: TextStyles.subtitleLight
+                                  .copyWith(height: 1.1),
                             ),
                             Text(
                               beneficiary.nickname,
@@ -314,8 +313,8 @@ class _MainPageState extends State<MainPage> {
                           user == null
                               ? ScoutSpiritIcons.fleur_de_lis
                               : (user.unit == Unit.Scouts
-                              ? ScoutSpiritIcons.fleur_de_lis
-                              : ScoutSpiritIcons.trebol),
+                                  ? ScoutSpiritIcons.fleur_de_lis
+                                  : ScoutSpiritIcons.trebol),
                           color: Colors.white,
                           size: IconSizes.xlarge,
                         );
@@ -374,7 +373,7 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildCredits() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: Paddings.container,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -385,46 +384,44 @@ class _MainPageState extends State<MainPage> {
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.white,
-                fontSize: 21.0,
+                fontSize: FontSizes.large,
                 fontFamily: 'Ubuntu',
                 fontWeight: FontWeight.w600),
           ),
-          SizedBox(
-            height: 21.0,
-          ),
+          VSpacings.xlarge,
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             ClipOval(
                 child: Container(
                     width: 81.0,
                     height: 81.0,
-                    child: Image(image: AssetImage('assets/imgs/spiral.jpg'))))
+                    child: Image(image: AssetImage('assets/imgs/ankan.png'))))
           ]),
-          SizedBox(
-            height: 8.0,
-          ),
+          VSpacings.small,
           Flexible(
             child: Column(
               children: [
                 Text(
                   'Desarrollado por',
                   textAlign: TextAlign.start,
-                  style: TextStyle(color: Colors.white, fontFamily: 'Ubuntu'),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Ubuntu',
+                      fontSize: FontSizes.medium),
                 ),
+                VSpacings.small,
                 Text(
                   'Paths Ankan',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 21.0,
-                      fontWeight: FontWeight.w600,
+                      fontSize: FontSizes.medium,
+                      fontWeight: FontWeight.w700,
                       fontFamily: 'Ubuntu'),
                 ),
               ],
             ),
           ),
-          SizedBox(
-            height: 21.0,
-          ),
+          VSpacings.xlarge,
           Row(
             children: [
               Expanded(
@@ -436,15 +433,18 @@ class _MainPageState extends State<MainPage> {
                         'Personaje por',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.white, fontFamily: 'Ubuntu'),
+                            color: Colors.white,
+                            fontFamily: 'Ubuntu',
+                            fontSize: FontSizes.medium),
                       ),
+                      VSpacings.small,
                       Text(
                         'Frano\n@franopx',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 21.0,
-                            fontWeight: FontWeight.w600,
+                            fontSize: FontSizes.medium,
+                            fontWeight: FontWeight.w700,
                             fontFamily: 'Ubuntu'),
                       ),
                     ],
@@ -460,15 +460,18 @@ class _MainPageState extends State<MainPage> {
                         'Modelos por',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.white, fontFamily: 'Ubuntu'),
+                            color: Colors.white,
+                            fontFamily: 'Ubuntu',
+                            fontSize: FontSizes.medium),
                       ),
+                      VSpacings.small,
                       Text(
                         'Nanchark\n@nanchark',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 21.0,
-                            fontWeight: FontWeight.w600,
+                            fontSize: FontSizes.medium,
+                            fontWeight: FontWeight.w700,
                             fontFamily: 'Ubuntu'),
                       ),
                     ],

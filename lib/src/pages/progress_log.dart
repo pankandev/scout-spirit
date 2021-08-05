@@ -64,14 +64,16 @@ class _ProgressLogDialogState extends State<ProgressLogDialog> {
                       VSpacings.medium,
                       Text(
                         'Escribe aquí algo que hayas hecho para avanzar en este objetivo',
-                        style: TextStyle(fontFamily: 'Ubuntu'),
+                        style: TextStyle(
+                            fontFamily: 'Ubuntu', fontSize: FontSizes.medium),
                       ),
                       VSpacings.xlarge,
                       TextFormField(
                         controller: controller,
                         maxLines: 5,
                         readOnly: loading,
-                        style: TextStyle(fontFamily: 'Ubuntu'),
+                        keyboardType: TextInputType.text,
+                        style: TextStyles.input,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadii.medium),

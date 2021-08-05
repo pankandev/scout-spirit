@@ -46,6 +46,7 @@ class _LoginFormState extends State<LoginForm> {
           VSpacings.small,
           ScoutButton(
             label: 'Crear cuenta',
+            padding: Paddings.buttonLoose,
             onPressed: loading
                 ? null
                 : () => Navigator.of(context).pushNamed('/signup'),
@@ -62,7 +63,7 @@ class _LoginFormState extends State<LoginForm> {
         builder: (context, snapshot) {
           return ScoutButton(
             label: 'Entrar',
-            padding: Paddings.button,
+            padding: Paddings.buttonLoose,
             onPressed: disabled || snapshot.error != null
                 ? null
                 : () => _login(context),

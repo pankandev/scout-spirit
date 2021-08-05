@@ -22,7 +22,7 @@ class LabelValue<T> extends StatelessWidget {
               style: TextStyle(
                   color: Colors.white,
                   fontSize: FontSizes.xxlarge,
-                  shadows: <Shadow>[Shadow(color: Colors.white, blurRadius: 13.0)],
+                  shadows: <Shadow>[Shadows.glow],
                   fontFamily: 'ConcertOne'),
             )),
         VSpacings.large,
@@ -52,7 +52,7 @@ class LabelValue<T> extends StatelessWidget {
 }
 
 class LabelValueBox<T> extends LabelValue<T> {
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
   final String label;
   final T value;
 
@@ -60,15 +60,15 @@ class LabelValueBox<T> extends LabelValue<T> {
       {Key? key,
       required this.label,
       required this.value,
-      this.padding = const EdgeInsets.only(top: 8.0, bottom: 20.0)})
+      this.padding})
       : super(key: key, label: label, value: value);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: padding,
+      padding: padding ?? Paddings.containerFluid.copyWith(bottom: Dimensions.xlarge),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadii.medium,
         border: Border.all(color: Colors.white, width: 2.0),
       ),
       child: Flex(
@@ -80,20 +80,16 @@ class LabelValueBox<T> extends LabelValue<T> {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Colors.white, fontSize: 13.0, fontFamily: 'ConcertOne'),
+                color: Colors.white, fontSize: FontSizes.medium, fontFamily: 'ConcertOne'),
           )),
-          SizedBox(
-            height: 8.0,
-          ),
+          VSpacings.medium,
           Flexible(
               child: Text(
             value.toString(),
             style: TextStyle(
                 color: Colors.white,
-                fontSize: 28.0,
-                shadows: <Shadow>[
-                  Shadow(color: Colors.white, blurRadius: 13.0)
-                ],
+                fontSize: FontSizes.xxlarge,
+                shadows: <Shadow>[Shadows.glow],
                 fontFamily: 'ConcertOne'),
           )),
         ],

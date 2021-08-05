@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scout_spirit/src/error/app_error.dart';
 import 'package:scout_spirit/src/models/reward_token.dart';
 import 'package:scout_spirit/src/models/rewards/reward.dart';
 import 'package:scout_spirit/src/providers/logger.dart';
 import 'package:scout_spirit/src/services/rewards.dart';
-import 'package:scout_spirit/src/themes/theme.dart';
+import 'package:scout_spirit/src/themes/constants.dart';
 
 class RewardClaimPage extends StatefulWidget {
   final RewardToken reward;
@@ -40,32 +41,31 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
         body: Stack(children: [
           Center(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 64.0, horizontal: 16.0),
-              child: Card(
-                  child: SingleChildScrollView(
+              padding: Paddings.containerXFluid,
+              child: SingleChildScrollView(
                 child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 24.0, horizontal: 36.0),
+                    decoration: BoxDecoration(
+                        color: Colors.white, borderRadius: BorderRadii.max),
+                    padding: Paddings.container,
                     child: Flex(
                       direction: Axis.vertical,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           '¡Felicitaciones!',
-                          style: appTheme.textTheme.headline1,
+                          style: TextStyles.title,
                         ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Text('Elige una recompensa!'),
-                        SizedBox(
-                          height: 16.0,
-                        ),
+                        VSpacings.large,
+                        Text('Elige una recompensa!',
+                            style: TextStyles.subtitle.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey,
+                                fontFamily: 'Ubuntu')),
+                        VSpacings.large,
                         _buildBoxesList(),
                       ],
                     )),
-              )),
+              ),
             ),
           ),
           Align(
@@ -93,14 +93,25 @@ class _RewardClaimPageState extends State<RewardClaimPage> {
           .asMap()
           .keys
           .map((index) => Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: Paddings.allLarge,
                 child: RawMaterialButton(
-                    fillColor: loading ? Colors.grey[700] : appTheme.primaryColor,
                     textStyle: TextStyle(color: Colors.white),
                     shape: CircleBorder(),
                     child: FittedBox(
                       fit: BoxFit.contain,
-                      child: Text('🎁 #$index'),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: Paddings.allMedium,
+                            child: Image.asset('assets/imgs/gift.png', fit: BoxFit.contain,),
+                          ),
+                          Text('Loot #$index',
+                              style: TextStyles.buttonLight.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'UbuntuCondensed'))
+                        ],
+                      ),
                     ),
                     onPressed:
                         loading ? null : () => claimReward(boxIndex: index)),

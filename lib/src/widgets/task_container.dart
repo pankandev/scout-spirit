@@ -40,10 +40,8 @@ class TaskContainer extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: <BoxShadow>[
-              BoxShadow(color: Colors.white54, blurRadius: 12.0)
-            ]),
+            borderRadius: BorderRadii.medium,
+            boxShadow: <BoxShadow>[Shadows.glow]),
         child: GestureDetector(
           onTap: onTap,
           child: Stack(children: [
@@ -60,7 +58,7 @@ class TaskContainer extends StatelessWidget {
               bottom: -iconSize / 3,
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+              padding: Paddings.containerFluid,
               child: Flex(
                 direction: Axis.horizontal,
                 children: [
@@ -78,7 +76,7 @@ class TaskContainer extends StatelessWidget {
                             Text(
                               display.name,
                               style: TextStyle(
-                                  fontSize: 12.0,
+                                  fontSize: FontSizes.small,
                                   color: display.color.withOpacity(0.8),
                                   fontFamily: 'ConcertOne'),
                             ),
